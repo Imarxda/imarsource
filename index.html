@@ -62,7 +62,7 @@ nav a:hover{color:var(--gray-text)}
 .section-title{font-family:var(--serif);font-size:28px;font-weight:400;font-style:italic}
 .section-label{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gray-text)}
 
-/* FEATURED (antes "podio") */
+/* FEATURED */
 #podio-section{padding:48px 60px 64px;background:var(--white)}
 .podio-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;max-width:900px;margin:0 auto}
 .podio-card{display:flex;flex-direction:column;align-items:center}
@@ -105,6 +105,27 @@ nav a:hover{color:var(--gray-text)}
 .lista-btn:hover,.lista-btn.voted{background:var(--black);color:var(--white);border-color:var(--black)}
 #lista-empty{padding:60px;text-align:center;font-family:var(--serif);font-size:20px;font-style:italic;color:var(--gray-mid)}
 
+/* EVENTOS — carrusel estilo Netflix */
+#eventos-carousel-section{border-top:1px solid var(--gray-mid);border-bottom:1px solid var(--gray-mid);padding:48px 0 56px;background:var(--black)}
+#eventos-carousel-section .section-header-inner{padding:0 60px 24px;display:flex;align-items:baseline;gap:20px}
+#eventos-carousel-section .section-title{color:var(--white)}
+#eventos-carousel-section .section-label{color:#999}
+.eventos-wrap{position:relative}
+.eventos-track{display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding:4px 60px 12px}
+.eventos-track::-webkit-scrollbar{display:none}
+.evento-card{flex:0 0 auto;width:300px;aspect-ratio:16/9;position:relative;overflow:hidden;cursor:pointer;background:#1a1a1a;border:1px solid #333;transition:transform .35s var(--ease)}
+.evento-card:hover{transform:scale(1.045);z-index:2}
+.evento-card img{width:100%;height:100%;object-fit:cover;display:block}
+.evento-noimg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#555;font-family:var(--serif);font-style:italic;font-size:14px}
+.evento-overlay{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.92))}
+.evento-titulo{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--white);margin-bottom:3px}
+.evento-fecha{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#bbb}
+.eventos-arrow{position:absolute;top:0;bottom:12px;width:64px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;z-index:3;color:var(--white);font-size:22px;opacity:0;transition:opacity .2s}
+.eventos-arrow.left{left:0;background:linear-gradient(90deg,rgba(0,0,0,.65),transparent);justify-content:flex-start;padding-left:20px}
+.eventos-arrow.right{right:0;background:linear-gradient(270deg,rgba(0,0,0,.65),transparent);justify-content:flex-end;padding-right:20px}
+.eventos-wrap:hover .eventos-arrow{opacity:1}
+#eventos-carousel-empty{padding:20px 60px 0;font-family:var(--serif);font-style:italic;color:#666}
+
 /* MODAL EVENTO */
 #modal-ev-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:40px}
 #modal-ev-overlay.open{display:flex}
@@ -118,7 +139,7 @@ nav a:hover{color:var(--gray-text)}
 #modal-ev-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.9);border:none;font-size:18px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:transform .2s;z-index:2}
 #modal-ev-close:hover{transform:rotate(90deg)}
 
-/* MODAL PERFIL — estilo Instagram / portfolio */
+/* MODAL PERFIL */
 #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:24px}
 #modal-overlay.open{display:flex}
 #modal-box{background:var(--white);max-width:780px;width:100%;max-height:92vh;overflow-y:auto;position:relative}
@@ -156,67 +177,15 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 .footer-logo{font-family:var(--serif);font-size:18px;font-style:italic}
 .footer-meta{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text)}
 
-/* ADMIN LOGIN */
-#admin-login{display:none;position:fixed;inset:0;background:var(--white);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:20px}
-#admin-login.open{display:flex}
-.al-title{font-family:var(--serif);font-size:32px;font-style:italic;text-align:center}
-.al-sub{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gray-text);margin-bottom:16px}
-.al-field{width:320px}
-.al-field label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text);display:block;margin-bottom:6px}
-.al-field input{width:100%;border:none;border-bottom:1px solid var(--gray-mid);background:transparent;font-family:var(--sans);font-size:14px;letter-spacing:.04em;color:var(--black);padding:10px 4px;outline:none}
-.al-field input:focus{border-bottom-color:var(--black)}
-.btn-primary{background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:9px;letter-spacing:.25em;text-transform:uppercase;padding:16px 40px;cursor:pointer;width:320px;margin-top:8px;transition:background var(--ease)}
-.btn-primary:hover{background:#333}
-.btn-cancel{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text);cursor:pointer;text-decoration:underline;margin-top:4px;background:none;border:none;font-family:var(--sans)}
-
-/* ADMIN PANEL */
-#admin-panel{display:none;position:fixed;inset:0;background:var(--white);z-index:2000;overflow-y:auto}
-#admin-panel.open{display:block}
-.ap-header{border-bottom:1px solid var(--black);padding:28px 60px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--white);z-index:10}
-.ap-title{font-family:var(--serif);font-size:22px;font-weight:400}
-.ap-title span{font-style:italic;color:var(--gray-text);font-size:13px;margin-left:12px}
-.ap-tabs{display:flex;gap:0;border-bottom:1px solid var(--gray-mid);margin:0 60px}
-.ap-tab{background:none;border:none;border-bottom:2px solid transparent;font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:16px 24px;cursor:pointer;color:var(--gray-text);transition:all var(--ease)}
-.ap-tab.active{border-bottom-color:var(--black);color:var(--black)}
-.ap-content{padding:48px 60px;max-width:700px}
-.ap-pane{display:none}
-.ap-pane.active{display:block}
-.ap-sec-title{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:8px}
-.ap-sec-sub{font-size:10px;letter-spacing:.05em;color:var(--gray-text);margin-bottom:32px;line-height:1.7}
-.form-grid{display:flex;flex-direction:column;gap:24px}
-.ff label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text);display:block;margin-bottom:6px}
-.ff input,.ff textarea,.ff select{width:100%;border:none;border-bottom:1px solid var(--gray-mid);background:transparent;font-family:var(--sans);font-size:14px;letter-spacing:.04em;color:var(--black);padding:10px 4px;outline:none;transition:border-color var(--ease);resize:none}
-.ff select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center;padding-right:20px}
-.ff input:focus,.ff textarea:focus,.ff select:focus{border-bottom-color:var(--black)}
-.ff .hint{font-size:9px;color:var(--gray-text);margin-top:6px;line-height:1.5}
-.btn-submit{background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:9px;letter-spacing:.25em;text-transform:uppercase;padding:16px 32px;cursor:pointer;transition:background var(--ease);margin-top:8px}
-.btn-submit:hover{background:#333}
-.btn-submit:disabled{background:var(--gray-mid);cursor:not-allowed}
-.ap-status{font-size:10px;letter-spacing:.1em;padding:10px 0;min-height:32px;color:var(--gray-text)}
-.ap-status.ok{color:#2d7a2d}
-.ap-status.error{color:#c0392b}
-#ap-logout{background:none;border:1px solid var(--gray-mid);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:10px 20px;cursor:pointer;transition:all var(--ease)}
-#ap-logout:hover{border-color:var(--black)}
-.sb-config{background:var(--gray-light);border-left:3px solid var(--black);padding:24px;margin-bottom:40px}
-.sb-config h3{font-size:9px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:16px}
-.sb-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.sb-schema{margin-top:18px;font-size:10px;color:var(--gray-text)}
-.sb-schema summary{cursor:pointer;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--black)}
-.sb-schema pre{margin-top:12px;background:var(--white);border:1px solid var(--gray-mid);padding:14px;font-size:10px;line-height:1.7;overflow-x:auto;white-space:pre}
-
-/* SUB-TABS dentro de "Modelos" */
-.sub-tabs{display:flex;gap:10px;margin-bottom:32px}
-.sub-tab{background:none;border:1px solid var(--gray-mid);font-family:var(--sans);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all var(--ease);color:var(--gray-text)}
-.sub-tab.active{background:var(--black);color:var(--white);border-color:var(--black)}
-.sub-pane{display:none}
-.sub-pane.active{display:block}
-
 @media(max-width:900px){
   header{padding:32px 24px 24px}
   nav{gap:20px;flex-wrap:wrap;justify-content:center}
   #hero-portada{height:clamp(360px,110vw,560px)}
   .hero-content{padding:28px 22px 30px}
-  #search-section,.section-header,#podio-section,#lista-section,.ap-content{padding-left:24px;padding-right:24px}
+  #eventos-carousel-section .section-header-inner{padding:0 24px 20px}
+  .eventos-track{padding:4px 24px 12px}
+  .evento-card{width:230px}
+  #search-section,.section-header,#podio-section,#lista-section{padding-left:24px;padding-right:24px}
   .podio-grid{grid-template-columns:1fr;gap:28px;max-width:340px}
   .lista-header-row,.lista-row{grid-template-columns:44px 1fr 80px 56px 92px;gap:8px}
   .lista-avatar{width:44px;height:44px}
@@ -225,8 +194,6 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   #modal-avatar{width:120px;height:120px}
   .ig-gallery{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));padding:14px 24px 32px}
   .ig-gallery-label{padding:20px 24px 4px}
-  .ap-header,.ap-tabs{padding-left:24px;padding-right:24px}
-  .sb-grid{grid-template-columns:1fr}
   footer{padding:24px;flex-direction:column;gap:10px;text-align:center}
 }
 </style>
@@ -245,10 +212,10 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <header>
   <div class="logo" onclick="location.reload()"><em>imar</em> source</div>
   <nav>
+    <a onclick="goTo('#eventos-carousel-section')">Eventos</a>
     <a onclick="goTo('#podio-section')">Perfiles Destacados</a>
     <a onclick="goTo('#destacados-section')">Destacadas</a>
     <a onclick="goTo('#lista-section')">Directorio</a>
-    <a onclick="openAdminLogin()">Admin</a>
   </nav>
 </header>
 
@@ -275,6 +242,20 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     </div>
   </div>
   <div id="result-count"></div>
+</section>
+
+<!-- EVENTOS — carrusel estilo Netflix -->
+<section id="eventos-carousel-section">
+  <div class="section-header-inner">
+    <div class="section-title">Eventos</div>
+    <div class="section-label">Lo que se viene</div>
+  </div>
+  <div class="eventos-wrap">
+    <button class="eventos-arrow left" onclick="scrollEventos(-1)" aria-label="Anterior">‹</button>
+    <div class="eventos-track" id="eventos-carousel-track"></div>
+    <button class="eventos-arrow right" onclick="scrollEventos(1)" aria-label="Siguiente">›</button>
+  </div>
+  <div id="eventos-carousel-empty" style="display:none">Todavía no hay eventos cargados.</div>
 </section>
 
 <!-- PERFILES DESTACADOS -->
@@ -361,218 +342,31 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ADMIN LOGIN -->
-<div id="admin-login">
-  <div>
-    <div class="al-title"><em>imar</em> source</div>
-    <div class="al-sub">Panel de administración</div>
-  </div>
-  <div class="al-field">
-    <label>Contraseña</label>
-    <input type="password" id="admin-pwd" onkeydown="if(event.key==='Enter')checkPwd()">
-  </div>
-  <button class="btn-primary" onclick="checkPwd()">Acceder</button>
-  <button class="btn-cancel" onclick="closeAdminLogin()">Cancelar</button>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="admin-panel">
-  <div class="ap-header">
-    <div class="ap-title">Panel Admin <span>imar source</span></div>
-    <button id="ap-logout" onclick="logoutAdmin()">Cerrar sesión</button>
-  </div>
-  <div class="ap-tabs">
-    <button class="ap-tab active" onclick="switchTab('modelos',this)">Modelos</button>
-    <button class="ap-tab" onclick="switchTab('portada',this)">Editar Portada</button>
-    <button class="ap-tab" onclick="switchTab('eventos',this)">Carrusel / Eventos</button>
-  </div>
-  <div class="ap-content">
-
-    <!-- Supabase config -->
-    <div class="sb-config">
-      <h3>Configuración Supabase</h3>
-      <div class="sb-grid">
-        <div class="ff">
-          <label>URL del proyecto</label>
-          <input type="text" id="sb-url" placeholder="https://xxxx.supabase.co">
-        </div>
-        <div class="ff">
-          <label>Anon Key</label>
-          <input type="password" id="sb-key" placeholder="eyJh…">
-          <div class="hint">Solo se guarda en esta sesión, nunca en el código.</div>
-        </div>
-      </div>
-      <details class="sb-schema">
-        <summary>Ver estructura de tablas necesaria en Supabase</summary>
-        <pre>modelos
-  id            uuid / int8 (PK)
-  nombre        text
-  codigo        text
-  descripcion   text
-  foto_perfil_embed  text   -- embed de Telegram de la foto de perfil
-  likes_mes     int8  (default 0)
-  creado_en     timestamptz
-
-fotos
-  id            uuid / int8 (PK)
-  modelo_id     -> referencia a modelos.id
-  embed_code    text   -- embed de Telegram de cada foto de la galería
-  creado_en     timestamptz
-
-eventos
-  id            uuid / int8 (PK)
-  titulo        text
-  fecha_evento  date
-  banner_url    text
-  descripcion   text
-
-portada
-  id            int8 (usar siempre el valor 1, fila única)
-  imagen_url    text   -- link directo a la imagen de portada
-  titular       text
-  subtitulo     text</pre>
-      </details>
-    </div>
-
-    <!-- TAB MODELOS -->
-    <div class="ap-pane active" id="tab-modelos">
-      <div class="ap-sec-title">Modelos</div>
-      <div class="ap-sec-sub">
-        Cada modelo tiene un único perfil, como una cuenta de Instagram: se crea una sola vez y después se le van sumando fotos a su galería personal.
-      </div>
-
-      <div class="sub-tabs">
-        <button class="sub-tab active" onclick="switchSubTab('crear',this)">Crear Perfil de Modelo</button>
-        <button class="sub-tab" onclick="switchSubTab('foto',this)">Subir Foto a Modelo existente</button>
-      </div>
-
-      <!-- Crear perfil -->
-      <div class="sub-pane active" id="sub-crear">
-        <div class="form-grid">
-          <div class="ff"><label>Nombre</label><input type="text" id="m-name" placeholder="Valentina López"></div>
-          <div class="ff"><label>Código único</label><input type="text" id="m-code" placeholder="#KM01"></div>
-          <div class="ff"><label>Descripción</label><textarea id="m-desc" rows="3" placeholder="Breve texto editorial sobre la modelo."></textarea></div>
-          <div class="ff">
-            <label>Embed de Telegram — Foto de perfil</label>
-            <textarea id="m-embed" rows="5" placeholder='&lt;script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="TuCanal/123" data-width="100%"&gt;&lt;/script&gt;'></textarea>
-            <div class="hint">Abrí el post con la foto en Telegram Web → compartir → Embed → pegá el código completo.</div>
-          </div>
-          <div>
-            <button class="btn-submit" id="btn-pub-m" onclick="publishModel()">Crear Perfil</button>
-            <div class="ap-status" id="status-m"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Subir foto -->
-      <div class="sub-pane" id="sub-foto">
-        <div class="form-grid">
-          <div class="ff">
-            <label>Modelo</label>
-            <select id="f-modelo"><option value="">Seleccioná una modelo…</option></select>
-          </div>
-          <div class="ff">
-            <label>Embed de Telegram — Nueva foto</label>
-            <textarea id="f-embed" rows="5" placeholder='&lt;script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="TuCanal/456" data-width="100%"&gt;&lt;/script&gt;'></textarea>
-            <div class="hint">Esta foto se suma a la galería del perfil seleccionado.</div>
-          </div>
-          <div>
-            <button class="btn-submit" id="btn-pub-f" onclick="uploadFoto()">Subir Foto</button>
-            <div class="ap-status" id="status-f"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB PORTADA -->
-    <div class="ap-pane" id="tab-portada">
-      <div class="ap-sec-title">Portada de la Temporada</div>
-      <div class="ap-sec-sub">Esta es la imagen y el titular grande que aparecen al inicio del sitio. Actualizala cada mes o cada temporada.</div>
-      <div class="form-grid">
-        <div class="ff">
-          <label>URL de la imagen de fondo</label>
-          <input type="url" id="p-imagen" placeholder="https://…/portada.jpg">
-          <div class="hint">Subí la foto a un canal de Telegram, ImgBB o Cloudinary y pegá aquí el link directo a la imagen. Se recomienda una foto vertical u orientación retrato para que luzca bien en celulares.</div>
-        </div>
-        <div class="ff"><label>Titular de la temporada</label><input type="text" id="p-titular" placeholder="Edición Primavera / Verano"></div>
-        <div class="ff"><label>Subtítulo</label><input type="text" id="p-subtitulo" placeholder="Las tendencias que marcan la temporada."></div>
-        <div>
-          <button class="btn-submit" id="btn-pub-p" onclick="savePortada()">Guardar Portada</button>
-          <div class="ap-status" id="status-p"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB EVENTOS -->
-    <div class="ap-pane" id="tab-eventos">
-      <div class="ap-sec-title">Nuevo Evento</div>
-      <div class="ap-sec-sub">Completá los datos para agregar el evento al carrusel y al ticker.</div>
-      <div class="form-grid">
-        <div class="ff"><label>Título del evento</label><input type="text" id="e-title" placeholder="Kanime 2025"></div>
-        <div class="ff"><label>Fecha</label><input type="date" id="e-date"></div>
-        <div class="ff">
-          <label>URL del banner</label>
-          <input type="url" id="e-banner" placeholder="https://…/banner.jpg">
-          <div class="hint">Subí la imagen a ImgBB, Cloudinary u otro hosting gratuito y pegá el enlace directo.</div>
-        </div>
-        <div class="ff">
-          <label>Descripción del evento</label>
-          <textarea id="e-desc" rows="5" placeholder="Contá de qué trata el evento, horarios, lugar, etc."></textarea>
-        </div>
-        <div>
-          <button class="btn-submit" id="btn-pub-e" onclick="publishEvent()">Publicar Evento</button>
-          <div class="ap-status" id="status-e"></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
 <script>
-// ─── CONFIG ────────────────────────────────────────────────
-const SUPABASE_URL_DEFAULT = "https://lmxpbgvbxvmnlcntovdo.supabase.co"; // pegar URL de Supabase aqui
-const SUPABASE_KEY_DEFAULT = "sb_publishable_IRXmidh-ipHtdPMH4-O-iA_dQnnuZN6"; // pegar Anon Key aqui
-const ADMIN_PASSWORD = "imarsource2025"; // cambiar esta contraseña
-const PORTADA_ID = 1; // fila única de la tabla "portada"
+// ─── CONFIG (solo lectura — sin credenciales de escritura) ──
+const SUPABASE_URL = "https://lmxpbgvbxvmnlcntovdo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_IRXmidh-ipHtdPMH4-O-iA_dQnnuZN6";
+const PORTADA_ID   = 1;
 
 // ─── ESTADO ────────────────────────────────────────────────
 let sb = null;
-let allModels = [];
-let allFotos = [];
-let allEvents = [];
+let allModels  = [];
+let allFotos   = [];
+let allEvents  = [];
 let heroPortada = { imagen_url:"", titular:"", subtitulo:"" };
 let searchQuery = "";
 let currentModalModel = null;
 let toastTimer;
 
-// ─── SUPABASE ──────────────────────────────────────────────
-function initSB(url, key) {
-  if (!url || !key) return false;
-  sb = supabase.createClient(url, key);
-  return true;
-}
-
-function tryInitSB() {
-  const url = sessionStorage.getItem("sb_url") || SUPABASE_URL_DEFAULT;
-  const key = sessionStorage.getItem("sb_key") || SUPABASE_KEY_DEFAULT;
-  return initSB(url, key);
-}
-
-function initSBFromPanel() {
-  const url = document.getElementById("sb-url").value.trim() || sessionStorage.getItem("sb_url") || SUPABASE_URL_DEFAULT;
-  const key = document.getElementById("sb-key").value.trim() || sessionStorage.getItem("sb_key") || SUPABASE_KEY_DEFAULT;
-  if (!url || !key) return false;
-  initSB(url, key);
-  sessionStorage.setItem("sb_url", url);
-  sessionStorage.setItem("sb_key", key);
-  return true;
+// ─── SUPABASE (solo lectura) ────────────────────────────────
+function initSB() {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
 // ─── INIT ──────────────────────────────────────────────────
 async function init() {
-  if (tryInitSB()) await loadData();
-  else renderAll();
+  initSB();
+  await loadData();
   handleHash();
 }
 
@@ -587,7 +381,7 @@ async function loadData() {
     const [mRes, eRes, fRes, pRes] = results;
     if (mRes.status === "fulfilled" && mRes.value.data) allModels = mRes.value.data;
     if (eRes.status === "fulfilled" && eRes.value.data) allEvents = eRes.value.data;
-    if (fRes.status === "fulfilled" && fRes.value.data) allFotos = fRes.value.data;
+    if (fRes.status === "fulfilled" && fRes.value.data) allFotos  = fRes.value.data;
     if (pRes.status === "fulfilled" && pRes.value.data) heroPortada = pRes.value.data;
   } catch(e) { console.warn("Error Supabase:", e); }
   renderAll();
@@ -596,18 +390,45 @@ async function loadData() {
 function renderAll() {
   renderTicker();
   renderHero();
+  renderEventosCarousel();
   renderPodio();
   renderDestacados();
   renderLista();
 }
 
-// ─── HERO / PORTADA ────────────────────────────────────────
-function renderHero() {
-  const wrap = document.getElementById("hero-portada");
-  const bg = document.getElementById("hero-portada-bg");
-  const titular = document.getElementById("hero-titular");
-  const subtitulo = document.getElementById("hero-subtitulo");
+// ─── EVENTOS ───────────────────────────────────────────────
+function renderEventosCarousel() {
+  const track = document.getElementById("eventos-carousel-track");
+  const empty = document.getElementById("eventos-carousel-empty");
+  if (!allEvents.length) { track.innerHTML = ""; empty.style.display = "block"; return; }
+  empty.style.display = "none";
+  track.innerHTML = allEvents.map(ev => {
+    const d = ev.fecha_evento
+      ? new Date(ev.fecha_evento + "T00:00:00").toLocaleDateString("es-AR",{day:"2-digit",month:"long",year:"numeric"})
+      : "";
+    const img = ev.banner_url
+      ? `<img src="${ev.banner_url}" alt="${ev.titulo}">`
+      : `<div class="evento-noimg">${ev.titulo}</div>`;
+    return `
+    <div class="evento-card" onclick="openEvModal('${ev.id}')">
+      ${img}
+      <div class="evento-overlay">
+        <div class="evento-titulo">${ev.titulo}</div>
+        ${d ? `<div class="evento-fecha">${d}</div>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+}
+function scrollEventos(dir) {
+  document.getElementById("eventos-carousel-track").scrollBy({ left: dir * 320, behavior: "smooth" });
+}
 
+// ─── HERO ──────────────────────────────────────────────────
+function renderHero() {
+  const wrap     = document.getElementById("hero-portada");
+  const bg       = document.getElementById("hero-portada-bg");
+  const titular  = document.getElementById("hero-titular");
+  const subtitulo= document.getElementById("hero-subtitulo");
   if (heroPortada && heroPortada.imagen_url) {
     bg.style.backgroundImage = `url('${heroPortada.imagen_url}')`;
     wrap.classList.remove("empty");
@@ -615,8 +436,8 @@ function renderHero() {
     bg.style.backgroundImage = "none";
     wrap.classList.add("empty");
   }
-  titular.textContent = (heroPortada && heroPortada.titular) ? heroPortada.titular : "Edición Primavera / Verano";
-  subtitulo.textContent = (heroPortada && heroPortada.subtitulo) ? heroPortada.subtitulo : "Las tendencias que marcan la temporada.";
+  titular.textContent  = (heroPortada && heroPortada.titular)   ? heroPortada.titular   : "Edición Primavera / Verano";
+  subtitulo.textContent= (heroPortada && heroPortada.subtitulo) ? heroPortada.subtitulo : "Las tendencias que marcan la temporada.";
 }
 
 // ─── TICKER ────────────────────────────────────────────────
@@ -635,15 +456,13 @@ function renderTicker() {
   track.innerHTML = items + items;
 }
 
-// ─── PERFILES DESTACADOS (top 3 por votos, sin jerarquías) ──
+// ─── PODIO ─────────────────────────────────────────────────
 function renderPodio() {
-  const grid = document.getElementById("podio-grid");
+  const grid  = document.getElementById("podio-grid");
   const empty = document.getElementById("podio-empty");
-  const top3 = allModels.slice(0, 3);
-
+  const top3  = allModels.slice(0, 3);
   if (!top3.length) { grid.innerHTML = ""; empty.style.display = "block"; return; }
   empty.style.display = "none";
-
   grid.innerHTML = top3.map(m => {
     const voted = hasVoted(m.id);
     return `
@@ -660,33 +479,25 @@ function renderPodio() {
       </div>
     </div>`;
   }).join("");
-
   top3.forEach(m => injectEmbed("pe-"+m.id, m.foto_perfil_embed));
 }
 
 // ─── DESTACADOS ────────────────────────────────────────────
 function renderDestacados() {
-  const track = document.getElementById("cinta-track");
-  const sorted = [...allModels]
-    .sort((a,b) => new Date(b.creado_en) - new Date(a.creado_en))
-    .slice(0, 10);
-
+  const track  = document.getElementById("cinta-track");
+  const sorted = [...allModels].sort((a,b) => new Date(b.creado_en) - new Date(a.creado_en)).slice(0, 10);
   if (!sorted.length) {
     track.innerHTML = '<div style="padding:0 60px;color:var(--gray-mid);font-size:11px">Sin modelos aún.</div>';
     return;
   }
-
   const items = sorted.map(m => `
     <div class="cinta-card" onclick="openModal('${m.id}')">
-      <div class="cinta-img">
-        <div class="cinta-embed" id="ce-${m.id}"></div>
-      </div>
+      <div class="cinta-img"><div class="cinta-embed" id="ce-${m.id}"></div></div>
       <div class="cinta-info">
         <div class="cinta-name">${m.nombre}</div>
         <div class="cinta-code">${m.codigo}</div>
       </div>
     </div>`).join("");
-
   track.innerHTML = items + items;
   sorted.forEach(m => injectEmbed("ce-"+m.id, m.foto_perfil_embed));
 }
@@ -694,25 +505,16 @@ function renderDestacados() {
 // ─── DIRECTORIO ────────────────────────────────────────────
 function renderLista() {
   const container = document.getElementById("lista-rows");
-  const empty = document.getElementById("lista-empty");
-  const q = searchQuery.toLowerCase().trim();
-
-  let models;
-  if (q) {
-    models = allModels.filter(m =>
-      m.nombre.toLowerCase().includes(q) || m.codigo.toLowerCase().includes(q)
-    );
-  } else {
-    models = allModels.slice(3);
-  }
-
+  const empty     = document.getElementById("lista-empty");
+  const q         = searchQuery.toLowerCase().trim();
+  let models = q
+    ? allModels.filter(m => m.nombre.toLowerCase().includes(q) || m.codigo.toLowerCase().includes(q))
+    : allModels.slice(3);
   document.getElementById("result-count").textContent = q
     ? `${models.length} resultado${models.length!==1?"s":""}`
     : "";
-
   if (!models.length) { container.innerHTML=""; empty.style.display="block"; return; }
   empty.style.display = "none";
-
   container.innerHTML = models.map(m => {
     const voted = hasVoted(m.id);
     return `
@@ -724,14 +526,12 @@ function renderLista() {
       <div><button class="lista-btn${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button></div>
     </div>`;
   }).join("");
-
   models.forEach(m => injectEmbed("le-"+m.id, m.foto_perfil_embed));
 }
 
-// ─── SEARCH ────────────────────────────────────────────────
 function onSearch(val) { searchQuery = val; renderLista(); }
 
-// ─── VOTOS ─────────────────────────────────────────────────
+// ─── VOTOS (única escritura permitida en la página pública) ─
 function hasVoted(id) {
   const ts = localStorage.getItem("iv_"+id);
   return ts && Date.now() - parseInt(ts) < 86400000;
@@ -739,7 +539,6 @@ function hasVoted(id) {
 
 async function vote(id) {
   if (hasVoted(id)) { showToast("Ya votaste por esta modelo hoy"); return; }
-  if (!sb) { showToast("Supabase no configurado"); return; }
   const m = allModels.find(x => x.id === id);
   if (!m) return;
   const newVotes = (m.likes_mes||0) + 1;
@@ -802,27 +601,23 @@ function closeEvModalDirect() {
   document.body.style.overflow = "";
 }
 
-// ─── MODAL PERFIL (Instagram-style) ────────────────────────
+// ─── MODAL PERFIL ──────────────────────────────────────────
 function openModal(id) {
   const m = allModels.find(x => String(x.id) === String(id));
   if (!m) return;
   currentModalModel = m;
-  document.getElementById("modal-name").textContent = m.nombre;
-  document.getElementById("modal-code").textContent = m.codigo;
-  document.getElementById("modal-desc").textContent = m.descripcion || "";
+  document.getElementById("modal-name").textContent  = m.nombre;
+  document.getElementById("modal-code").textContent  = m.codigo;
+  document.getElementById("modal-desc").textContent  = m.descripcion || "";
   document.getElementById("modal-votes").textContent = m.likes_mes||0;
-
   const av = document.getElementById("modal-avatar-embed");
   av.innerHTML = "";
   injectEmbed("modal-avatar-embed", m.foto_perfil_embed);
-
   const voted = hasVoted(m.id);
   const vb = document.getElementById("modal-vote-btn");
   vb.textContent = voted ? "✓ Votado" : "♡ Votar";
   vb.classList.toggle("voted", voted);
-
-  // Galería personal: todas las fotos ligadas a esta modelo
-  const gallery = document.getElementById("ig-gallery");
+  const gallery      = document.getElementById("ig-gallery");
   const galleryEmpty = document.getElementById("ig-gallery-empty");
   const fotos = allFotos.filter(f => String(f.modelo_id) === String(m.id));
   gallery.innerHTML = "";
@@ -835,7 +630,6 @@ function openModal(id) {
     `).join("");
     fotos.forEach(f => injectEmbed("igf-"+f.id, f.embed_code));
   }
-
   document.getElementById("modal-overlay").classList.add("open");
   document.body.style.overflow = "hidden";
   history.replaceState(null,"",`#modelo-${id}`);
@@ -869,173 +663,6 @@ function showToast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg; t.classList.add("show");
   clearTimeout(tt); tt = setTimeout(()=>t.classList.remove("show"), 2600);
-}
-
-// ─── ADMIN AUTH ────────────────────────────────────────────
-function openAdminLogin() {
-  document.getElementById("admin-login").classList.add("open");
-  setTimeout(()=>document.getElementById("admin-pwd").focus(), 100);
-}
-function closeAdminLogin() {
-  document.getElementById("admin-login").classList.remove("open");
-  document.getElementById("admin-pwd").value = "";
-}
-function checkPwd() {
-  if (document.getElementById("admin-pwd").value === ADMIN_PASSWORD) {
-    closeAdminLogin(); openAdminPanel(); loadAdminCfg();
-  } else {
-    document.getElementById("admin-pwd").value = "";
-    document.getElementById("admin-pwd").placeholder = "Contraseña incorrecta…";
-    setTimeout(()=>document.getElementById("admin-pwd").placeholder="Contraseña", 2000);
-  }
-}
-function openAdminPanel() {
-  document.getElementById("admin-panel").classList.add("open");
-  document.body.style.overflow = "hidden";
-  populateModelSelect();
-  fillPortadaForm();
-}
-function logoutAdmin() {
-  document.getElementById("admin-panel").classList.remove("open");
-  document.body.style.overflow = "";
-}
-function loadAdminCfg() {
-  const url = sessionStorage.getItem("sb_url") || SUPABASE_URL_DEFAULT;
-  const key = sessionStorage.getItem("sb_key") || SUPABASE_KEY_DEFAULT;
-  if (url) document.getElementById("sb-url").value = url;
-  if (key) document.getElementById("sb-key").value = key;
-}
-function switchTab(name, btn) {
-  document.querySelectorAll(".ap-tab").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".ap-pane").forEach(p=>p.classList.remove("active"));
-  btn.classList.add("active");
-  document.getElementById("tab-"+name).classList.add("active");
-  if (name === "modelos") populateModelSelect();
-  if (name === "portada") fillPortadaForm();
-}
-function switchSubTab(name, btn) {
-  document.querySelectorAll(".sub-tab").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".sub-pane").forEach(p=>p.classList.remove("active"));
-  btn.classList.add("active");
-  document.getElementById("sub-"+name).classList.add("active");
-  if (name === "foto") populateModelSelect();
-}
-
-// ─── ADMIN: CREAR PERFIL DE MODELO ─────────────────────────
-async function publishModel() {
-  const st = document.getElementById("status-m");
-  const btn = document.getElementById("btn-pub-m");
-  const nombre = document.getElementById("m-name").value.trim();
-  const codigo = document.getElementById("m-code").value.trim();
-  const descripcion = document.getElementById("m-desc").value.trim();
-  const embed  = document.getElementById("m-embed").value.trim();
-  if (!nombre || !codigo) { setSt(st,"Nombre y código son obligatorios.","error"); return; }
-  if (!initSBFromPanel()) { setSt(st,"Configurá URL y Anon Key de Supabase.","error"); return; }
-  btn.disabled = true; setSt(st,"Guardando…","");
-  const { data, error } = await sb.from("modelos").insert([{
-    nombre, codigo, descripcion, foto_perfil_embed: embed, likes_mes: 0, creado_en: new Date().toISOString()
-  }]).select();
-  if (error) { setSt(st,"Error: "+error.message,"error"); btn.disabled=false; return; }
-  allModels.push(data[0]);
-  allModels.sort((a,b)=>(b.likes_mes||0)-(a.likes_mes||0));
-  document.getElementById("m-name").value="";
-  document.getElementById("m-code").value="";
-  document.getElementById("m-desc").value="";
-  document.getElementById("m-embed").value="";
-  setSt(st,`✓ Perfil de "${nombre}" creado correctamente.`,"ok");
-  btn.disabled = false;
-  populateModelSelect();
-  renderAll();
-}
-
-// ─── ADMIN: SUBIR FOTO A MODELO EXISTENTE ──────────────────
-function populateModelSelect() {
-  const sel = document.getElementById("f-modelo");
-  if (!sel) return;
-  const current = sel.value;
-  sel.innerHTML = '<option value="">Seleccioná una modelo…</option>' +
-    allModels.map(m => `<option value="${m.id}">${m.nombre} — ${m.codigo}</option>`).join("");
-  if (current) sel.value = current;
-}
-
-async function uploadFoto() {
-  const st = document.getElementById("status-f");
-  const btn = document.getElementById("btn-pub-f");
-  const modeloId = document.getElementById("f-modelo").value;
-  const embed = document.getElementById("f-embed").value.trim();
-  if (!modeloId) { setSt(st,"Seleccioná una modelo.","error"); return; }
-  if (!embed) { setSt(st,"Pegá el embed de la foto.","error"); return; }
-  if (!initSBFromPanel()) { setSt(st,"Configurá URL y Anon Key de Supabase.","error"); return; }
-  btn.disabled = true; setSt(st,"Guardando…","");
-  const { data, error } = await sb.from("fotos").insert([{
-    modelo_id: modeloId, embed_code: embed, creado_en: new Date().toISOString()
-  }]).select();
-  if (error) { setSt(st,"Error: "+error.message,"error"); btn.disabled=false; return; }
-  allFotos.push(data[0]);
-  document.getElementById("f-embed").value="";
-  const m = allModels.find(x=>String(x.id)===String(modeloId));
-  setSt(st,`✓ Foto agregada a la galería de "${m?m.nombre:'la modelo'}".`,"ok");
-  btn.disabled = false;
-}
-
-// ─── ADMIN: PORTADA DE LA TEMPORADA ────────────────────────
-function fillPortadaForm() {
-  const imgEl = document.getElementById("p-imagen");
-  const titEl = document.getElementById("p-titular");
-  const subEl = document.getElementById("p-subtitulo");
-  if (!imgEl) return;
-  imgEl.value = heroPortada.imagen_url || "";
-  titEl.value = heroPortada.titular || "";
-  subEl.value = heroPortada.subtitulo || "";
-}
-
-async function savePortada() {
-  const st = document.getElementById("status-p");
-  const btn = document.getElementById("btn-pub-p");
-  const imagen_url = document.getElementById("p-imagen").value.trim();
-  const titular = document.getElementById("p-titular").value.trim();
-  const subtitulo = document.getElementById("p-subtitulo").value.trim();
-  if (!initSBFromPanel()) { setSt(st,"Configurá URL y Anon Key de Supabase.","error"); return; }
-  btn.disabled = true; setSt(st,"Guardando…","");
-  const { data, error } = await sb.from("portada").upsert([{
-    id: PORTADA_ID, imagen_url, titular, subtitulo
-  }]).select();
-  if (error) { setSt(st,"Error: "+error.message,"error"); btn.disabled=false; return; }
-  heroPortada = data[0];
-  setSt(st,"✓ Portada actualizada.","ok");
-  btn.disabled = false;
-  renderHero();
-}
-
-// ─── ADMIN: PUBLICAR EVENTO ─────────────────────────────────
-async function publishEvent() {
-  const st = document.getElementById("status-e");
-  const btn = document.getElementById("btn-pub-e");
-  const titulo     = document.getElementById("e-title").value.trim();
-  const fecha      = document.getElementById("e-date").value;
-  const banner_url = document.getElementById("e-banner").value.trim();
-  const descripcion= document.getElementById("e-desc").value.trim();
-  if (!titulo) { setSt(st,"El título es obligatorio.","error"); return; }
-  if (!initSBFromPanel()) { setSt(st,"Configurá URL y Anon Key de Supabase.","error"); return; }
-  btn.disabled = true; setSt(st,"Guardando…","");
-  const { data, error } = await sb.from("eventos").insert([{
-    titulo, fecha_evento: fecha||null, banner_url, descripcion
-  }]).select();
-  if (error) { setSt(st,"Error: "+error.message,"error"); btn.disabled=false; return; }
-  allEvents.push(data[0]);
-  allEvents.sort((a,b)=>new Date(a.fecha_evento)-new Date(b.fecha_evento));
-  document.getElementById("e-title").value="";
-  document.getElementById("e-date").value="";
-  document.getElementById("e-banner").value="";
-  document.getElementById("e-desc").value="";
-  setSt(st,`✓ Evento "${titulo}" publicado.`,"ok");
-  btn.disabled = false;
-  renderTicker();
-}
-
-function setSt(el, msg, type) {
-  el.textContent = msg;
-  el.className = "ap-status" + (type ? " "+type : "");
 }
 
 // ─── KEYBOARD ──────────────────────────────────────────────
