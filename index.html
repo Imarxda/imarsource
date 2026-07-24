@@ -177,6 +177,32 @@ nav a:hover{color:var(--gray-text)}
 .ig-photo{aspect-ratio:3/4;overflow:hidden;background:var(--gray-light);border:1px solid var(--gray-mid)}
 .ig-photo .embed-box{width:100%;height:100%}
 #ig-gallery-empty{padding:20px 44px 44px;font-family:var(--serif);font-style:italic;color:var(--gray-mid);font-size:14px}
+.ig-photo{cursor:pointer}
+
+/* LIGHTBOX — visor de fotos estilo Instagram (carrusel vertical) */
+#lightbox-overlay{position:fixed;inset:0;background:#000;z-index:2000;display:none;align-items:center;justify-content:center}
+#lightbox-overlay.open{display:flex}
+.lightbox-track{display:flex;flex-direction:column;overflow-y:auto;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;width:100%;height:100%;scrollbar-width:none}
+.lightbox-track::-webkit-scrollbar{display:none}
+.lightbox-slide{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:16px}
+.lightbox-slide .embed-box{max-width:100%;max-height:100%;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.lightbox-slide img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;margin:auto}
+.lightbox-topbar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;z-index:2002;pointer-events:none}
+.lightbox-topbar>*{pointer-events:auto}
+#lightbox-close{background:rgba(255,255,255,.12);border:none;color:var(--white);font-size:16px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s}
+#lightbox-close:hover{background:rgba(255,255,255,.24)}
+.lightbox-counter{color:#eee;font-size:11px;letter-spacing:.15em;background:rgba(255,255,255,.1);padding:6px 12px;border-radius:20px}
+.lightbox-vnav{position:absolute;right:14px;background:rgba(255,255,255,.12);border:none;color:var(--white);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2002;font-size:16px;transition:background .2s}
+.lightbox-vnav:hover{background:rgba(255,255,255,.24)}
+.lightbox-vnav.up{top:calc(50% - 54px)}
+.lightbox-vnav.down{top:calc(50% + 14px)}
+.lightbox-share-btn{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(255,255,255,.96);color:#000;border:none;font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:13px 26px;cursor:pointer;z-index:2002;transition:background .2s;white-space:nowrap}
+.lightbox-share-btn:hover{background:#fff}
+@media (max-width:640px){
+  .lightbox-slide{padding:0}
+  .lightbox-vnav{width:36px;height:36px;font-size:14px;right:10px}
+  .lightbox-share-btn{padding:12px 22px;font-size:9px;bottom:18px}
+}
 #modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.9);border:none;font-size:18px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:transform .2s;z-index:10}
 #modal-close:hover{transform:rotate(90deg)}
 
@@ -409,6 +435,18 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   </div>
 </div>
 
+<!-- LIGHTBOX — visor de fotos estilo Instagram -->
+<div id="lightbox-overlay" onclick="closeLightboxOverlay(event)">
+  <div class="lightbox-topbar">
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+    <button id="lightbox-close" onclick="closeLightbox()" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="lightbox-track" id="lightbox-track"></div>
+  <button class="lightbox-vnav up" onclick="lightboxNav(-1)" aria-label="Foto anterior">︿</button>
+  <button class="lightbox-vnav down" onclick="lightboxNav(1)" aria-label="Foto siguiente">﹀</button>
+  <button class="lightbox-share-btn" onclick="shareSinglePhoto(currentLightboxIndex)">↗ Compartir foto</button>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -609,6 +647,8 @@ let allEvents = [];
 let heroPortada = { imagen_url:"", titular:"", subtitulo:"" };
 let searchQuery = "";
 let currentModalModel = null;
+let currentGalleryFotos = [];
+let currentLightboxIndex = 0;
 let toastTimer;
 
 // ─── SUPABASE ──────────────────────────────────────────────
@@ -857,7 +897,9 @@ async function voteFromModal() {
 }
 
 // ─── EMBED DE IMAGEN (link directo, <img>, iframe o script Telegram) ──
-function injectEmbed(containerId, embedCode) {
+// fit: "cover" (default, para miniaturas cuadradas) o "contain" (foto completa sin recortar, para el visor)
+function injectEmbed(containerId, embedCode, fit) {
+  fit = fit || "cover";
   if (!embedCode) return;
   const c = document.getElementById(containerId);
   if (!c) return;
@@ -871,10 +913,7 @@ function injectEmbed(containerId, embedCode) {
     const img = document.createElement("img");
     img.src = raw;
     img.loading = "lazy";
-    img.style.width = "100%";
-    img.style.height = "100%";
-    img.style.objectFit = "cover";
-    img.style.display = "block";
+    aplicarFitImagen(img, fit);
     c.appendChild(img);
     return;
   }
@@ -882,7 +921,11 @@ function injectEmbed(containerId, embedCode) {
   const tmp = document.createElement("div");
   tmp.innerHTML = raw;
   const scriptEl = tmp.querySelector("script");
-  if (!scriptEl) { c.innerHTML = raw; return; }
+  if (!scriptEl) {
+    c.innerHTML = raw;
+    if (fit === "contain") { const im = c.querySelector("img"); if (im) aplicarFitImagen(im, fit); }
+    return;
+  }
   const noScript = tmp.innerHTML.replace(/<script[\s\S]*?<\/script>/gi,"");
   if (noScript.trim()) c.innerHTML = noScript;
   const s = document.createElement("script");
@@ -891,6 +934,34 @@ function injectEmbed(containerId, embedCode) {
     if (attr.name.startsWith("data-")) s.setAttribute(attr.name, attr.value);
   }
   c.appendChild(s);
+}
+function aplicarFitImagen(img, fit) {
+  img.style.display = "block";
+  if (fit === "contain") {
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100%";
+    img.style.width = "auto";
+    img.style.height = "auto";
+    img.style.objectFit = "contain";
+  } else {
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+  }
+}
+
+// Intenta extraer una URL directa de imagen desde un embed (link pelado, <img>, o <iframe>)
+function getEmbedShareUrl(embedCode) {
+  if (!embedCode) return null;
+  const raw = embedCode.trim();
+  if (/^https?:\/\/\S+$/i.test(raw) && !/[<>]/.test(raw)) return raw;
+  const tmp = document.createElement("div");
+  tmp.innerHTML = raw;
+  const img = tmp.querySelector("img");
+  if (img && img.src) return img.src;
+  const iframe = tmp.querySelector("iframe");
+  if (iframe && iframe.src) return iframe.src;
+  return null;
 }
 
 // ─── MODAL EVENTO ──────────────────────────────────────────
@@ -938,13 +1009,14 @@ function openModal(id) {
   const gallery = document.getElementById("ig-gallery");
   const galleryEmpty = document.getElementById("ig-gallery-empty");
   const fotos = allFotos.filter(f => String(f.modelo_id) === String(m.id));
+  currentGalleryFotos = fotos;
   gallery.innerHTML = "";
   if (!fotos.length) {
     galleryEmpty.style.display = "block";
   } else {
     galleryEmpty.style.display = "none";
-    gallery.innerHTML = fotos.map(f => `
-      <div class="ig-photo"><div class="embed-box" id="igf-${f.id}"></div></div>
+    gallery.innerHTML = fotos.map((f,i) => `
+      <div class="ig-photo" onclick="openLightbox(${i})"><div class="embed-box" id="igf-${f.id}"></div></div>
     `).join("");
     fotos.forEach(f => injectEmbed("igf-"+f.id, f.embed_code));
   }
@@ -960,6 +1032,81 @@ function closeModal() {
   history.replaceState(null,"",location.pathname);
 }
 function closeModalOverlay(e) { if (e.target.id==="modal-overlay") closeModal(); }
+
+// ─── LIGHTBOX — visor de fotos estilo Instagram (vertical) ──
+function openLightbox(index) {
+  if (!currentGalleryFotos.length) return;
+  const track = document.getElementById("lightbox-track");
+  track.innerHTML = currentGalleryFotos.map((f,i) => `
+    <div class="lightbox-slide"><div class="embed-box" id="lb-${i}"></div></div>
+  `).join("");
+  currentGalleryFotos.forEach((f,i) => injectEmbed("lb-"+i, f.embed_code, "contain"));
+  document.getElementById("lightbox-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  currentLightboxIndex = index;
+  updateLightboxCounter();
+  requestAnimationFrame(() => {
+    track.scrollTo({ top: index * track.clientHeight, behavior: "auto" });
+  });
+}
+function closeLightbox() {
+  document.getElementById("lightbox-overlay").classList.remove("open");
+  const modalOpen = document.getElementById("modal-overlay").classList.contains("open");
+  document.body.style.overflow = modalOpen ? "hidden" : "";
+}
+function closeLightboxOverlay(e) { if (e.target.id === "lightbox-overlay") closeLightbox(); }
+function lightboxNav(dir) {
+  const track = document.getElementById("lightbox-track");
+  const max = currentGalleryFotos.length - 1;
+  currentLightboxIndex = Math.min(max, Math.max(0, currentLightboxIndex + dir));
+  track.scrollTo({ top: currentLightboxIndex * track.clientHeight, behavior: "smooth" });
+  updateLightboxCounter();
+}
+function updateLightboxCounter() {
+  const el = document.getElementById("lightbox-counter");
+  if (!el) return;
+  el.textContent = currentGalleryFotos.length
+    ? `${currentLightboxIndex + 1} / ${currentGalleryFotos.length}` : "";
+}
+// Comparte solo la foto actual del visor (no toda la galería)
+async function shareSinglePhoto(index) {
+  const foto = currentGalleryFotos[index];
+  if (!foto) return;
+  const fallbackUrl = `${location.origin}${location.pathname}#modelo-${currentModalModel ? currentModalModel.id : ""}`;
+  const url = getEmbedShareUrl(foto.embed_code) || fallbackUrl;
+  const titulo = currentModalModel ? currentModalModel.nombre : "Foto";
+  if (navigator.share) {
+    try { await navigator.share({ title: titulo, url }); return; } catch (e) { /* cancelado, seguimos al copiado */ }
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast("Enlace de la foto copiado");
+  } catch (e) {
+    showToast("No se pudo copiar el enlace");
+  }
+}
+// Sincroniza el índice cuando el usuario desliza a mano (swipe táctil vertical)
+(function initLightboxSwipeSync() {
+  document.addEventListener("DOMContentLoaded", () => {
+    const track = document.getElementById("lightbox-track");
+    if (!track) return;
+    let t;
+    track.addEventListener("scroll", () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const h = track.clientHeight || 1;
+        currentLightboxIndex = Math.round(track.scrollTop / h);
+        updateLightboxCounter();
+      }, 90);
+    });
+  });
+})();
+document.addEventListener("keydown", (e) => {
+  if (!document.getElementById("lightbox-overlay").classList.contains("open")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowUp") lightboxNav(-1);
+  if (e.key === "ArrowDown") lightboxNav(1);
+});
 function copyShareLink() {
   if (!currentModalModel) return;
   navigator.clipboard.writeText(`${location.origin}${location.pathname}#modelo-${currentModalModel.id}`)
