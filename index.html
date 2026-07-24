@@ -32,7 +32,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);font-siz
 /* HEADER */
 header{border-bottom:1px solid var(--black);padding:48px 60px 36px;display:flex;flex-direction:column;align-items:center;gap:12px;background-size:cover;background-position:center;background-repeat:no-repeat}
 .logo{cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
-.logo img{height:clamp(48px,8vw,96px);width:auto;max-width:100%;object-fit:contain;display:block}
+.logo img{height:clamp(64px,11vw,150px);width:auto;max-width:100%;object-fit:contain;display:block}
 .header-sub{font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gray-text)}
 nav{display:flex;gap:40px;align-items:center;margin-top:8px;font-size:9px;letter-spacing:.2em;text-transform:uppercase}
 nav a{color:var(--black);text-decoration:none;cursor:pointer;transition:color var(--ease)}
@@ -938,6 +938,7 @@ function injectEmbed(containerId, embedCode, fit) {
     const img = document.createElement("img");
     img.src = raw;
     img.loading = "lazy";
+    img.decoding = "async";
     aplicarFitImagen(img, fit);
     c.appendChild(img);
     return;
@@ -948,7 +949,12 @@ function injectEmbed(containerId, embedCode, fit) {
   const scriptEl = tmp.querySelector("script");
   if (!scriptEl) {
     c.innerHTML = raw;
-    if (fit === "contain") { const im = c.querySelector("img"); if (im) aplicarFitImagen(im, fit); }
+    const im = c.querySelector("img");
+    if (im) {
+      im.loading = "lazy";
+      im.decoding = "async";
+      aplicarFitImagen(im, fit);
+    }
     return;
   }
   const noScript = tmp.innerHTML.replace(/<script[\s\S]*?<\/script>/gi,"");
