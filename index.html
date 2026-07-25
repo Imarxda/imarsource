@@ -488,24 +488,8 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 </section>
 
 
-<!-- BANNER "QUIERO SER PARTE" -->
-<div id="banner-postulacion">
-  <div class="bp-text">
-    <div class="bp-eyebrow">Para modelos</div>
-    <div class="bp-title">Tu perfil, tus fotos, tu Instagram — todo en un solo link para compartir.</div>
-    <div class="bp-sub">Aparecer en imar source es prensa y portfolio gratis. Sin costo, sin complicaciones.</div>
-  </div>
-  <a href="https://wa.me/5493624000000?text=Hola%2C%20quiero%20sumarme%20a%20imar%20source%20como%20modelo" target="_blank" class="btn-postular" id="btn-postular-main">✦ Quiero ser parte</a>
-</div>
 
-<!-- TESTIMONIOS -->
-<section id="testimonios-section">
-  <div class="section-header" style="border:none;padding:0 0 0 0">
-    <div class="section-title">Lo que dicen las modelos</div>
-    <div class="section-label">Prueba social</div>
-  </div>
-  <div class="test-grid" id="testimonios-grid"></div>
-</section>
+
 
 <!-- FOOTER -->
 <footer>
@@ -593,7 +577,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     <button onclick="closePostulacion()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer">✕</button>
     <div style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Para modelos</div>
     <div style="font-family:var(--serif);font-size:26px;margin-bottom:8px">Sumate a imar source</div>
-    <div style="font-size:12px;color:#666;line-height:1.7;margin-bottom:28px">Tu perfil, tus fotos, tu Instagram — todo en un solo link para compartir. Aparecer acá es prensa y portfolio gratis.</div>
+    <div style="font-size:12px;color:#666;line-height:1.7;margin-bottom:28px">Tu perfil, tus fotos, tu Instagram — todo en un solo link para compartir.</div>
     <div style="display:flex;flex-direction:column;gap:16px">
       <a href="https://wa.me/5493624000000?text=Hola%2C%20quiero%20sumarme%20a%20imar%20source%20como%20modelo" target="_blank" class="btn-postular" style="text-align:center;display:block">💬 Escribir por WhatsApp</a>
       <a href="mailto:imarsotelo50@gmail.com?subject=Quiero%20ser%20parte%20de%20imar%20source" class="btn-postular" style="text-align:center;display:block;background:none;color:var(--black);border-color:var(--gray-mid)">✉ Escribir por correo</a>
@@ -869,7 +853,6 @@ async function loadData() {
   } catch(e) { console.warn("Error Supabase:", e); }
   renderAll();
   loadCiclo();
-  loadTestimonios();
   renderSeguidos();
   renderRecentTicker();
 }
@@ -1913,25 +1896,6 @@ async function copyShareLinkWithCount() {
 }
 
 // ─── TESTIMONIOS ────────────────────────────────────────────
-async function loadTestimonios() {
-  if (!sb) return;
-  try {
-    const { data } = await sb.from("testimonios").select("*").eq("activo", true).order("orden");
-    if (data && data.length) renderTestimonios(data);
-    else document.getElementById("testimonios-section").style.display = "none";
-  } catch(e) { document.getElementById("testimonios-section").style.display = "none"; }
-}
-
-function renderTestimonios(testimonios) {
-  const grid = document.getElementById("testimonios-grid");
-  if (!grid) return;
-  grid.innerHTML = testimonios.map(t => `
-    <div class="test-card">
-      <div class="test-quote">"${t.texto}"</div>
-      <div class="test-name">— ${t.modelo_nombre}</div>
-    </div>`).join("");
-}
-
 // ─── MODAL "QUIERO SER PARTE" ────────────────────────────────
 function openPostulacion() {
   document.getElementById("modal-postulacion-overlay").style.display = "flex";
