@@ -89,6 +89,22 @@ nav a:hover{color:var(--gray-text)}
 .btn-vote:hover,.btn-vote.voted{background:var(--black);color:var(--white)}
 #podio-empty{text-align:center;padding:60px;font-family:var(--serif);font-size:20px;font-style:italic;color:var(--gray-mid)}
 
+/* SALÓN DE LA FAMA */
+#fama-section-body{padding:8px 60px 64px;background:var(--white)}
+.fama-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:22px;max-width:1100px;margin:0 auto}
+.fama-card{display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.fama-img-wrap{width:100%;aspect-ratio:2/3;overflow:hidden;background:var(--gray-light);position:relative;border:1px solid var(--gray-mid)}
+.fama-img-wrap.medal-1{border:3px solid #D4AF37;box-shadow:0 0 0 1px #D4AF37,0 8px 22px rgba(212,175,55,.35)}
+.fama-img-wrap.medal-2{border:3px solid #B9B9B9;box-shadow:0 0 0 1px #B9B9B9,0 8px 22px rgba(185,185,185,.3)}
+.fama-img-wrap.medal-3{border:3px solid #CD7F32;box-shadow:0 0 0 1px #CD7F32,0 8px 22px rgba(205,127,50,.3)}
+.fama-medal-badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-size:10px;letter-spacing:.1em;padding:4px 8px;text-transform:uppercase}
+.fama-info{padding:12px 0 0;text-align:center;width:100%}
+.fama-name{font-family:var(--serif);font-size:15px;font-weight:400;margin-bottom:2px}
+.fama-code{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gray-text);margin-bottom:6px}
+.fama-count{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.fama-ciclos{font-size:8px;color:var(--gray-text);margin-top:4px;line-height:1.6}
+#fama-empty{text-align:center;padding:60px;font-family:var(--serif);font-size:20px;font-style:italic;color:var(--gray-mid)}
+
 /* DESTACADOS */
 #destacados-section{border-top:1px solid var(--gray-mid)}
 .cinta-wrap{overflow:hidden;border-top:1px solid var(--gray-mid);border-bottom:1px solid var(--gray-mid);padding:32px 0}
@@ -404,6 +420,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   <nav>
     <a onclick="goTo('#eventos-carousel-section')">Eventos</a>
     <a onclick="goTo('#podio-section')">Perfiles Destacados</a>
+    <a onclick="goTo('#fama-section')">Salón de la Fama</a>
     <a onclick="goTo('#destacados-section')">Destacados</a>
     <a onclick="goTo('#lista-section')">Directorio</a>
     <a onclick="openPostulacion()" style="color:var(--gold);font-weight:600">★ Quiero ser parte</a>
@@ -472,6 +489,16 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <section id="podio-section">
   <div id="podio-grid" class="podio-grid"></div>
   <div id="podio-empty" style="display:none">Aún no hay modelos destacados.</div>
+</section>
+
+<!-- SALÓN DE LA FAMA -->
+<div class="section-header" id="fama-section">
+  <div class="section-title">Salón de la Fama</div>
+  <div class="section-label">Todas las que llegaron al Top 3, alguna vez</div>
+</div>
+<section id="fama-section-body">
+  <div id="fama-grid" class="fama-grid"></div>
+  <div id="fama-empty" style="display:none">Todavía no hay ganadoras en el Salón de la Fama.</div>
 </section>
 
 <!-- DESTACADOS -->
@@ -815,6 +842,7 @@ let sb = null;
 let allModels = [];
 let allFotos = [];
 let allEvents = [];
+let allFama = [];
 let heroPortada = { imagen_url:"", titular:"", subtitulo:"", header_bg_url:"" };
 let searchQuery = "";
 let currentModalModel = null;
@@ -859,12 +887,14 @@ async function loadData() {
       sb.from("eventos").select("*").order("fecha_evento", { ascending: true }),
       sb.from("fotos").select("*").order("creado_en", { ascending: true }),
       sb.from("portada").select("*").eq("id", PORTADA_ID).maybeSingle(),
+      sb.from("salon_fama").select("*").order("fecha_cierre", { ascending: false }),
     ]);
-    const [mRes, eRes, fRes, pRes] = results;
+    const [mRes, eRes, fRes, pRes, faRes] = results;
     if (mRes.status === "fulfilled" && mRes.value.data) allModels = mRes.value.data;
     if (eRes.status === "fulfilled" && eRes.value.data) allEvents = eRes.value.data;
     if (fRes.status === "fulfilled" && fRes.value.data) allFotos = fRes.value.data;
     if (pRes.status === "fulfilled" && pRes.value.data) heroPortada = pRes.value.data;
+    if (faRes.status === "fulfilled" && faRes.value.data) allFama = faRes.value.data;
   } catch(e) { console.warn("Error Supabase:", e); }
   renderAll();
   loadCiclo();
@@ -878,6 +908,7 @@ function renderAll() {
   renderHeaderBg();
   renderEventosCarousel();
   renderPodio();
+  renderFama();
   renderDestacados();
   renderLista();
   renderRecentTicker();
@@ -989,6 +1020,58 @@ function renderPodio() {
   }).join("");
 
   top3.forEach(m => injectEmbed("pe-"+m.id, m.foto_perfil_embed));
+}
+
+// ─── SALÓN DE LA FAMA (todas las que ganaron top 3 alguna vez) ─
+function renderFama() {
+  const grid = document.getElementById("fama-grid");
+  const empty = document.getElementById("fama-empty");
+  if (!grid) return;
+  if (!allFama.length) { grid.innerHTML = ""; empty.style.display = "block"; return; }
+  empty.style.display = "none";
+
+  // Agrupar por modelo (modelo_id si existe, si no por código) para no repetir tarjetas
+  const grupos = new Map();
+  allFama.forEach(f => {
+    const key = f.modelo_id ? String(f.modelo_id) : "cod:" + f.codigo;
+    if (!grupos.has(key)) {
+      grupos.set(key, {
+        modelo_id: f.modelo_id, nombre: f.nombre, codigo: f.codigo,
+        foto_perfil_embed: f.foto_perfil_embed, mejorPuesto: f.puesto, veces: 0, historial: []
+      });
+    }
+    const g = grupos.get(key);
+    g.veces += 1;
+    g.mejorPuesto = Math.min(g.mejorPuesto, f.puesto);
+    g.historial.push(f);
+  });
+
+  const medalla = { 1: "🥇", 2: "🥈", 3: "🥉" };
+  const lista = [...grupos.values()].sort((a, b) =>
+    a.mejorPuesto - b.mejorPuesto || b.veces - a.veces || a.nombre.localeCompare(b.nombre)
+  );
+
+  grid.innerHTML = lista.map(g => {
+    const existeModelo = allModels.some(m => String(m.id) === String(g.modelo_id));
+    const ciclosTxt = g.historial
+      .sort((a,b) => new Date(b.fecha_cierre) - new Date(a.fecha_cierre))
+      .map(h => `${medalla[h.puesto]||''} ${h.ciclo_nombre}`).join(" · ");
+    return `
+    <div class="fama-card" ${existeModelo ? `onclick="openModal('${g.modelo_id}')"` : ''}>
+      <div class="fama-img-wrap medal-${g.mejorPuesto}">
+        <span class="fama-medal-badge">${medalla[g.mejorPuesto]||''} Top ${g.mejorPuesto}</span>
+        <div class="embed-box" id="fa-${g.modelo_id || g.codigo}"></div>
+      </div>
+      <div class="fama-info">
+        <div class="fama-name">${g.nombre}</div>
+        <div class="fama-code">${g.codigo}</div>
+        <div class="fama-count">${g.veces} ${g.veces === 1 ? 'vez' : 'veces'} en el podio</div>
+        <div class="fama-ciclos">${ciclosTxt}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  lista.forEach(g => injectEmbed("fa-" + (g.modelo_id || g.codigo), g.foto_perfil_embed));
 }
 
 // ─── DESTACADOS ────────────────────────────────────────────
