@@ -75,6 +75,9 @@ nav a:hover{color:var(--gray-text)}
 .podio-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;max-width:900px;margin:0 auto}
 .podio-card{display:flex;flex-direction:column;align-items:center}
 .podio-img-wrap{width:100%;aspect-ratio:2/3;overflow:hidden;background:var(--gray-light);position:relative;border:1px solid var(--gray-mid);cursor:pointer}
+.podio-img-wrap.rank-gold{border:3px solid #D4AF37;box-shadow:0 0 0 1px #D4AF37,0 8px 22px rgba(212,175,55,.35)}
+.podio-img-wrap.rank-silver{border:3px solid #B9B9B9;box-shadow:0 0 0 1px #B9B9B9,0 8px 22px rgba(185,185,185,.3)}
+.podio-img-wrap.rank-bronze{border:3px solid #CD7F32;box-shadow:0 0 0 1px #CD7F32,0 8px 22px rgba(205,127,50,.3)}
 .embed-box{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .ph-box{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--gray-mid);font-size:9px;letter-spacing:.12em;text-transform:uppercase}
 .podio-info{padding:14px 0 0;text-align:center;width:100%}
@@ -180,6 +183,12 @@ nav a:hover{color:var(--gray-text)}
 .btn-modal-vote.voted{background:var(--gray-text);border-color:var(--gray-text)}
 .btn-share{background:none;color:var(--black);border:1px solid var(--black);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:12px 22px;cursor:pointer;transition:all var(--ease)}
 .btn-share:hover{background:var(--gray-light)}
+.share-wrap{position:relative;display:inline-block}
+.share-menu{position:absolute;top:calc(100% + 8px);left:0;background:var(--white);border:1px solid var(--black);min-width:230px;z-index:1200;display:none;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.share-menu.open{display:flex}
+.share-menu button{background:none;border:none;text-align:left;padding:14px 18px;font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:var(--black);transition:background .2s}
+.share-menu button:hover{background:var(--gray-light)}
+.share-menu button+button{border-top:1px solid var(--gray-mid)}
 .ig-gallery-label{padding:28px 44px 4px;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gray-text)}
 .ig-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:14px 44px 44px}
 .ig-photo{aspect-ratio:3/4;overflow:hidden;background:var(--gray-light);border:1px solid var(--gray-mid)}
@@ -415,7 +424,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <section id="search-section">
   <div class="search-eyebrow">Buscar modelo</div>
   <div class="search-wrap">
-    <input type="text" id="search-input" placeholder="Nombre o código…" autocomplete="off" oninput="onSearch(this.value)">
+    <input type="text" id="search-input" placeholder="Código de búsqueda…" autocomplete="off" oninput="onSearch(this.value)">
     <div class="search-icon">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <circle cx="6.5" cy="6.5" r="5" stroke="#000" stroke-width="1.2"/>
@@ -534,8 +543,8 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
         <div class="modal-badges" id="modal-badges"></div>
         <div class="ig-stats-row">
           <div>
-            <div class="modal-votes-big" id="modal-votes">0</div>
-            <div class="modal-votes-lbl">Votos</div>
+            <div class="modal-votes-big" id="modal-votes">0%</div>
+            <div class="modal-votes-lbl">de los votos</div>
           </div>
           <div>
             <div class="modal-votes-big" id="modal-compartidos">0</div>
@@ -544,7 +553,13 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
         </div>
         <div class="modal-actions">
           <button class="btn-modal-vote" id="modal-vote-btn" onclick="voteFromModal()">♡ Votar</button>
-          <button class="btn-share" onclick="copyShareLinkWithCount()">Compartir</button>
+          <div class="share-wrap">
+            <button class="btn-share" onclick="toggleShareMenu(event)">Compartir</button>
+            <div class="share-menu" id="share-menu">
+              <button onclick="copyShareLinkWithCount()">🔗 Copiar enlace</button>
+              <button onclick="downloadProfileImage()">🖼 Guardar imagen del perfil</button>
+            </div>
+          </div>
           <button class="btn-follow" id="modal-follow-btn" onclick="toggleFollow()">☆ Seguir</button>
           <a class="btn-share" id="modal-ig-btn" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;justify-content:center">Instagram</a>
         </div>
@@ -952,19 +967,20 @@ function renderPodio() {
   if (!top3.length) { grid.innerHTML = ""; empty.style.display = "block"; return; }
   empty.style.display = "none";
 
-  grid.innerHTML = top3.map(m => {
+  const rankClasses = ["rank-gold","rank-silver","rank-bronze"];
+  grid.innerHTML = top3.map((m, idx) => {
     const voted = hasVoted(m.id);
     const countdown = voted ? getRevotoCountdown(m.id) : null;
     return `
     <div class="podio-card">
-      <div class="podio-img-wrap" onclick="openModal('${m.id}')">
+      <div class="podio-img-wrap ${rankClasses[idx]||''}" onclick="openModal('${m.id}')">
         <div class="embed-box" id="pe-${m.id}"></div>
       </div>
       <div class="podio-info">
         <div class="podio-name" onclick="openModal('${m.id}')">${m.nombre}</div>
         <div class="podio-code">${m.codigo}</div>
-        <div class="podio-votes">${m.likes_mes||0}</div>
-        <div class="podio-votes-lbl">votos este mes</div>
+        <div class="podio-votes">${votePercentText(m)}</div>
+        <div class="podio-votes-lbl">de los votos</div>
         ${m.compartidos ? `<div class="share-count">Compartido ${m.compartidos} veces</div>` : ''}
         <button class="btn-vote${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
         ${countdown ? `<div class="vote-countdown">Podés volver a votar en ${countdown}</div>` : ''}
@@ -1019,7 +1035,7 @@ function renderLista() {
       <div class="lista-avatar" onclick="openModal('${m.id}')"><div class="embed-box" id="le-${m.id}"></div></div>
       <div><div class="lista-nombre" onclick="openModal('${m.id}')">${m.nombre}</div></div>
       <div class="lista-codigo">${m.codigo}</div>
-      <div class="lista-votos">${m.likes_mes||0}</div>
+      <div class="lista-votos">${votePercentText(m)}</div>
       <div>
         <button class="lista-btn${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
         ${countdown ? `<div class="vote-countdown">${countdown}</div>` : ''}
@@ -1041,7 +1057,7 @@ function renderSearchResults() {
   if (!q) { box.style.display = "none"; box.innerHTML = ""; countEl.textContent = ""; return; }
 
   const models = allModels.filter(m =>
-    m.nombre.toLowerCase().includes(q) || m.codigo.toLowerCase().includes(q)
+    (m.codigo || "").toLowerCase().includes(q)
   );
   countEl.textContent = `${models.length} resultado${models.length!==1?"s":""}`;
   box.style.display = "block";
@@ -1060,7 +1076,7 @@ function renderSearchResults() {
         <div class="sr-name">${m.nombre}</div>
         <div class="sr-code">${m.codigo}</div>
       </div>
-      <div class="sr-votes">${m.likes_mes||0} votos</div>
+      <div class="sr-votes">${votePercentText(m)} de los votos</div>
       <button class="lista-btn${voted?' voted':''}" style="width:auto" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
     </div>`;
   }).join("");
@@ -1068,7 +1084,17 @@ function renderSearchResults() {
   models.forEach(m => injectEmbed("sr-"+m.id, m.foto_perfil_embed));
 }
 
-// ─── VOTOS ─────────────────────────────────────────────────
+// ─── VOTOS (mostrados como % del total de votos de la página) ─
+function getTotalVotes() {
+  return allModels.reduce((s, m) => s + (m.likes_mes || 0), 0);
+}
+function votePercentText(m) {
+  const total = getTotalVotes();
+  if (!total) return "0%";
+  const pct = Math.round(((m.likes_mes || 0) / total) * 100);
+  return pct + "%";
+}
+
 function hasVoted(id) {
   const ts = localStorage.getItem("iv_"+id);
   return ts && Date.now() - parseInt(ts) < 86400000;
@@ -1088,7 +1114,7 @@ async function vote(id) {
   showToast("¡Voto registrado! ♥");
   renderPodio(); renderLista(); renderSearchResults();
   if (currentModalModel && currentModalModel.id === id) {
-    document.getElementById("modal-votes").textContent = newVotes;
+    document.getElementById("modal-votes").textContent = votePercentText(m);
     const vb = document.getElementById("modal-vote-btn");
     vb.textContent = "✓ Votado"; vb.classList.add("voted");
   }
@@ -1242,7 +1268,7 @@ async function openModal(id) {
   document.getElementById("modal-name").textContent = m.nombre;
   document.getElementById("modal-code").textContent = m.codigo;
   document.getElementById("modal-desc").textContent = m.descripcion || "";
-  document.getElementById("modal-votes").textContent = m.likes_mes||0;
+  document.getElementById("modal-votes").textContent = votePercentText(m);
 
   const av = document.getElementById("modal-avatar-embed");
   av.innerHTML = "";
@@ -1872,9 +1898,26 @@ async function loadFotoReactions(fotos) {
   } catch(e) { return {}; }
 }
 
-// ─── COMPARTIR PERFIL CON CONTADOR ─────────────────────────
+// ─── COMPARTIR PERFIL — MENÚ (copiar enlace / guardar imagen) ─
+function toggleShareMenu(e) {
+  if (e) e.stopPropagation();
+  const sm = document.getElementById("share-menu");
+  if (sm) sm.classList.toggle("open");
+}
+function closeShareMenu() {
+  const sm = document.getElementById("share-menu");
+  if (sm) sm.classList.remove("open");
+}
+document.addEventListener("click", (e) => {
+  const sm = document.getElementById("share-menu");
+  if (sm && sm.classList.contains("open") && !sm.parentElement.contains(e.target)) {
+    sm.classList.remove("open");
+  }
+});
+
 async function copyShareLinkWithCount() {
   if (!currentModalModel) return;
+  closeShareMenu();
   const m = currentModalModel;
   const url = location.origin + location.pathname + "#modelo-" + m.id;
   const texto = "Visitá el perfil de " + m.nombre + " en imar source";
@@ -1893,6 +1936,173 @@ async function copyShareLinkWithCount() {
     await navigator.clipboard.writeText(texto + ": " + url);
     showToast("¡Enlace copiado! Compartilo para subir el ranking ↑");
   } catch(e) { showToast("No se pudo copiar el enlace"); }
+}
+
+// ─── GUARDAR IMAGEN DE PERFIL (JPG vertical estilo historia IG) ─
+const IMAR_LOGO_URL = "https://i.ibb.co/HDRLbntG/88053bc3-cc24-4541-8c12-1017a47ec874.png";
+let _imarLogoWhiteCache = null;
+
+function loadImageCORS(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("No se pudo cargar la imagen: " + src));
+    img.src = src;
+  });
+}
+
+// Quita el fondo blanco del logo (jpg) y lo deja en blanco sólido con transparencia,
+// para que se pueda ver bien sobre la foto oscurecida.
+function prepareLogoWhite(img) {
+  const c = document.createElement("canvas");
+  c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const cx = c.getContext("2d");
+  cx.drawImage(img, 0, 0);
+  const data = cx.getImageData(0, 0, c.width, c.height);
+  const d = data.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const lum = (d[i] + d[i+1] + d[i+2]) / 3;
+    if (lum > 235) { d[i+3] = 0; }
+    else if (lum > 170) { d[i+3] = Math.round(255 * (1 - (lum-170)/65)); }
+  }
+  cx.putImageData(data, 0, 0);
+  // Recolorear a blanco sólido conservando la forma (alpha) del logo
+  cx.globalCompositeOperation = "source-in";
+  cx.fillStyle = "#ffffff";
+  cx.fillRect(0, 0, c.width, c.height);
+  cx.globalCompositeOperation = "source-over";
+  return c;
+}
+
+async function getImarLogoWhite() {
+  if (_imarLogoWhiteCache) return _imarLogoWhiteCache;
+  const img = await loadImageCORS(IMAR_LOGO_URL);
+  _imarLogoWhiteCache = prepareLogoWhite(img);
+  return _imarLogoWhiteCache;
+}
+
+function slugify(str) {
+  return (str || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase() || "modelo";
+}
+
+// Dibuja texto centrado con salto de línea automático si no entra en maxWidth
+function wrapCenteredText(ctx, text, cx, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+  const lines = [];
+  for (const w of words) {
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line); line = w;
+    } else { line = test; }
+  }
+  if (line) lines.push(line);
+  const startY = y - (lines.length - 1) * lineHeight;
+  lines.forEach((l, i) => ctx.fillText(l, cx, startY + i * lineHeight));
+  return lines.length;
+}
+
+async function downloadProfileImage() {
+  if (!currentModalModel) { showToast("No hay perfil seleccionado"); return; }
+  const m = currentModalModel;
+  closeShareMenu();
+  const photoUrl = getEmbedShareUrl(m.foto_perfil_embed);
+  if (!photoUrl) { showToast("Esta modelo no tiene foto de perfil cargada"); return; }
+
+  showToast("Generando imagen…");
+  try {
+    if (document.fonts && document.fonts.load) {
+      await Promise.all([
+        document.fonts.load("italic 700 76px 'Playfair Display'"),
+        document.fonts.load("700 54px 'Montserrat'"),
+        document.fonts.load("500 30px 'Montserrat'")
+      ]).catch(()=>{});
+    }
+
+    const [photoImg, logoCanvas] = await Promise.all([
+      loadImageCORS(photoUrl),
+      getImarLogoWhite().catch(() => null)
+    ]);
+
+    const W = 1080, H = 1920;
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, W, H);
+
+    // Foto de perfil a pantalla completa, sin marco (cover-fit)
+    const scale = Math.max(W / photoImg.width, H / photoImg.height);
+    const dw = photoImg.width * scale, dh = photoImg.height * scale;
+    const dx = (W - dw) / 2, dy = (H - dh) / 2;
+    ctx.drawImage(photoImg, dx, dy, dw, dh);
+
+    // Degradado superior sutil (para que se lea el logo)
+    let grad = ctx.createLinearGradient(0, 0, 0, H * 0.26);
+    grad.addColorStop(0, "rgba(0,0,0,.55)");
+    grad.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H * 0.26);
+
+    // Degradado inferior progresivo hacia negro (para nombre y código)
+    grad = ctx.createLinearGradient(0, H * 0.42, 0, H);
+    grad.addColorStop(0, "rgba(0,0,0,0)");
+    grad.addColorStop(0.55, "rgba(0,0,0,.62)");
+    grad.addColorStop(1, "rgba(0,0,0,.94)");
+    ctx.fillStyle = grad; ctx.fillRect(0, H * 0.42, W, H * 0.58);
+
+    // Logo imar source, arriba centrado
+    if (logoCanvas) {
+      const logoW = 240;
+      const logoH = logoCanvas.height * (logoW / logoCanvas.width);
+      ctx.drawImage(logoCanvas, (W - logoW) / 2, 64, logoW, logoH);
+    }
+
+    // Nombre
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#fff";
+    ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 16;
+    ctx.font = "italic 700 74px 'Playfair Display', Georgia, serif";
+    const nameLines = wrapCenteredText(ctx, m.nombre || "", W/2, H - 300, W - 140, 82);
+    ctx.shadowBlur = 0;
+
+    // Etiqueta + código
+    const codeBaseY = H - 300 + (nameLines - 1) * 82 + 90;
+    ctx.font = "600 26px 'Montserrat', Helvetica, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.75)";
+    ctx.fillText("MI CÓDIGO DE BÚSQUEDA", W/2, codeBaseY);
+
+    ctx.font = "700 58px 'Montserrat', Helvetica, sans-serif";
+    ctx.fillStyle = "#fff";
+    ctx.fillText(m.codigo || "", W/2, codeBaseY + 66);
+
+    // Marca al pie
+    ctx.font = "500 22px 'Montserrat', Helvetica, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    ctx.fillText("imar source", W/2, H - 46);
+
+    canvas.toBlob((blob) => {
+      if (!blob) { showToast("No se pudo generar la imagen"); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${slugify(m.nombre)}-${slugify(m.codigo)}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      showToast("¡Imagen guardada! Subila a tu historia 📲");
+    }, "image/jpeg", 0.92);
+
+  } catch (e) {
+    console.error(e);
+    showToast("No se pudo generar la imagen. Probá con otra foto o revisá la conexión.");
+  }
 }
 
 // ─── TESTIMONIOS ────────────────────────────────────────────
