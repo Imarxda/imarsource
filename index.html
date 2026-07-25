@@ -32,7 +32,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);font-siz
 /* HEADER */
 header{border-bottom:1px solid var(--black);padding:48px 60px 36px;display:flex;flex-direction:column;align-items:center;gap:12px;background-size:cover;background-position:center;background-repeat:no-repeat}
 .logo{cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
-.logo img{height:clamp(64px,11vw,150px);width:auto;max-width:100%;object-fit:contain;display:block}
+.logo img{height:clamp(48px,8vw,96px);width:auto;max-width:100%;object-fit:contain;display:block}
 .header-sub{font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gray-text)}
 nav{display:flex;gap:40px;align-items:center;margin-top:8px;font-size:9px;letter-spacing:.2em;text-transform:uppercase}
 nav a{color:var(--black);text-decoration:none;cursor:pointer;transition:color var(--ease)}
@@ -56,6 +56,14 @@ nav a:hover{color:var(--gray-text)}
 #search-input::placeholder{color:var(--gray-mid)}
 .search-icon{position:absolute;right:0;top:50%;transform:translateY(-50%);pointer-events:none}
 #result-count{font-size:9px;letter-spacing:.2em;color:var(--gray-text);text-transform:uppercase;min-height:14px}
+#search-results{width:100%;max-width:680px;margin-top:18px;text-align:left;border-top:1px solid var(--gray-mid)}
+.sr-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-mid)}
+.sr-avatar{width:48px;height:48px;flex-shrink:0;overflow:hidden;background:var(--gray-light);border:1px solid var(--gray-mid);cursor:pointer}
+.sr-info{flex:1;min-width:0;cursor:pointer}
+.sr-name{font-family:var(--serif);font-size:15px}
+.sr-code{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gray-text);margin-top:2px}
+.sr-votes{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gray-text);flex-shrink:0}
+#search-results-empty{padding:20px 0;font-size:11px;color:var(--gray-text);font-style:italic;text-align:center}
 
 /* SECTION TITLES */
 .section-header{padding:56px 60px 28px;border-bottom:1px solid var(--gray-mid);display:flex;align-items:baseline;gap:20px}
@@ -291,6 +299,70 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   .sb-grid{grid-template-columns:1fr}
   footer{padding:24px;flex-direction:column;gap:10px;text-align:center}
 }
+
+/* ── BANNER CIERRE RANKING ─────────────────────────────── */
+#ranking-banner{background:var(--black);color:var(--white);text-align:center;padding:10px 20px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;position:sticky;top:36px;z-index:99;display:none}
+#ranking-banner.show{display:block}
+#ranking-banner strong{color:var(--gold)}
+
+/* ── BANNER "RECIÉN SUBIDO" ─────────────────────────────── */
+#recent-ticker{border-bottom:1px solid var(--gray-mid);overflow:hidden;height:34px;display:flex;align-items:center;background:var(--gray-light)}
+.recent-label{font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:0 16px;white-space:nowrap;border-right:1px solid var(--gray-mid);height:100%;display:flex;align-items:center;flex-shrink:0;color:var(--gray-text)}
+.recent-track-wrap{overflow:hidden;flex:1}
+.recent-track{display:flex;animation:ticker 22s linear infinite;white-space:nowrap}
+.recent-item{display:inline-flex;align-items:center;gap:10px;padding:0 32px;font-size:9px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--black);cursor:pointer}
+.recent-item:hover{color:var(--gold)}
+.recent-item::after{content:'·';color:var(--gray-text);margin-left:10px}
+
+/* ── BOTÓN "SEGUIR" ─────────────────────────────────────── */
+.btn-follow{background:none;border:1px solid var(--gray-mid);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all var(--ease)}
+.btn-follow:hover,.btn-follow.following{background:var(--gold);border-color:var(--gold);color:var(--white)}
+
+/* ── SECCIÓN "TUS SEGUIDOS" ─────────────────────────────── */
+#seguidos-section{border-top:1px solid var(--gray-mid);display:none}
+#seguidos-section.show{display:block}
+#seguidos-wrap{overflow:hidden;padding:24px 0}
+#seguidos-track{display:flex;gap:12px;padding:0 60px;overflow-x:auto;scrollbar-width:none}
+#seguidos-track::-webkit-scrollbar{display:none}
+.seguido-card{flex-shrink:0;width:100px;cursor:pointer;text-align:center}
+.seguido-img{width:100px;height:100px;border-radius:50%;background:var(--gray-light);border:2px solid var(--gray-mid);overflow:hidden;margin-bottom:6px}
+.seguido-name{font-family:var(--serif);font-size:11px;font-style:italic}
+
+/* ── COUNTDOWN VOTO ─────────────────────────────────────── */
+.vote-countdown{font-size:8px;letter-spacing:.1em;color:var(--gray-text);text-align:center;margin-top:4px;min-height:14px}
+
+/* ── REACCIONES FOTO ────────────────────────────────────── */
+.ig-photo-wrap{position:relative}
+.foto-reactions{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:flex-end;gap:4px;padding:4px 6px;background:linear-gradient(transparent,rgba(0,0,0,.55));opacity:0;transition:opacity .2s}
+.ig-photo-wrap:hover .foto-reactions{opacity:1}
+.reac-btn{background:none;border:none;cursor:pointer;font-size:14px;line-height:1;padding:2px 4px;transition:transform .15s}
+.reac-btn:hover{transform:scale(1.3)}
+.reac-count{font-size:8px;color:#fff;letter-spacing:.05em;display:flex;align-items:center;gap:2px}
+
+/* ── COMPARTIR CONTADOR ─────────────────────────────────── */
+.share-count{font-size:8px;letter-spacing:.1em;color:var(--gray-text);margin-top:4px;text-align:center}
+
+/* ── BOTÓN "QUIERO SER PARTE" ───────────────────────────── */
+#banner-postulacion{background:var(--black);color:var(--white);padding:40px 60px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-top:1px solid #222}
+.bp-text{flex:1}
+.bp-eyebrow{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.bp-title{font-family:var(--serif);font-size:22px;font-style:italic;margin-bottom:6px}
+.bp-sub{font-size:11px;color:#aaa;line-height:1.6}
+.btn-postular{border:1px solid var(--white);background:none;color:var(--white);font-family:var(--sans);font-size:9px;letter-spacing:.25em;text-transform:uppercase;padding:14px 28px;cursor:pointer;transition:all var(--ease);white-space:nowrap;text-decoration:none;display:inline-block}
+.btn-postular:hover{background:var(--white);color:var(--black)}
+@media(max-width:640px){#banner-postulacion{flex-direction:column;padding:32px 24px;gap:20px}.btn-postular{width:100%;text-align:center}}
+
+/* ── INSIGNIAS EN PERFIL ────────────────────────────────── */
+.modal-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.badge{background:var(--black);color:var(--gold);font-size:8px;letter-spacing:.15em;text-transform:uppercase;padding:5px 10px;border:1px solid var(--gold)}
+
+/* ── TESTIMONIOS ────────────────────────────────────────── */
+#testimonios-section{padding:56px 60px;border-top:1px solid var(--gray-mid);background:var(--gray-light)}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;margin-top:32px}
+.test-card{background:var(--white);border:1px solid var(--gray-mid);padding:28px;display:flex;flex-direction:column;gap:12px}
+.test-quote{font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.7;color:#333}
+.test-name{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text)}
+@media(max-width:640px){#testimonios-section{padding:40px 24px}#seguidos-track{padding:0 24px}#banner-postulacion{padding:32px 24px}}
 </style>
 </head>
 <body>
@@ -303,14 +375,29 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   </div>
 </div>
 
+
+<!-- BANNER CIERRE RANKING -->
+<div id="ranking-banner">
+  ⏳ Ranking <strong id="ranking-ciclo-nombre">del mes</strong> — cierra en <strong id="ranking-countdown">—</strong>
+</div>
+
+<!-- TICKER "RECIÉN SUBIDO" -->
+<div id="recent-ticker">
+  <div class="recent-label">📸 Recién subido</div>
+  <div class="recent-track-wrap">
+    <div class="recent-track" id="recent-track"></div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header id="site-header">
   <div class="logo" onclick="location.reload()"><img src="https://i.ibb.co/HDRLbntG/88053bc3-cc24-4541-8c12-1017a47ec874.png" alt="imar source"></div>
   <nav>
     <a onclick="goTo('#eventos-carousel-section')">Eventos</a>
     <a onclick="goTo('#podio-section')">Perfiles Destacados</a>
-    <a onclick="goTo('#destacados-section')">Destacadas</a>
+    <a onclick="goTo('#destacados-section')">Destacados</a>
     <a onclick="goTo('#lista-section')">Directorio</a>
+    <a onclick="openPostulacion()" style="color:var(--gold);font-weight:600">★ Quiero ser parte</a>
   </nav>
 </header>
 
@@ -337,13 +424,29 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     </div>
   </div>
   <div id="result-count"></div>
+  <div id="search-results" style="display:none"></div>
+</section>
+
+
+<!-- TUS SEGUIDOS -->
+<section id="seguidos-section">
+  <div class="section-header" style="padding-bottom:0">
+    <div class="section-title">Tus seguidos</div>
+    <div class="section-label">Modelos que seguís</div>
+  </div>
+  <div id="seguidos-wrap">
+    <div id="seguidos-track"></div>
+  </div>
 </section>
 
 <!-- EVENTOS — carrusel estilo Netflix -->
 <section id="eventos-carousel-section">
-  <div class="section-header-inner">
-    <div class="section-title">Eventos</div>
-    <div class="section-label">Lo que se viene</div>
+  <div class="section-header-inner" style="justify-content:space-between;align-items:baseline">
+    <div style="display:flex;align-items:baseline;gap:20px">
+      <div class="section-title">Eventos</div>
+      <div class="section-label">Lo que se viene</div>
+    </div>
+    <a href="mailto:imarsotelo50@gmail.com?subject=Quiero%20a%C3%B1adir%20mi%20evento&body=Hola%2C%20quiero%20sumar%20mi%20evento%20a%20imar%20source.%0A%0ANombre%20del%20evento%3A%0AFecha%3A%0ADescripci%C3%B3n%3A" class="btn-share" style="text-decoration:none;color:var(--white);border-color:#555;font-size:8px;padding:10px 16px;flex-shrink:0">+ Añadir mi evento</a>
   </div>
   <div class="eventos-wrap">
     <button class="eventos-arrow left" onclick="scrollEventos(-1)" aria-label="Anterior">‹</button>
@@ -355,16 +458,16 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 
 <!-- PERFILES DESTACADOS -->
 <div class="section-header">
-  <div class="section-title">Top 3</div>
+  <div class="section-title">Lo más votado</div>
 </div>
 <section id="podio-section">
   <div id="podio-grid" class="podio-grid"></div>
-  <div id="podio-empty" style="display:none">Aún no hay modelos destacadas.</div>
+  <div id="podio-empty" style="display:none">Aún no hay modelos destacados.</div>
 </section>
 
 <!-- DESTACADOS -->
 <div class="section-header" id="destacados-section">
-  <div class="section-title">Destacadas de la semana</div>
+  <div class="section-title">Destacados de la semana</div>
   <div class="section-label">Las 10 más recientes</div>
 </div>
 <div class="cinta-wrap">
@@ -374,7 +477,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <!-- LISTA / DIRECTORIO -->
 <div class="section-header">
   <div class="section-title">Directorio de modelos</div>
-  <div class="section-label">Todas nuestras modelos</div>
+  <div class="section-label">Todos nuestros modelos</div>
 </div>
 <section id="lista-section">
   <div class="lista-header-row">
@@ -382,6 +485,26 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   </div>
   <div id="lista-rows"></div>
   <div id="lista-empty" style="display:none">Sin resultados.</div>
+</section>
+
+
+<!-- BANNER "QUIERO SER PARTE" -->
+<div id="banner-postulacion">
+  <div class="bp-text">
+    <div class="bp-eyebrow">Para modelos</div>
+    <div class="bp-title">Tu perfil, tus fotos, tu Instagram — todo en un solo link para compartir.</div>
+    <div class="bp-sub">Aparecer en imar source es prensa y portfolio gratis. Sin costo, sin complicaciones.</div>
+  </div>
+  <a href="https://wa.me/5493624000000?text=Hola%2C%20quiero%20sumarme%20a%20imar%20source%20como%20modelo" target="_blank" class="btn-postular" id="btn-postular-main">✦ Quiero ser parte</a>
+</div>
+
+<!-- TESTIMONIOS -->
+<section id="testimonios-section">
+  <div class="section-header" style="border:none;padding:0 0 0 0">
+    <div class="section-title">Lo que dicen las modelos</div>
+    <div class="section-label">Prueba social</div>
+  </div>
+  <div class="test-grid" id="testimonios-grid"></div>
 </section>
 
 <!-- FOOTER -->
@@ -399,6 +522,16 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
       <div class="modal-ev-title" id="modal-ev-title">—</div>
       <div class="modal-ev-date" id="modal-ev-date">—</div>
       <div class="modal-ev-desc" id="modal-ev-desc">—</div>
+      <div class="ig-stats-row" style="margin-top:24px">
+        <div>
+          <div class="modal-votes-big" id="modal-ev-interesados">0</div>
+          <div class="modal-votes-lbl">Les interesa</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-vote" id="modal-ev-interes-btn" onclick="marcarInteres()">☆ Me interesa</button>
+        <button class="btn-share" onclick="shareEvento()">Compartir evento</button>
+      </div>
     </div>
     <button id="modal-ev-close" onclick="closeEvModalDirect()">✕</button>
   </div>
@@ -414,21 +547,28 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
         <div id="modal-name">—</div>
         <div id="modal-code">—</div>
         <div id="modal-desc"></div>
+        <div class="modal-badges" id="modal-badges"></div>
         <div class="ig-stats-row">
           <div>
             <div class="modal-votes-big" id="modal-votes">0</div>
             <div class="modal-votes-lbl">Votos</div>
           </div>
+          <div>
+            <div class="modal-votes-big" id="modal-compartidos">0</div>
+            <div class="modal-votes-lbl">Compartidos</div>
+          </div>
         </div>
         <div class="modal-actions">
           <button class="btn-modal-vote" id="modal-vote-btn" onclick="voteFromModal()">♡ Votar</button>
-          <button class="btn-share" onclick="copyShareLink()">Compartir</button>
+          <button class="btn-share" onclick="copyShareLinkWithCount()">Compartir</button>
+          <button class="btn-follow" id="modal-follow-btn" onclick="toggleFollow()">☆ Seguir</button>
+          <a class="btn-share" id="modal-ig-btn" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;justify-content:center">Instagram</a>
         </div>
       </div>
     </div>
     <hr class="modal-divider">
     <div class="ig-gallery-label">Galería</div>
-    <div class="ig-gallery" id="ig-gallery"></div>
+    <div class="ig-gallery" id="ig-gallery"></div><!-- reactions injected via JS -->
     <div id="ig-gallery-empty" style="display:none">Aún no hay fotos en esta galería.</div>
     <button id="modal-close" onclick="closeModal()">✕</button>
   </div>
@@ -444,6 +584,22 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   <button class="lightbox-vnav up" onclick="lightboxNav(-1)" aria-label="Foto anterior">︿</button>
   <button class="lightbox-vnav down" onclick="lightboxNav(1)" aria-label="Foto siguiente">﹀</button>
   <button class="lightbox-share-btn" onclick="shareSinglePhoto(currentLightboxIndex)">↗ Compartir foto</button>
+</div>
+
+
+<!-- MODAL "QUIERO SER PARTE" -->
+<div id="modal-postulacion-overlay" onclick="if(event.target===this)closePostulacion()" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:3000;display:none;align-items:center;justify-content:center;padding:24px">
+  <div style="background:var(--white);max-width:500px;width:100%;padding:48px;position:relative">
+    <button onclick="closePostulacion()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer">✕</button>
+    <div style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Para modelos</div>
+    <div style="font-family:var(--serif);font-size:26px;margin-bottom:8px">Sumate a imar source</div>
+    <div style="font-size:12px;color:#666;line-height:1.7;margin-bottom:28px">Tu perfil, tus fotos, tu Instagram — todo en un solo link para compartir. Aparecer acá es prensa y portfolio gratis.</div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <a href="https://wa.me/5493624000000?text=Hola%2C%20quiero%20sumarme%20a%20imar%20source%20como%20modelo" target="_blank" class="btn-postular" style="text-align:center;display:block">💬 Escribir por WhatsApp</a>
+      <a href="mailto:imarsotelo50@gmail.com?subject=Quiero%20ser%20parte%20de%20imar%20source" class="btn-postular" style="text-align:center;display:block;background:none;color:var(--black);border-color:var(--gray-mid)">✉ Escribir por correo</a>
+    </div>
+    <div style="font-size:9px;color:var(--gray-text);margin-top:20px;text-align:center">También podés seguirnos en Instagram para novedades</div>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -498,6 +654,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   codigo        text
   descripcion   text
   foto_perfil_embed  text   -- link directo o embed de la foto de perfil
+  instagram_url text   -- link a Instagram del modelo. Columna nueva, agregarla si no existe.
   likes_mes     int8  (default 0)
   creado_en     timestamptz
 
@@ -513,6 +670,7 @@ eventos
   fecha_evento  date
   banner_url    text
   descripcion   text
+  interesados   int8 (default 0)  -- contador de "Me interesa". Columna nueva, agregarla si no existe.
 
 portada
   id            int8 (usar siempre el valor 1, fila única)
@@ -541,7 +699,7 @@ portada
         <div class="form-grid">
           <div class="ff"><label>Nombre</label><input type="text" id="m-name" placeholder="Valentina López"></div>
           <div class="ff"><label>Código único</label><input type="text" id="m-code" placeholder="#KM01"></div>
-          <div class="ff"><label>Descripción</label><textarea id="m-desc" rows="3" placeholder="Breve texto editorial sobre la modelo."></textarea></div>
+          <div class="ff"><label>Descripción</label><textarea id="m-desc" rows="3" placeholder="Breve texto editorial sobre el modelo."></textarea></div>
           <div class="ff">
             <label>Embed de imagen — Foto de perfil</label>
             <textarea id="m-embed" rows="5" placeholder='Pegá el link directo a la imagen (https://i.ibb.co/…/foto.jpg) o un embed completo: &lt;img src="…"&gt;, iframe, etc.'></textarea>
@@ -559,7 +717,7 @@ portada
         <div class="form-grid">
           <div class="ff">
             <label>Modelo</label>
-            <select id="f-modelo" onchange="renderAdminFotosList(this.value)"><option value="">Seleccioná una modelo…</option></select>
+            <select id="f-modelo" onchange="renderAdminFotosList(this.value)"><option value="">Seleccioná un modelo…</option></select>
           </div>
           <div class="ff">
             <label>Embed de imagen — Nueva foto</label>
@@ -571,16 +729,16 @@ portada
             <div class="ap-status" id="status-f"></div>
           </div>
         </div>
-        <div class="admin-sub-label">Fotos de esta modelo</div>
+        <div class="admin-sub-label">Fotos de este modelo</div>
         <div class="admin-list" id="admin-fotos-list"></div>
-        <div id="admin-fotos-empty" class="ap-status">Seleccioná una modelo para ver su galería.</div>
+        <div id="admin-fotos-empty" class="ap-status">Seleccioná un modelo para ver su galería.</div>
       </div>
 
       <!-- Gestionar / Eliminar -->
       <div class="sub-pane" id="sub-gestionar">
         <div class="ap-sec-sub" style="margin-bottom:8px">Eliminar un perfil borra también todas las fotos de su galería. Esta acción no se puede deshacer.</div>
         <div class="admin-list" id="admin-modelos-list"></div>
-        <div id="admin-modelos-empty" class="ap-status" style="display:none">Todavía no hay modelos creadas.</div>
+        <div id="admin-modelos-empty" class="ap-status" style="display:none">Todavía no hay modelos creados.</div>
       </div>
     </div>
 
@@ -710,6 +868,10 @@ async function loadData() {
     if (pRes.status === "fulfilled" && pRes.value.data) heroPortada = pRes.value.data;
   } catch(e) { console.warn("Error Supabase:", e); }
   renderAll();
+  loadCiclo();
+  loadTestimonios();
+  renderSeguidos();
+  renderRecentTicker();
 }
 
 function renderAll() {
@@ -720,6 +882,8 @@ function renderAll() {
   renderPodio();
   renderDestacados();
   renderLista();
+  renderRecentTicker();
+  renderSeguidos();
 }
 
 // ─── EVENTOS — carrusel estilo Netflix ──────────────────────
@@ -742,6 +906,7 @@ function renderEventosCarousel() {
       <div class="evento-overlay">
         <div class="evento-titulo">${ev.titulo}</div>
         ${d ? `<div class="evento-fecha">${d}</div>` : ""}
+        ${ev.interesados ? `<div class="evento-fecha">★ ${ev.interesados} interesados</div>` : ""}
       </div>
     </div>`;
   }).join("");
@@ -806,6 +971,7 @@ function renderPodio() {
 
   grid.innerHTML = top3.map(m => {
     const voted = hasVoted(m.id);
+    const countdown = voted ? getRevotoCountdown(m.id) : null;
     return `
     <div class="podio-card">
       <div class="podio-img-wrap" onclick="openModal('${m.id}')">
@@ -816,7 +982,9 @@ function renderPodio() {
         <div class="podio-code">${m.codigo}</div>
         <div class="podio-votes">${m.likes_mes||0}</div>
         <div class="podio-votes-lbl">votos este mes</div>
+        ${m.compartidos ? `<div class="share-count">Compartido ${m.compartidos} veces</div>` : ''}
         <button class="btn-vote${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
+        ${countdown ? `<div class="vote-countdown">Podés volver a votar en ${countdown}</div>` : ''}
       </div>
     </div>`;
   }).join("");
@@ -851,45 +1019,71 @@ function renderDestacados() {
   sorted.forEach(m => injectEmbed("ce-"+m.id, m.foto_perfil_embed));
 }
 
-// ─── DIRECTORIO ────────────────────────────────────────────
+// ─── DIRECTORIO (siempre completo, sin filtrar por búsqueda) ─
 function renderLista() {
   const container = document.getElementById("lista-rows");
   const empty = document.getElementById("lista-empty");
-  const q = searchQuery.toLowerCase().trim();
-
-  let models;
-  if (q) {
-    models = allModels.filter(m =>
-      m.nombre.toLowerCase().includes(q) || m.codigo.toLowerCase().includes(q)
-    );
-  } else {
-    models = allModels.slice(3);
-  }
-
-  document.getElementById("result-count").textContent = q
-    ? `${models.length} resultado${models.length!==1?"s":""}`
-    : "";
+  const models = allModels.slice(3);
 
   if (!models.length) { container.innerHTML=""; empty.style.display="block"; return; }
   empty.style.display = "none";
 
   container.innerHTML = models.map(m => {
     const voted = hasVoted(m.id);
+    const countdown = voted ? getRevotoCountdown(m.id) : null;
     return `
     <div class="lista-row">
       <div class="lista-avatar" onclick="openModal('${m.id}')"><div class="embed-box" id="le-${m.id}"></div></div>
       <div><div class="lista-nombre" onclick="openModal('${m.id}')">${m.nombre}</div></div>
       <div class="lista-codigo">${m.codigo}</div>
       <div class="lista-votos">${m.likes_mes||0}</div>
-      <div><button class="lista-btn${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button></div>
+      <div>
+        <button class="lista-btn${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
+        ${countdown ? `<div class="vote-countdown">${countdown}</div>` : ''}
+      </div>
     </div>`;
   }).join("");
 
   models.forEach(m => injectEmbed("le-"+m.id, m.foto_perfil_embed));
 }
 
-// ─── SEARCH ────────────────────────────────────────────────
-function onSearch(val) { searchQuery = val; renderLista(); }
+// ─── SEARCH — resultados aparecen debajo del buscador ───────
+function onSearch(val) { searchQuery = val; renderSearchResults(); }
+
+function renderSearchResults() {
+  const box = document.getElementById("search-results");
+  const countEl = document.getElementById("result-count");
+  const q = searchQuery.toLowerCase().trim();
+
+  if (!q) { box.style.display = "none"; box.innerHTML = ""; countEl.textContent = ""; return; }
+
+  const models = allModels.filter(m =>
+    m.nombre.toLowerCase().includes(q) || m.codigo.toLowerCase().includes(q)
+  );
+  countEl.textContent = `${models.length} resultado${models.length!==1?"s":""}`;
+  box.style.display = "block";
+
+  if (!models.length) {
+    box.innerHTML = `<div id="search-results-empty">Sin resultados.</div>`;
+    return;
+  }
+
+  box.innerHTML = models.map(m => {
+    const voted = hasVoted(m.id);
+    return `
+    <div class="sr-row">
+      <div class="sr-avatar" onclick="openModal('${m.id}')"><div class="embed-box" id="sr-${m.id}"></div></div>
+      <div class="sr-info" onclick="openModal('${m.id}')">
+        <div class="sr-name">${m.nombre}</div>
+        <div class="sr-code">${m.codigo}</div>
+      </div>
+      <div class="sr-votes">${m.likes_mes||0} votos</div>
+      <button class="lista-btn${voted?' voted':''}" style="width:auto" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
+    </div>`;
+  }).join("");
+
+  models.forEach(m => injectEmbed("sr-"+m.id, m.foto_perfil_embed));
+}
 
 // ─── VOTOS ─────────────────────────────────────────────────
 function hasVoted(id) {
@@ -898,7 +1092,7 @@ function hasVoted(id) {
 }
 
 async function vote(id) {
-  if (hasVoted(id)) { showToast("Ya votaste por esta modelo hoy"); return; }
+  if (hasVoted(id)) { showToast("Ya votaste por este modelo hoy"); return; }
   if (!sb) { showToast("Supabase no configurado"); return; }
   const m = allModels.find(x => x.id === id);
   if (!m) return;
@@ -909,7 +1103,7 @@ async function vote(id) {
   localStorage.setItem("iv_"+id, Date.now().toString());
   allModels.sort((a,b)=>(b.likes_mes||0)-(a.likes_mes||0));
   showToast("¡Voto registrado! ♥");
-  renderPodio(); renderLista();
+  renderPodio(); renderLista(); renderSearchResults();
   if (currentModalModel && currentModalModel.id === id) {
     document.getElementById("modal-votes").textContent = newVotes;
     const vb = document.getElementById("modal-vote-btn");
@@ -938,7 +1132,6 @@ function injectEmbed(containerId, embedCode, fit) {
     const img = document.createElement("img");
     img.src = raw;
     img.loading = "lazy";
-    img.decoding = "async";
     aplicarFitImagen(img, fit);
     c.appendChild(img);
     return;
@@ -949,12 +1142,7 @@ function injectEmbed(containerId, embedCode, fit) {
   const scriptEl = tmp.querySelector("script");
   if (!scriptEl) {
     c.innerHTML = raw;
-    const im = c.querySelector("img");
-    if (im) {
-      im.loading = "lazy";
-      im.decoding = "async";
-      aplicarFitImagen(im, fit);
-    }
+    if (fit === "contain") { const im = c.querySelector("img"); if (im) aplicarFitImagen(im, fit); }
     return;
   }
   const noScript = tmp.innerHTML.replace(/<script[\s\S]*?<\/script>/gi,"");
@@ -996,9 +1184,11 @@ function getEmbedShareUrl(embedCode) {
 }
 
 // ─── MODAL EVENTO ──────────────────────────────────────────
+let currentModalEvent = null;
 function openEvModal(id) {
   const ev = allEvents.find(e => String(e.id) === String(id));
   if (!ev) return;
+  currentModalEvent = ev;
   const banner = document.getElementById("modal-banner-img");
   if (ev.banner_url) { banner.src = ev.banner_url; banner.style.display = "block"; }
   else banner.style.display = "none";
@@ -1008,6 +1198,11 @@ function openEvModal(id) {
     : "";
   document.getElementById("modal-ev-date").textContent = d;
   document.getElementById("modal-ev-desc").textContent = ev.descripcion || "";
+  document.getElementById("modal-ev-interesados").textContent = ev.interesados || 0;
+  const interesado = hasInteres(ev.id);
+  const ib = document.getElementById("modal-ev-interes-btn");
+  ib.textContent = interesado ? "★ Te interesa" : "☆ Me interesa";
+  ib.classList.toggle("voted", interesado);
   document.getElementById("modal-ev-overlay").classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -1015,10 +1210,49 @@ function closeEvModal(e) { if (e.target.id==="modal-ev-overlay") closeEvModalDir
 function closeEvModalDirect() {
   document.getElementById("modal-ev-overlay").classList.remove("open");
   document.body.style.overflow = "";
+  currentModalEvent = null;
+}
+
+// ─── ME INTERESA (votos de eventos) ─────────────────────────
+function hasInteres(id) {
+  return !!localStorage.getItem("ii_"+id);
+}
+async function marcarInteres() {
+  if (!currentModalEvent) return;
+  const ev = currentModalEvent;
+  if (hasInteres(ev.id)) { showToast("Ya marcaste que te interesa"); return; }
+  if (!sb) { showToast("Supabase no configurado"); return; }
+  const nuevoValor = (ev.interesados||0) + 1;
+  const { error } = await sb.from("eventos").update({ interesados: nuevoValor }).eq("id", ev.id);
+  if (error) { showToast("Error al registrar interés"); return; }
+  ev.interesados = nuevoValor;
+  localStorage.setItem("ii_"+ev.id, "1");
+  document.getElementById("modal-ev-interesados").textContent = nuevoValor;
+  const ib = document.getElementById("modal-ev-interes-btn");
+  ib.textContent = "★ Te interesa"; ib.classList.add("voted");
+  showToast("¡Genial! Te avisamos si hay novedades");
+  renderEventosCarousel();
+}
+
+// ─── COMPARTIR EVENTO ───────────────────────────────────────
+async function shareEvento() {
+  if (!currentModalEvent) return;
+  const ev = currentModalEvent;
+  const url = `${location.origin}${location.pathname}#evento-${ev.id}`;
+  const texto = `Sobre este evento... ${ev.titulo}`;
+  if (navigator.share) {
+    try { await navigator.share({ title: ev.titulo, text: texto, url }); return; } catch (e) { /* cancelado */ }
+  }
+  try {
+    await navigator.clipboard.writeText(`${texto}: ${url}`);
+    showToast("¡Enlace del evento copiado!");
+  } catch (e) {
+    showToast("No se pudo copiar el enlace");
+  }
 }
 
 // ─── MODAL PERFIL (Instagram-style) ────────────────────────
-function openModal(id) {
+async function openModal(id) {
   const m = allModels.find(x => String(x.id) === String(id));
   if (!m) return;
   currentModalModel = m;
@@ -1036,7 +1270,16 @@ function openModal(id) {
   vb.textContent = voted ? "✓ Votado" : "♡ Votar";
   vb.classList.toggle("voted", voted);
 
-  // Galería personal: todas las fotos ligadas a esta modelo
+  const igBtn = document.getElementById("modal-ig-btn");
+  if (m.instagram_url) {
+    igBtn.href = m.instagram_url;
+    igBtn.style.display = "inline-flex";
+  } else {
+    igBtn.style.display = "none";
+    igBtn.href = "#";
+  }
+
+  // Galería personal: todas las fotos ligadas a este modelo
   const gallery = document.getElementById("ig-gallery");
   const galleryEmpty = document.getElementById("ig-gallery-empty");
   const fotos = allFotos.filter(f => String(f.modelo_id) === String(m.id));
@@ -1046,11 +1289,28 @@ function openModal(id) {
     galleryEmpty.style.display = "block";
   } else {
     galleryEmpty.style.display = "none";
-    gallery.innerHTML = fotos.map((f,i) => `
-      <div class="ig-photo" onclick="openLightbox(${i})"><div class="embed-box" id="igf-${f.id}"></div></div>
-    `).join("");
+    const reactions = await loadFotoReactions(fotos);
+    gallery.innerHTML = fotos.map((f,i) => {
+      const rBtns = REACCIONES.map(r => {
+        const count = reactions[f.id + "_" + r.tipo] || 0;
+        return `<span class="reac-count"><button class="reac-btn" onclick="event.stopPropagation();reaccionar('${f.id}','${r.tipo}')">${r.emoji}</button>${count>0?count:''}</span>`;
+      }).join("");
+      return `
+      <div class="ig-photo-wrap">
+        <div class="ig-photo" onclick="openLightbox(${i})"><div class="embed-box" id="igf-${f.id}"></div></div>
+        <div class="foto-reactions" id="freac-${f.id}">${rBtns}</div>
+      </div>`;
+    }).join("");
     fotos.forEach(f => injectEmbed("igf-"+f.id, f.embed_code));
   }
+
+  // Update follow button
+  updateFollowBtn();
+  // Render badges/insignias
+  renderModalBadges(m);
+  // Update compartidos counter
+  const compEl = document.getElementById("modal-compartidos");
+  if (compEl) compEl.textContent = m.compartidos || 0;
 
   document.getElementById("modal-overlay").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -1138,16 +1398,29 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowUp") lightboxNav(-1);
   if (e.key === "ArrowDown") lightboxNav(1);
 });
-function copyShareLink() {
+async function copyShareLink() {
   if (!currentModalModel) return;
-  navigator.clipboard.writeText(`${location.origin}${location.pathname}#modelo-${currentModalModel.id}`)
-    .then(()=>showToast("¡Enlace copiado!"));
+  const url = `${location.origin}${location.pathname}#modelo-${currentModalModel.id}`;
+  const texto = "Visita mi perfil en imar source";
+  if (navigator.share) {
+    try { await navigator.share({ title: "imar source", text: texto, url }); return; } catch (e) { /* cancelado, seguimos al copiado */ }
+  }
+  try {
+    await navigator.clipboard.writeText(`${texto}: ${url}`);
+    showToast("¡Enlace copiado!");
+  } catch (e) {
+    showToast("No se pudo copiar el enlace");
+  }
 }
 function handleHash() {
   const h = location.hash.replace("#","");
-  if (!h.startsWith("modelo-")) return;
-  const id = h.replace("modelo-","");
-  setTimeout(()=>openModal(id), 700);
+  if (h.startsWith("modelo-")) {
+    const id = h.replace("modelo-","");
+    setTimeout(()=>openModal(id), 700);
+  } else if (h.startsWith("evento-")) {
+    const id = h.replace("evento-","");
+    setTimeout(()=>openEvModal(id), 700);
+  }
 }
 
 // ─── HELPERS ───────────────────────────────────────────────
@@ -1249,7 +1522,7 @@ function populateModelSelect() {
   const sel = document.getElementById("f-modelo");
   if (!sel) return;
   const current = sel.value;
-  sel.innerHTML = '<option value="">Seleccioná una modelo…</option>' +
+  sel.innerHTML = '<option value="">Seleccioná un modelo…</option>' +
     allModels.map(m => `<option value="${m.id}">${m.nombre} — ${m.codigo}</option>`).join("");
   if (current) sel.value = current;
 }
@@ -1259,7 +1532,7 @@ async function uploadFoto() {
   const btn = document.getElementById("btn-pub-f");
   const modeloId = document.getElementById("f-modelo").value;
   const embed = document.getElementById("f-embed").value.trim();
-  if (!modeloId) { setSt(st,"Seleccioná una modelo.","error"); return; }
+  if (!modeloId) { setSt(st,"Seleccioná un modelo.","error"); return; }
   if (!embed) { setSt(st,"Pegá el embed de la foto.","error"); return; }
   if (!initSBFromPanel()) { setSt(st,"Configurá URL y Anon Key de Supabase.","error"); return; }
   btn.disabled = true; setSt(st,"Guardando…","");
@@ -1270,7 +1543,7 @@ async function uploadFoto() {
   allFotos.push(data[0]);
   document.getElementById("f-embed").value="";
   const m = allModels.find(x=>String(x.id)===String(modeloId));
-  setSt(st,`✓ Foto agregada a la galería de "${m?m.nombre:'la modelo'}".`,"ok");
+  setSt(st,`✓ Foto agregada a la galería de "${m?m.nombre:'el modelo'}".`,"ok");
   btn.disabled = false;
   renderAdminFotosList(modeloId);
 }
@@ -1279,9 +1552,9 @@ function renderAdminFotosList(modeloId) {
   const list = document.getElementById("admin-fotos-list");
   const empty = document.getElementById("admin-fotos-empty");
   if (!list) return;
-  if (!modeloId) { list.innerHTML = ""; empty.style.display = "block"; empty.textContent = "Seleccioná una modelo para ver su galería."; return; }
+  if (!modeloId) { list.innerHTML = ""; empty.style.display = "block"; empty.textContent = "Seleccioná un modelo para ver su galería."; return; }
   const fotos = allFotos.filter(f => String(f.modelo_id) === String(modeloId));
-  if (!fotos.length) { list.innerHTML = ""; empty.style.display = "block"; empty.textContent = "Esta modelo todavía no tiene fotos."; return; }
+  if (!fotos.length) { list.innerHTML = ""; empty.style.display = "block"; empty.textContent = "Este modelo todavía no tiene fotos."; return; }
   empty.style.display = "none";
   list.innerHTML = fotos.map((f, i) => `
     <div class="admin-list-row">
@@ -1456,6 +1729,227 @@ function setSt(el, msg, type) {
 document.addEventListener("keydown", e => {
   if (e.key==="Escape") { closeModal(); closeEvModalDirect(); }
 });
+
+
+// ─── CICLO RANKING (countdown al cierre) ───────────────────
+let cicloActivo = null;
+
+async function loadCiclo() {
+  if (!sb) return;
+  try {
+    const { data } = await sb.from("ciclos_ranking").select("*").eq("activo", true).maybeSingle();
+    if (data) { cicloActivo = data; renderRankingBanner(); }
+  } catch(e) {}
+}
+
+function renderRankingBanner() {
+  if (!cicloActivo) return;
+  const banner = document.getElementById("ranking-banner");
+  const nombre = document.getElementById("ranking-ciclo-nombre");
+  const countdown = document.getElementById("ranking-countdown");
+  if (!banner) return;
+  banner.classList.add("show");
+  if (nombre) nombre.textContent = cicloActivo.nombre;
+  actualizarCountdown();
+  setInterval(actualizarCountdown, 60000);
+}
+
+function actualizarCountdown() {
+  const countdown = document.getElementById("ranking-countdown");
+  if (!countdown || !cicloActivo) return;
+  const cierre = new Date(cicloActivo.fecha_cierre + "T23:59:59");
+  const ahora  = new Date();
+  const diff   = cierre - ahora;
+  if (diff <= 0) { countdown.textContent = "cerrado"; return; }
+  const dias   = Math.floor(diff / 86400000);
+  const horas  = Math.floor((diff % 86400000) / 3600000);
+  if (dias > 0) countdown.textContent = "Quedan " + dias + " día" + (dias !== 1 ? "s" : "");
+  else countdown.textContent = "Quedan " + horas + "h";
+}
+
+// ─── COUNTDOWN DE REVOTO ────────────────────────────────────
+function getRevotoCountdown(id) {
+  const ts = localStorage.getItem("iv_" + id);
+  if (!ts) return null;
+  const elapsed = Date.now() - parseInt(ts);
+  const remaining = 86400000 - elapsed; // 24 horas
+  if (remaining <= 0) return null;
+  const h = Math.floor(remaining / 3600000);
+  const m = Math.floor((remaining % 3600000) / 60000);
+  return h + "h " + m + "m";
+}
+
+// ─── TICKER "RECIÉN SUBIDO" ─────────────────────────────────
+function renderRecentTicker() {
+  const track = document.getElementById("recent-track");
+  if (!track) return;
+  // Tomar las 8 fotos más recientes de cualquier modelo
+  const ultimas = [...allFotos]
+    .sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en))
+    .slice(0, 8);
+  if (!ultimas.length) { document.getElementById("recent-ticker").style.display = "none"; return; }
+  document.getElementById("recent-ticker").style.display = "flex";
+  const items = ultimas.map(f => {
+    const m = allModels.find(x => String(x.id) === String(f.modelo_id));
+    const nombre = m ? m.nombre : "Modelo";
+    const id = m ? m.id : "";
+    return `<span class="recent-item" onclick="openModal('${id}')">📸 Nueva foto de ${nombre}</span>`;
+  });
+  track.innerHTML = items.join("") + items.join("");
+}
+
+// ─── SEGUIR MODELO (localStorage) ──────────────────────────
+function getFollowing() {
+  try { return JSON.parse(localStorage.getItem("im_following") || "[]"); } catch(e) { return []; }
+}
+function saveFollowing(arr) {
+  localStorage.setItem("im_following", JSON.stringify(arr));
+}
+function isFollowing(id) {
+  return getFollowing().includes(String(id));
+}
+function toggleFollow() {
+  if (!currentModalModel) return;
+  const id = String(currentModalModel.id);
+  let list = getFollowing();
+  if (list.includes(id)) {
+    list = list.filter(x => x !== id);
+    showToast("Dejaste de seguir a " + currentModalModel.nombre);
+  } else {
+    list.push(id);
+    showToast("¡Ahora seguís a " + currentModalModel.nombre + "! ☆");
+  }
+  saveFollowing(list);
+  updateFollowBtn();
+  renderSeguidos();
+}
+function updateFollowBtn() {
+  const btn = document.getElementById("modal-follow-btn");
+  if (!btn || !currentModalModel) return;
+  const following = isFollowing(currentModalModel.id);
+  btn.textContent = following ? "★ Siguiendo" : "☆ Seguir";
+  btn.classList.toggle("following", following);
+}
+
+function renderSeguidos() {
+  const section = document.getElementById("seguidos-section");
+  const track   = document.getElementById("seguidos-track");
+  if (!section || !track) return;
+  const list = getFollowing();
+  const models = list.map(id => allModels.find(m => String(m.id) === String(id))).filter(Boolean);
+  if (!models.length) { section.classList.remove("show"); return; }
+  section.classList.add("show");
+  track.innerHTML = models.map(m => `
+    <div class="seguido-card" onclick="openModal('${m.id}')">
+      <div class="seguido-img"><div class="embed-box" id="seg-${m.id}"></div></div>
+      <div class="seguido-name">${m.nombre}</div>
+    </div>`).join("");
+  models.forEach(m => injectEmbed("seg-" + m.id, m.foto_perfil_embed));
+}
+
+// ─── REACCIONES POR FOTO ────────────────────────────────────
+const REACCIONES = [
+  { tipo: "heart", emoji: "❤️" },
+  { tipo: "fire",  emoji: "🔥" },
+  { tipo: "star",  emoji: "⭐" },
+  { tipo: "wow",   emoji: "😍" },
+];
+
+function hasReacted(fotoId, tipo) {
+  return !!localStorage.getItem("ir_" + fotoId + "_" + tipo);
+}
+
+async function reaccionar(fotoId, tipo) {
+  if (hasReacted(fotoId, tipo)) { showToast("Ya reaccionaste a esta foto"); return; }
+  if (!sb) { showToast("Supabase no configurado"); return; }
+  const { error } = await sb.from("reacciones_foto").insert([{ foto_id: fotoId, tipo }]);
+  if (error) { showToast("Error al reaccionar"); return; }
+  localStorage.setItem("ir_" + fotoId + "_" + tipo, "1");
+  showToast(REACCIONES.find(r => r.tipo === tipo)?.emoji + " ¡Reacción guardada!");
+  // Update counter visually
+  const counter = document.getElementById("rc-" + fotoId + "-" + tipo);
+  if (counter) {
+    const n = parseInt(counter.textContent || "0") + 1;
+    counter.textContent = n;
+  }
+}
+
+async function loadFotoReactions(fotos) {
+  if (!sb || !fotos.length) return {};
+  const ids = fotos.map(f => f.id);
+  try {
+    const { data } = await sb.from("reacciones_foto").select("foto_id, tipo");
+    if (!data) return {};
+    const counts = {};
+    data.forEach(r => {
+      const key = r.foto_id + "_" + r.tipo;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return counts;
+  } catch(e) { return {}; }
+}
+
+// ─── COMPARTIR PERFIL CON CONTADOR ─────────────────────────
+async function copyShareLinkWithCount() {
+  if (!currentModalModel) return;
+  const m = currentModalModel;
+  const url = location.origin + location.pathname + "#modelo-" + m.id;
+  const texto = "Visitá el perfil de " + m.nombre + " en imar source";
+  // Incrementar contador
+  if (sb) {
+    const nuevoCount = (m.compartidos || 0) + 1;
+    await sb.from("modelos").update({ compartidos: nuevoCount }).eq("id", m.id);
+    m.compartidos = nuevoCount;
+    const el = document.getElementById("modal-compartidos");
+    if (el) el.textContent = nuevoCount;
+  }
+  if (navigator.share) {
+    try { await navigator.share({ title: m.nombre, text: texto, url }); return; } catch(e) {}
+  }
+  try {
+    await navigator.clipboard.writeText(texto + ": " + url);
+    showToast("¡Enlace copiado! Compartilo para subir el ranking ↑");
+  } catch(e) { showToast("No se pudo copiar el enlace"); }
+}
+
+// ─── TESTIMONIOS ────────────────────────────────────────────
+async function loadTestimonios() {
+  if (!sb) return;
+  try {
+    const { data } = await sb.from("testimonios").select("*").eq("activo", true).order("orden");
+    if (data && data.length) renderTestimonios(data);
+    else document.getElementById("testimonios-section").style.display = "none";
+  } catch(e) { document.getElementById("testimonios-section").style.display = "none"; }
+}
+
+function renderTestimonios(testimonios) {
+  const grid = document.getElementById("testimonios-grid");
+  if (!grid) return;
+  grid.innerHTML = testimonios.map(t => `
+    <div class="test-card">
+      <div class="test-quote">"${t.texto}"</div>
+      <div class="test-name">— ${t.modelo_nombre}</div>
+    </div>`).join("");
+}
+
+// ─── MODAL "QUIERO SER PARTE" ────────────────────────────────
+function openPostulacion() {
+  document.getElementById("modal-postulacion-overlay").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+function closePostulacion() {
+  document.getElementById("modal-postulacion-overlay").style.display = "none";
+  document.body.style.overflow = "";
+}
+
+// ─── INSIGNIAS EN MODAL ─────────────────────────────────────
+function renderModalBadges(m) {
+  const container = document.getElementById("modal-badges");
+  if (!container) return;
+  const badges = m.insignias || [];
+  if (!badges.length) { container.innerHTML = ""; return; }
+  container.innerHTML = badges.map(b => `<span class="badge">🏆 ${b}</span>`).join("");
+}
 
 // ─── START ─────────────────────────────────────────────────
 init();
