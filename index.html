@@ -494,11 +494,11 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <!-- SALÓN DE LA FAMA -->
 <div class="section-header" id="fama-section">
   <div class="section-title">Salón de la Fama</div>
-  <div class="section-label">Todas las que llegaron al Top 3, alguna vez</div>
+  <div class="section-label">Quienes llegaron al Top 3, alguna vez</div>
 </div>
 <section id="fama-section-body">
   <div id="fama-grid" class="fama-grid"></div>
-  <div id="fama-empty" style="display:none">Todavía no hay ganadoras en el Salón de la Fama.</div>
+  <div id="fama-empty" style="display:none">Todavía no hay nadie en el Salón de la Fama.</div>
 </section>
 
 <!-- DESTACADOS -->
@@ -1022,7 +1022,7 @@ function renderPodio() {
   top3.forEach(m => injectEmbed("pe-"+m.id, m.foto_perfil_embed));
 }
 
-// ─── SALÓN DE LA FAMA (todas las que ganaron top 3 alguna vez) ─
+// ─── SALÓN DE LA FAMA (todos los perfiles que ganaron top 3 alguna vez) ─
 function renderFama() {
   const grid = document.getElementById("fama-grid");
   const empty = document.getElementById("fama-empty");
@@ -2135,12 +2135,6 @@ async function downloadProfileImage() {
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext("2d");
 
-    // ¿Es el perfil #1 del ranking actual? (para el tratamiento "Top 1 del mes")
-    const rank = allModels.findIndex(x => String(x.id) === String(m.id)) + 1;
-    const esTop1 = rank === 1;
-    const GOLD = "#D4AF37";
-    const GOLD_LIGHT = "#F3DA8C";
-
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, W, H);
 
@@ -2182,28 +2176,6 @@ async function downloadProfileImage() {
       cursorY += 30;
     }
 
-    // Marco metálico dorado + "✦ TOP 1 DEL MES ✦" — solo para el #1 del ranking
-    if (esTop1) {
-      const inset = 26;
-      const frameGrad = ctx.createLinearGradient(0, 0, 0, H);
-      frameGrad.addColorStop(0, GOLD_LIGHT);
-      frameGrad.addColorStop(0.5, GOLD);
-      frameGrad.addColorStop(1, GOLD_LIGHT);
-      ctx.save();
-      ctx.shadowColor = "rgba(212,175,55,.55)";
-      ctx.shadowBlur = 22;
-      ctx.strokeStyle = frameGrad;
-      ctx.lineWidth = 5;
-      ctx.strokeRect(inset, inset, W - inset * 2, H - inset * 2);
-      ctx.restore();
-
-      ctx.textAlign = "center";
-      ctx.fillStyle = GOLD_LIGHT;
-      ctx.font = "600 26px 'Montserrat', Helvetica, sans-serif";
-      fillTextSpaced(ctx, "✦ TOP 1 DEL MES ✦", W/2, cursorY, 6);
-      cursorY += 56;
-    }
-
     // Nombre — tipografía cinematográfica, grande y elegante
     ctx.textAlign = "center";
     ctx.fillStyle = "#fff";
@@ -2215,7 +2187,7 @@ async function downloadProfileImage() {
     // Etiqueta chica, espaciada y dorada — para que no compita con el código
     const labelY = H - 300 + (nameLines - 1) * 84 + 78;
     ctx.font = "600 20px 'Montserrat', Helvetica, sans-serif";
-    ctx.fillStyle = esTop1 ? GOLD_LIGHT : "rgba(212,175,55,.85)";
+    ctx.fillStyle = "rgba(212,175,55,.85)";
     fillTextSpaced(ctx, "MI CÓDIGO DE BÚSQUEDA", W/2, labelY, 4.5);
 
     // Código — protagonista, grande y en negrita
