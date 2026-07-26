@@ -15,8 +15,9 @@
 <title>imar source</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700;1,900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -41,21 +42,23 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);font-siz
 /* HEADER */
 header{border-bottom:1px solid var(--black);padding:48px 60px 36px;display:flex;flex-direction:column;align-items:center;gap:12px;background-size:cover;background-position:center;background-repeat:no-repeat}
 .logo{cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
-.logo img{height:clamp(48px,8vw,96px);width:auto;max-width:100%;object-fit:contain;display:block}
+.logo img{height:clamp(72px,12vw,140px);width:auto;max-width:100%;object-fit:contain;display:block}
 .header-sub{font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gray-text)}
 nav{display:flex;gap:40px;align-items:center;margin-top:8px;font-size:9px;letter-spacing:.2em;text-transform:uppercase}
 nav a{color:var(--black);text-decoration:none;cursor:pointer;transition:color var(--ease)}
 nav a:hover{color:var(--gray-text)}
 
-/* HERO PORTADA */
+/* HERO PORTADA — estilo tapa de revista, capas editables desde el admin */
 #hero-portada{position:relative;width:100%;height:clamp(440px,72vw,760px);max-height:820px;overflow:hidden;background:var(--black)}
 #hero-portada-bg{position:absolute;inset:0;background-size:cover;background-position:center 22%;background-repeat:no-repeat;background-color:#111}
 .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.35) 70%,rgba(0,0,0,.82) 100%)}
-.hero-content{position:absolute;left:0;right:0;bottom:0;padding:56px 60px 48px;color:var(--white);text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
-.hero-eyebrow{font-size:10px;letter-spacing:.45em;text-transform:uppercase;opacity:.85}
-.hero-titular{font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(30px,6.4vw,86px);line-height:1.05;letter-spacing:-.01em}
-.hero-subtitulo{font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.9;max-width:620px;line-height:1.7}
-#hero-portada.empty .hero-eyebrow,#hero-portada.empty .hero-subtitulo{opacity:.55}
+#hero-portada.empty .hero-layer{opacity:.55}
+.hero-layer{position:absolute;line-height:1.12;text-shadow:0 2px 12px rgba(0,0,0,.55);max-width:88%;white-space:pre-wrap;z-index:5}
+.hero-logo-img{position:absolute;z-index:6;pointer-events:none;max-width:80%}
+.hero-marca-agua-img{position:absolute;z-index:6;pointer-events:none;opacity:.92;max-width:60%}
+#hero-secundarias,#hero-bajadas{position:absolute;inset:0}
+#hero-download-btn{position:absolute;right:16px;bottom:16px;z-index:20;background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.45);font-family:var(--sans);font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:12px 18px;cursor:pointer;transition:background var(--ease)}
+#hero-download-btn:hover{background:rgba(0,0,0,.8)}
 
 /* SEARCH */
 #search-section{padding:56px 60px 36px;display:flex;flex-direction:column;align-items:center;gap:14px;border-bottom:1px solid var(--gray-mid)}
@@ -316,7 +319,8 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   header{padding:32px 24px 24px}
   nav{gap:20px;flex-wrap:wrap;justify-content:center}
   #hero-portada{height:clamp(360px,110vw,560px)}
-  .hero-content{padding:28px 22px 30px}
+  .hero-layer{max-width:94%}
+  #hero-download-btn{right:10px;bottom:10px;padding:9px 12px}
   #eventos-carousel-section .section-header-inner{padding:0 24px 20px}
   .eventos-track{padding:4px 24px 12px}
   .evento-card{width:230px}
@@ -425,7 +429,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 
 <!-- HEADER -->
 <header id="site-header">
-  <div class="logo" onclick="location.reload()"><img src="https://i.ibb.co/HDRLbntG/88053bc3-cc24-4541-8c12-1017a47ec874.png" alt="imar source"></div>
+  <div class="logo" onclick="location.reload()"><img src="https://i.ibb.co/h0XNGpb/54-sin-t-tulo-20260726015938.png" alt="imar source"></div>
   <nav>
     <a onclick="goTo('#eventos-carousel-section')">Eventos</a>
     <a onclick="goTo('#podio-section')">Perfiles Destacados</a>
@@ -436,14 +440,17 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   </nav>
 </header>
 
-<!-- HERO / PORTADA DE LA TEMPORADA -->
+<!-- HERO / PORTADA DE LA TEMPORADA — tapa de revista con capas editables -->
 <section id="hero-portada">
   <div id="hero-portada-bg"></div>
   <div class="hero-scrim"></div>
-  <div class="hero-content">
-    <h1 class="hero-titular" id="hero-titular">Edición Primavera / Verano</h1>
-    <div class="hero-subtitulo" id="hero-subtitulo">Las tendencias que marcan la temporada.</div>
-  </div>
+  <img id="hero-logo" class="hero-logo-img" alt="">
+  <div id="hero-titular" class="hero-layer"></div>
+  <div id="hero-secundarias"></div>
+  <div id="hero-bajadas"></div>
+  <div id="hero-personaje" class="hero-layer"></div>
+  <img id="hero-marca-agua" class="hero-marca-agua-img" alt="">
+  <button id="hero-download-btn" onclick="descargarPortada()">⬇ Descargar portada</button>
 </section>
 
 <!-- SEARCH -->
@@ -712,7 +719,9 @@ portada
   imagen_url    text   -- link directo a la imagen de portada
   titular       text
   subtitulo     text
-  header_bg_url text   -- link directo a la imagen de fondo del header (logo). Columna nueva, agregarla si no existe.</pre>
+  header_bg_url text   -- link directo a la imagen de fondo del header (logo). Columna nueva, agregarla si no existe.
+  layout        jsonb  -- posición/tamaño/color de logo, titular, líneas secundarias, bajadas, personaje y marca de agua.
+                        -- Se edita desde admin.html (Editar Portada), no desde este panel viejo.</pre>
       </details>
     </div>
 
@@ -954,12 +963,67 @@ function scrollEventos(dir) {
   track.scrollBy({ left: dir * 320, behavior: "smooth" });
 }
 
-// ─── HERO / PORTADA ────────────────────────────────────────
+// ─── HERO / PORTADA — capas de tapa de revista ──────────────
+const DEFAULT_COVER_LOGO = "https://i.ibb.co/h0XNGpb/54-sin-t-tulo-20260726015938.png";
+
+function defaultCoverLayout() {
+  return {
+    logo: { url: DEFAULT_COVER_LOGO, top: 6, left: 50, width: 170 },
+    titular: { text: "", top: 58, left: 50, size: 64, color: "#ffffff", align: "center" },
+    secundarias: [],
+    bajadas: [],
+    personaje: { text: "", top: 92, left: 10, size: 24, color: "#ffffff", align: "left" },
+    marca_agua: { embed: "", top: 95, left: 90, width: 90 }
+  };
+}
+
+function getCoverLayout() {
+  const d = defaultCoverLayout();
+  const l = (heroPortada && heroPortada.layout) ? heroPortada.layout : {};
+  return {
+    logo: Object.assign({}, d.logo, l.logo || {}),
+    titular: Object.assign({}, d.titular, l.titular || {}, { text: (l.titular && l.titular.text) || heroPortada.titular || "" }),
+    secundarias: Array.isArray(l.secundarias) ? l.secundarias : [],
+    bajadas: Array.isArray(l.bajadas) ? l.bajadas : [],
+    personaje: Object.assign({}, d.personaje, l.personaje || {}),
+    marca_agua: Object.assign({}, d.marca_agua, l.marca_agua || {})
+  };
+}
+
+// Ubica una capa de texto según su top/left (%, punto de anclaje) y su alineación.
+function positionHeroLayer(el, cfg, fontKind) {
+  el.style.top = (cfg.top ?? 50) + "%";
+  el.style.left = (cfg.left ?? 50) + "%";
+  el.style.fontSize = (cfg.size || 16) + "px";
+  el.style.color = cfg.color || "#ffffff";
+  const align = cfg.align || "center";
+  el.style.textAlign = align;
+  let tx = "-50%";
+  if (align === "left") tx = "0%"; else if (align === "right") tx = "-100%";
+  el.style.transform = `translate(${tx}, -50%)`;
+  if (fontKind === "titular") {
+    el.style.fontFamily = "'Playfair Display', Georgia, serif";
+    el.style.fontStyle = "italic";
+    el.style.fontWeight = "900";
+    el.style.letterSpacing = "-.01em";
+  } else if (fontKind === "bajada") {
+    el.style.fontFamily = "'Montserrat', Helvetica, sans-serif";
+    el.style.fontStyle = "normal";
+    el.style.fontWeight = "300";
+    el.style.letterSpacing = ".04em";
+    el.style.textTransform = "none";
+  } else {
+    el.style.fontFamily = "'Montserrat', Helvetica, sans-serif";
+    el.style.fontStyle = "normal";
+    el.style.fontWeight = "800";
+    el.style.letterSpacing = ".05em";
+    el.style.textTransform = "uppercase";
+  }
+}
+
 function renderHero() {
   const wrap = document.getElementById("hero-portada");
   const bg = document.getElementById("hero-portada-bg");
-  const titular = document.getElementById("hero-titular");
-  const subtitulo = document.getElementById("hero-subtitulo");
 
   if (heroPortada && heroPortada.imagen_url) {
     bg.style.backgroundImage = `url('${heroPortada.imagen_url}')`;
@@ -968,8 +1032,105 @@ function renderHero() {
     bg.style.backgroundImage = "none";
     wrap.classList.add("empty");
   }
-  titular.textContent = (heroPortada && heroPortada.titular) ? heroPortada.titular : "Edición Primavera / Verano";
-  subtitulo.textContent = (heroPortada && heroPortada.subtitulo) ? heroPortada.subtitulo : "Las tendencias que marcan la temporada.";
+
+  const L = getCoverLayout();
+
+  // Logo (cabecera de la tapa)
+  const logoEl = document.getElementById("hero-logo");
+  if (L.logo.url) {
+    logoEl.src = L.logo.url;
+    logoEl.style.display = "block";
+    logoEl.style.top = L.logo.top + "%";
+    logoEl.style.left = L.logo.left + "%";
+    logoEl.style.width = L.logo.width + "px";
+    logoEl.style.transform = "translate(-50%,-50%)";
+  } else {
+    logoEl.style.display = "none";
+  }
+
+  // Titular
+  const titEl = document.getElementById("hero-titular");
+  titEl.textContent = L.titular.text || "";
+  positionHeroLayer(titEl, L.titular, "titular");
+
+  // Líneas secundarias
+  const secWrap = document.getElementById("hero-secundarias");
+  secWrap.innerHTML = "";
+  L.secundarias.forEach(item => {
+    if (!item || !item.text) return;
+    const el = document.createElement("div");
+    el.className = "hero-layer";
+    el.textContent = item.text;
+    positionHeroLayer(el, item, "secundaria");
+    secWrap.appendChild(el);
+  });
+
+  // Bajadas / subtítulos
+  const bajWrap = document.getElementById("hero-bajadas");
+  bajWrap.innerHTML = "";
+  L.bajadas.forEach(item => {
+    if (!item || !item.text) return;
+    const el = document.createElement("div");
+    el.className = "hero-layer";
+    el.textContent = item.text;
+    positionHeroLayer(el, item, "bajada");
+    bajWrap.appendChild(el);
+  });
+
+  // Nombre del personaje
+  const persEl = document.getElementById("hero-personaje");
+  persEl.textContent = L.personaje.text || "";
+  positionHeroLayer(persEl, L.personaje, "personaje");
+
+  // Crédito / marca de agua
+  const wmUrl = getEmbedShareUrl(L.marca_agua.embed);
+  const wmEl = document.getElementById("hero-marca-agua");
+  if (wmUrl) {
+    wmEl.src = wmUrl;
+    wmEl.style.display = "block";
+    wmEl.style.top = L.marca_agua.top + "%";
+    wmEl.style.left = L.marca_agua.left + "%";
+    wmEl.style.width = L.marca_agua.width + "px";
+    wmEl.style.transform = "translate(-50%,-50%)";
+  } else {
+    wmEl.style.display = "none";
+  }
+
+  // Botón de descarga: sólo tiene sentido si hay imagen de fondo cargada
+  const dlBtn = document.getElementById("hero-download-btn");
+  if (dlBtn) dlBtn.style.display = (heroPortada && heroPortada.imagen_url) ? "block" : "none";
+}
+
+// Descarga la portada completa (imagen + logo + textos + marca de agua) como JPG,
+// tomando una "foto" exacta de lo que se ve en pantalla.
+async function descargarPortada() {
+  if (!heroPortada || !heroPortada.imagen_url) { showToast("Todavía no hay una portada cargada"); return; }
+  if (typeof html2canvas === "undefined") { showToast("No se pudo cargar el generador de imágenes"); return; }
+  const wrap = document.getElementById("hero-portada");
+  const btn = document.getElementById("hero-download-btn");
+  showToast("Generando portada…");
+  if (btn) btn.style.visibility = "hidden";
+  try {
+    if (document.fonts && document.fonts.ready) { await document.fonts.ready; }
+    const canvas = await html2canvas(wrap, { useCORS: true, backgroundColor: "#000000", scale: 2 });
+    if (btn) btn.style.visibility = "";
+    canvas.toBlob((blob) => {
+      if (!blob) { showToast("No se pudo generar la imagen"); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "portada-imar-source.jpg";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      showToast("¡Portada descargada!");
+    }, "image/jpeg", 0.95);
+  } catch (e) {
+    if (btn) btn.style.visibility = "";
+    console.error(e);
+    showToast("No se pudo generar la portada. Probá de nuevo.");
+  }
 }
 
 function renderHeaderBg() {
