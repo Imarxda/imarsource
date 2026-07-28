@@ -401,6 +401,29 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 .test-quote{font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.7;color:#333}
 .test-name{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text)}
 @media(max-width:640px){#testimonios-section{padding:40px 24px}#seguidos-track{padding:0 24px}#banner-postulacion{padding:32px 24px}}
+
+/* ── CUENTA / AUTENTICACIÓN ─────────────────────────────── */
+.af{display:flex;flex-direction:column;gap:6px}
+.af label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text)}
+.af input{width:100%;border:none;border-bottom:1px solid var(--gray-mid);background:transparent;font-family:var(--sans);font-size:14px;letter-spacing:.02em;color:var(--black);padding:9px 2px;outline:none;transition:border-color var(--ease)}
+.af input:focus{border-bottom-color:var(--black)}
+#nav-account-link{position:relative}
+#nav-bell{position:relative;cursor:pointer;display:inline-flex;align-items:center}
+#nav-bell-dot{position:absolute;top:-4px;right:-8px;width:8px;height:8px;border-radius:50%;background:#c0392b;display:none}
+#nav-bell-dot.show{display:block}
+.notif-panel{position:fixed;top:0;right:0;height:100%;width:360px;max-width:92vw;background:var(--white);box-shadow:-6px 0 24px rgba(0,0,0,.18);z-index:3500;transform:translateX(100%);transition:transform var(--ease);display:flex;flex-direction:column}
+.notif-panel.open{transform:translateX(0)}
+.notif-head{padding:24px 24px 16px;border-bottom:1px solid var(--gray-mid);display:flex;justify-content:space-between;align-items:center}
+.notif-title{font-family:var(--serif);font-size:18px;font-style:italic}
+.notif-list{flex:1;overflow-y:auto;padding:8px 0}
+.notif-item{padding:16px 24px;border-bottom:1px solid var(--gray-mid);cursor:pointer}
+.notif-item.unread{background:#fbf8ef}
+.notif-item-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.notif-item-body{font-size:11px;color:var(--gray-text);line-height:1.5}
+.notif-item-time{font-size:9px;color:var(--gray-mid);margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
+#notif-empty{padding:40px 24px;text-align:center;color:var(--gray-mid);font-size:11px;font-style:italic}
+#notif-scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3400;display:none}
+#notif-scrim.show{display:block}
 </style>
 </head>
 <body>
@@ -437,6 +460,8 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     <a onclick="goTo('#destacados-section')">Destacados</a>
     <a onclick="goTo('#lista-section')">Directorio</a>
     <a onclick="openPostulacion()" style="color:var(--gold);font-weight:600">★ Quiero ser parte</a>
+    <a onclick="handleAccountNavClick()" id="nav-account-link">Iniciar sesión</a>
+    <a onclick="openNotifPanel()" id="nav-bell" style="display:none">🔔<span id="nav-bell-dot"></span></a>
   </nav>
 </header>
 
@@ -642,6 +667,69 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     </div>
     <div style="font-size:9px;color:var(--gray-text);margin-top:20px;text-align:center">También podés seguirnos en Instagram para novedades</div>
   </div>
+</div>
+
+<!-- MODAL CUENTA (login / crear cuenta para votar) -->
+<div id="modal-auth-overlay" onclick="if(event.target===this)closeAuthModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:3000;display:none;align-items:center;justify-content:center;padding:24px">
+  <div style="background:var(--white);max-width:440px;width:100%;padding:44px 40px;position:relative;max-height:92vh;overflow-y:auto">
+    <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer">✕</button>
+
+    <div style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Cuenta</div>
+    <div style="font-family:var(--serif);font-size:22px;margin-bottom:10px" id="auth-modal-title">Necesitás una cuenta para votar</div>
+    <div style="font-size:11px;color:var(--gray-text);line-height:1.6;margin-bottom:24px">Creamos cuentas para asegurarnos de que cada voto sea de una persona real. Un voto por cuenta, por ciclo de ranking.</div>
+
+    <div style="display:flex;gap:0;border-bottom:1px solid var(--gray-mid);margin-bottom:24px">
+      <button type="button" onclick="switchAuthTab('login')" id="auth-tab-login" style="flex:1;background:none;border:none;border-bottom:2px solid var(--black);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:12px 0;cursor:pointer;color:var(--black)">Iniciar sesión</button>
+      <button type="button" onclick="switchAuthTab('signup')" id="auth-tab-signup" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--gray-text);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:12px 0;cursor:pointer">Crear cuenta</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="auth-pane-login">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="af"><label>Email</label><input type="email" id="login-email" autocomplete="email"></div>
+        <div class="af"><label>Contraseña</label><input type="password" id="login-password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doUserLogin()"></div>
+        <div id="auth-login-status" style="font-size:10px;color:#c0392b;min-height:16px"></div>
+        <button class="lista-btn" style="background:var(--black);color:var(--white);padding:14px 0" onclick="doUserLogin()" id="btn-do-login">Ingresar</button>
+        <div style="font-size:9px;color:var(--gray-text);text-align:center">¿Olvidaste tu contraseña? <a onclick="doResetPassword()" style="color:var(--black);text-decoration:underline;cursor:pointer">Recuperarla</a></div>
+      </div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="auth-pane-signup" style="display:none">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="af">
+          <label>Foto de perfil</label>
+          <div style="display:flex;align-items:center;gap:14px">
+            <div id="signup-foto-preview" style="width:56px;height:56px;border-radius:50%;overflow:hidden;background:var(--gray-light);border:1px solid var(--gray-mid);flex-shrink:0;background-size:cover;background-position:center"></div>
+            <input type="file" accept="image/*" id="signup-foto" onchange="previewSignupFoto(event)" style="font-size:11px">
+          </div>
+        </div>
+        <div class="af"><label>Nombre</label><input type="text" id="signup-nombre" autocomplete="given-name"></div>
+        <div class="af"><label>Apellido</label><input type="text" id="signup-apellido" autocomplete="family-name"></div>
+        <div class="af"><label>Apodo</label><input type="text" id="signup-apodo" placeholder="Cómo querés que te veamos"></div>
+        <div class="af"><label>Fecha de nacimiento</label><input type="date" id="signup-fecha"></div>
+        <div class="af"><label>Email</label><input type="email" id="signup-email" autocomplete="email"></div>
+        <div class="af"><label>Contraseña</label><input type="password" id="signup-password" autocomplete="new-password"></div>
+        <label style="display:flex;gap:10px;align-items:flex-start;font-size:10px;color:var(--gray-text);line-height:1.6;cursor:pointer">
+          <input type="checkbox" id="signup-privacidad" style="margin-top:3px">
+          <span>Entiendo que mis datos (foto, nombre, apellido, apodo y fecha de nacimiento) permanecen <strong>ocultos</strong>, no se muestran públicamente ni se comparten con nadie. Solo se usan para verificar que soy una persona real y evitar cuentas duplicadas.</span>
+        </label>
+        <div id="auth-signup-status" style="font-size:10px;color:#c0392b;min-height:16px"></div>
+        <button class="lista-btn" style="background:var(--black);color:var(--white);padding:14px 0" onclick="doUserSignup()" id="btn-do-signup">Crear cuenta y votar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL DE NOTIFICACIONES -->
+<div id="notif-scrim" onclick="closeNotifPanel()"></div>
+<div id="notif-panel" class="notif-panel">
+  <div class="notif-head">
+    <div class="notif-title">Notificaciones</div>
+    <button onclick="closeNotifPanel()" style="background:none;border:none;font-size:18px;cursor:pointer">✕</button>
+  </div>
+  <div class="notif-list" id="notif-list"></div>
+  <div id="notif-empty" style="display:none">Todavía no tenés notificaciones.</div>
 </div>
 
 <!-- TOAST -->
@@ -854,6 +942,8 @@ const SUPABASE_URL_DEFAULT = "https://lmxpbgvbxvmnlcntovdo.supabase.co"; // pega
 const SUPABASE_KEY_DEFAULT = "sb_publishable_IRXmidh-ipHtdPMH4-O-iA_dQnnuZN6"; // pegar Anon Key aqui
 const ADMIN_PASSWORD = "imarsource2025"; // cambiar esta contraseña
 const PORTADA_ID = 1; // fila única de la tabla "portada"
+const AVATAR_BUCKET = "avatars"; // bucket de Supabase Storage para fotos de perfil de cuentas
+const EDAD_MINIMA = 18; // edad mínima para crear cuenta
 
 // ─── ESTADO ────────────────────────────────────────────────
 let sb = null;
@@ -867,6 +957,16 @@ let currentModalModel = null;
 let currentGalleryFotos = [];
 let currentLightboxIndex = 0;
 let toastTimer;
+
+// ─── CUENTA DE USUARIO ─────────────────────────────────────
+let currentUser = null;      // sesión de Supabase Auth
+let currentUsuario = null;   // fila de la tabla "usuarios" (perfil)
+let miVotoCiclo = null;      // voto del usuario en el ciclo activo (si existe)
+let pendingVoteAfterLogin = null;
+let signupFotoFile = null;
+
+// ─── NOTIFICACIONES ────────────────────────────────────────
+let misNotificaciones = [];
 
 // ─── SUPABASE ──────────────────────────────────────────────
 function initSB(url, key) {
@@ -893,7 +993,10 @@ function initSBFromPanel() {
 
 // ─── INIT ──────────────────────────────────────────────────
 async function init() {
-  if (tryInitSB()) await loadData();
+  if (tryInitSB()) {
+    await loadData();
+    await initAuth();
+  }
   else renderAll();
   handleHash();
 }
@@ -1348,21 +1451,53 @@ function votePercentText(m) {
   return pct + "%";
 }
 
+// hasVoted(id): ¿el usuario logueado ya usó su voto del ciclo actual en ESTE modelo?
 function hasVoted(id) {
-  const ts = localStorage.getItem("iv_"+id);
-  return ts && Date.now() - parseInt(ts) < 86400000;
+  return !!(miVotoCiclo && String(miVotoCiclo.modelo_id) === String(id));
+}
+// yaVotoEsteCiclo: ¿el usuario ya usó su único voto del ciclo, sea cual sea el modelo?
+function yaVotoEsteCiclo() {
+  return !!miVotoCiclo;
 }
 
 async function vote(id) {
-  if (hasVoted(id)) { showToast("Ya votaste por este modelo hoy"); return; }
   if (!sb) { showToast("Supabase no configurado"); return; }
+
+  // 1) Necesita cuenta
+  if (!currentUsuario) {
+    pendingVoteAfterLogin = id;
+    openAuthModal();
+    showToast("Creá una cuenta o iniciá sesión para votar");
+    return;
+  }
+
+  // 2) Necesita ciclo activo
+  if (!cicloActivo) { showToast("No hay un ciclo de votación activo por ahora"); return; }
+
+  // 3) Ya usó su voto de este ciclo
+  if (yaVotoEsteCiclo()) {
+    showToast(hasVoted(id) ? "Ya votaste por este perfil este mes" : "Ya usaste tu voto de este ciclo. Podrás votar de nuevo cuando se reinicie el ranking.");
+    return;
+  }
+
   const m = allModels.find(x => x.id === id);
   if (!m) return;
+
+  const { data: votoInsertado, error: vErr } = await sb.from("votos").insert([{
+    usuario_id: currentUsuario.id, modelo_id: id, ciclo_id: cicloActivo.id
+  }]).select().maybeSingle();
+
+  if (vErr) {
+    if (vErr.code === "23505") showToast("Ya usaste tu voto de este ciclo.");
+    else showToast("Error al votar: " + vErr.message);
+    return;
+  }
+
+  miVotoCiclo = votoInsertado;
   const newVotes = (m.likes_mes||0) + 1;
   const { error } = await sb.from("modelos").update({ likes_mes: newVotes }).eq("id", id);
-  if (error) { showToast("Error al votar"); return; }
+  if (error) { showToast("Tu voto quedó registrado, pero hubo un error al sumar el contador."); }
   m.likes_mes = newVotes;
-  localStorage.setItem("iv_"+id, Date.now().toString());
   allModels.sort((a,b)=>(b.likes_mes||0)-(a.likes_mes||0));
   showToast("¡Voto registrado! ♥");
   renderPodio(); renderLista(); renderSearchResults();
@@ -1375,6 +1510,278 @@ async function vote(id) {
 
 async function voteFromModal() {
   if (currentModalModel) await vote(currentModalModel.id);
+}
+
+// ══════════════════════════════════════════════════════════
+// ─── CUENTA DE USUARIO (Supabase Auth) ──────────────────────
+// ══════════════════════════════════════════════════════════
+
+async function initAuth() {
+  if (!sb) return;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session && session.user) await onAuthReady(session.user);
+    else updateAuthUI();
+    sb.auth.onAuthStateChange((_event, session) => {
+      if (session && session.user) onAuthReady(session.user);
+      else { currentUser = null; currentUsuario = null; miVotoCiclo = null; updateAuthUI(); }
+    });
+  } catch(e) { console.warn("Auth init error:", e); updateAuthUI(); }
+}
+
+async function onAuthReady(user) {
+  currentUser = user;
+  try {
+    const { data } = await sb.from("usuarios").select("*").eq("id", user.id).maybeSingle();
+    if (!data || data.activa === false) {
+      // Cuenta eliminada por el administrador o perfil incompleto
+      await sb.auth.signOut();
+      currentUser = null; currentUsuario = null; miVotoCiclo = null;
+      updateAuthUI();
+      return;
+    }
+    currentUsuario = data;
+    await cargarMiVoto();
+    await cargarNotificaciones();
+  } catch(e) { console.warn("Error cargando perfil:", e); }
+  updateAuthUI();
+
+  if (pendingVoteAfterLogin) {
+    const id = pendingVoteAfterLogin;
+    pendingVoteAfterLogin = null;
+    closeAuthModal();
+    vote(id);
+  }
+}
+
+async function cargarMiVoto() {
+  miVotoCiclo = null;
+  if (!currentUsuario || !cicloActivo) return;
+  try {
+    const { data } = await sb.from("votos").select("*")
+      .eq("usuario_id", currentUsuario.id).eq("ciclo_id", cicloActivo.id).maybeSingle();
+    miVotoCiclo = data || null;
+  } catch(e) {}
+}
+
+function updateAuthUI() {
+  const link = document.getElementById("nav-account-link");
+  const bell = document.getElementById("nav-bell");
+  if (!link) return;
+  if (currentUsuario) {
+    link.textContent = "★ " + (currentUsuario.apodo || "Mi cuenta");
+    if (bell) bell.style.display = "inline-flex";
+    renderNotifBadge();
+  } else {
+    link.textContent = "Iniciar sesión";
+    if (bell) bell.style.display = "none";
+  }
+  renderPodio(); renderLista(); renderSearchResults();
+}
+
+function handleAccountNavClick() {
+  if (currentUsuario) {
+    if (confirm(`Sesión iniciada como ${currentUsuario.apodo}.\n\n¿Querés cerrar sesión?`)) doUserLogout();
+  } else {
+    openAuthModal();
+  }
+}
+
+function openAuthModal() {
+  document.getElementById("modal-auth-overlay").style.display = "flex";
+  document.body.style.overflow = "hidden";
+  switchAuthTab(pendingVoteAfterLogin ? "signup" : "login");
+}
+function closeAuthModal() {
+  document.getElementById("modal-auth-overlay").style.display = "none";
+  document.body.style.overflow = "";
+}
+function switchAuthTab(tab) {
+  const isLogin = tab === "login";
+  document.getElementById("auth-pane-login").style.display = isLogin ? "block" : "none";
+  document.getElementById("auth-pane-signup").style.display = isLogin ? "none" : "block";
+  document.getElementById("auth-tab-login").style.borderBottomColor = isLogin ? "var(--black)" : "transparent";
+  document.getElementById("auth-tab-login").style.color = isLogin ? "var(--black)" : "var(--gray-text)";
+  document.getElementById("auth-tab-signup").style.borderBottomColor = !isLogin ? "var(--black)" : "transparent";
+  document.getElementById("auth-tab-signup").style.color = !isLogin ? "var(--black)" : "var(--gray-text)";
+}
+
+function previewSignupFoto(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  signupFotoFile = file;
+  const url = URL.createObjectURL(file);
+  document.getElementById("signup-foto-preview").style.backgroundImage = `url('${url}')`;
+}
+
+function calcularEdad(fechaStr) {
+  const hoy = new Date(); const nac = new Date(fechaStr + "T00:00:00");
+  let edad = hoy.getFullYear() - nac.getFullYear();
+  const m = hoy.getMonth() - nac.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+  return edad;
+}
+
+async function doUserSignup() {
+  const st = document.getElementById("auth-signup-status");
+  const btn = document.getElementById("btn-do-signup");
+  st.textContent = "";
+  const nombre = document.getElementById("signup-nombre").value.trim();
+  const apellido = document.getElementById("signup-apellido").value.trim();
+  const apodo = document.getElementById("signup-apodo").value.trim();
+  const fecha = document.getElementById("signup-fecha").value;
+  const email = document.getElementById("signup-email").value.trim();
+  const password = document.getElementById("signup-password").value;
+  const aceptaPrivacidad = document.getElementById("signup-privacidad").checked;
+
+  if (!signupFotoFile) { st.textContent = "Subí una foto de perfil."; return; }
+  if (!nombre || !apellido || !apodo) { st.textContent = "Completá nombre, apellido y apodo."; return; }
+  if (!fecha) { st.textContent = "Ingresá tu fecha de nacimiento."; return; }
+  if (calcularEdad(fecha) < EDAD_MINIMA) { st.textContent = `Tenés que ser mayor de ${EDAD_MINIMA} años para crear una cuenta.`; return; }
+  if (!email || !password || password.length < 6) { st.textContent = "Email válido y contraseña de al menos 6 caracteres."; return; }
+  if (!aceptaPrivacidad) { st.textContent = "Tenés que aceptar cómo usamos tus datos para continuar."; return; }
+  if (!sb) { st.textContent = "Supabase no configurado."; return; }
+
+  btn.disabled = true; st.style.color = "var(--gray-text)"; st.textContent = "Creando cuenta…";
+  try {
+    const { data: signData, error: signErr } = await sb.auth.signUp({ email, password });
+    if (signErr) throw signErr;
+    const user = signData.user;
+    if (!user) { st.textContent = "Revisá tu email para confirmar la cuenta y después iniciá sesión."; btn.disabled=false; return; }
+
+    // Subir foto de perfil al bucket "avatars"
+    const ext = (signupFotoFile.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${user.id}/${Date.now()}.${ext}`;
+    const { error: upErr } = await sb.storage.from(AVATAR_BUCKET).upload(path, signupFotoFile, { upsert: true });
+    let fotoUrl = "";
+    if (!upErr) {
+      const { data: pub } = sb.storage.from(AVATAR_BUCKET).getPublicUrl(path);
+      fotoUrl = pub.publicUrl;
+    }
+
+    const { error: profErr } = await sb.from("usuarios").insert([{
+      id: user.id, nombre, apellido, apodo, fecha_nacimiento: fecha,
+      foto_url: fotoUrl, email, activa: true
+    }]);
+    if (profErr) throw profErr;
+
+    st.style.color = "#2d7a2d"; st.textContent = "¡Cuenta creada!";
+    // Si Supabase pide confirmación de email, no habrá sesión todavía.
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) await onAuthReady(session.user);
+    else { showToast("Te enviamos un email de confirmación. Confirmalo y volvé a iniciar sesión."); closeAuthModal(); }
+  } catch(e) {
+    st.style.color = "#c0392b";
+    st.textContent = "Error: " + (e.message || "no se pudo crear la cuenta.");
+  }
+  btn.disabled = false;
+}
+
+async function doUserLogin() {
+  const st = document.getElementById("auth-login-status");
+  const btn = document.getElementById("btn-do-login");
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value;
+  if (!email || !password) { st.textContent = "Completá email y contraseña."; return; }
+  if (!sb) { st.textContent = "Supabase no configurado."; return; }
+  btn.disabled = true; st.textContent = "Ingresando…";
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { st.textContent = "Email o contraseña incorrectos."; btn.disabled = false; return; }
+  st.textContent = "";
+  await onAuthReady(data.user);
+  closeAuthModal();
+  btn.disabled = false;
+}
+
+async function doResetPassword() {
+  const email = document.getElementById("login-email").value.trim();
+  if (!email) { showToast("Escribí tu email arriba primero."); return; }
+  if (!sb) return;
+  const { error } = await sb.auth.resetPasswordForEmail(email);
+  showToast(error ? "No se pudo enviar el email." : "Te enviamos un email para restablecer tu contraseña.");
+}
+
+async function doUserLogout() {
+  if (sb) await sb.auth.signOut();
+  currentUser = null; currentUsuario = null; miVotoCiclo = null; misNotificaciones = [];
+  updateAuthUI();
+  showToast("Cerraste sesión");
+}
+
+// ══════════════════════════════════════════════════════════
+// ─── NOTIFICACIONES ──────────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+
+async function cargarNotificaciones() {
+  if (!sb || !currentUsuario) return;
+  try {
+    const { data } = await sb.from("notificaciones")
+      .select("*")
+      .or(`usuario_id.eq.${currentUsuario.id},usuario_id.is.null`)
+      .order("creado_en", { ascending: false })
+      .limit(50);
+    misNotificaciones = data || [];
+  } catch(e) { console.warn("Error cargando notificaciones:", e); }
+  renderNotifBadge();
+}
+
+function renderNotifBadge() {
+  const dot = document.getElementById("nav-bell-dot");
+  if (!dot) return;
+  const leidas = getLeidasSet();
+  const hayNuevas = misNotificaciones.some(n => !leidas.has(n.id));
+  dot.classList.toggle("show", hayNuevas);
+}
+
+function getLeidasSet() {
+  try { return new Set(JSON.parse(localStorage.getItem("im_notif_leidas") || "[]")); }
+  catch(e) { return new Set(); }
+}
+function marcarTodasLeidas() {
+  const leidas = getLeidasSet();
+  misNotificaciones.forEach(n => leidas.add(n.id));
+  localStorage.setItem("im_notif_leidas", JSON.stringify([...leidas]));
+  renderNotifBadge();
+}
+
+function openNotifPanel() {
+  if (!currentUsuario) { openAuthModal(); return; }
+  document.getElementById("notif-panel").classList.add("open");
+  document.getElementById("notif-scrim").classList.add("show");
+  renderNotifList();
+  setTimeout(marcarTodasLeidas, 1200);
+}
+function closeNotifPanel() {
+  document.getElementById("notif-panel").classList.remove("open");
+  document.getElementById("notif-scrim").classList.remove("show");
+}
+
+function tiempoRelativo(fechaStr) {
+  const diff = Date.now() - new Date(fechaStr).getTime();
+  const min = Math.floor(diff/60000);
+  if (min < 1) return "ahora";
+  if (min < 60) return min + " min";
+  const hs = Math.floor(min/60);
+  if (hs < 24) return hs + " h";
+  const dias = Math.floor(hs/24);
+  return dias + " d";
+}
+
+function renderNotifList() {
+  const list = document.getElementById("notif-list");
+  const empty = document.getElementById("notif-empty");
+  if (!list) return;
+  if (!misNotificaciones.length) {
+    list.innerHTML = ""; empty.style.display = "block"; return;
+  }
+  empty.style.display = "none";
+  const leidas = getLeidasSet();
+  list.innerHTML = misNotificaciones.map(n => `
+    <div class="notif-item${leidas.has(n.id)?'':' unread'}">
+      <div class="notif-item-title">${n.titulo || "Novedad"}</div>
+      <div class="notif-item-body">${n.mensaje || ""}</div>
+      <div class="notif-item-time">${tiempoRelativo(n.creado_en)}</div>
+    </div>`).join("");
 }
 
 // ─── EMBED DE IMAGEN (link directo, <img>, iframe o script Telegram) ──
@@ -2029,16 +2436,16 @@ function actualizarCountdown() {
   else countdown.textContent = "Quedan " + horas + "h";
 }
 
-// ─── COUNTDOWN DE REVOTO ────────────────────────────────────
+// ─── COUNTDOWN DE REVOTO (hasta que se reinicie el ciclo de ranking) ──
 function getRevotoCountdown(id) {
-  const ts = localStorage.getItem("iv_" + id);
-  if (!ts) return null;
-  const elapsed = Date.now() - parseInt(ts);
-  const remaining = 86400000 - elapsed; // 24 horas
-  if (remaining <= 0) return null;
-  const h = Math.floor(remaining / 3600000);
-  const m = Math.floor((remaining % 3600000) / 60000);
-  return h + "h " + m + "m";
+  if (!cicloActivo) return null;
+  const cierre = new Date(cicloActivo.fecha_cierre + "T23:59:59");
+  const remaining = cierre - new Date();
+  if (remaining <= 0) return "el ranking cierra pronto";
+  const dias = Math.floor(remaining / 86400000);
+  if (dias > 0) return "podrás volver a votar en " + dias + " día" + (dias !== 1 ? "s" : "");
+  const horas = Math.floor(remaining / 3600000);
+  return "podrás volver a votar en " + horas + "h";
 }
 
 // ─── TICKER "RECIÉN SUBIDO" ─────────────────────────────────
