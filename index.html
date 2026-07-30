@@ -1359,37 +1359,37 @@ function votePercentText(m) {
   return pct + "%";
 }
 
-// hasVoted(id): ¿este navegador ya usó su voto del ciclo actual en ESTE modelo?
+// hasVoted(id): ¿este navegador ya votó por ESTE modelo en el ciclo actual?
 function getVotosLocales() {
-  try { return JSON.parse(localStorage.getItem("im_votos_ciclo") || "{}"); }
-  catch(e) { return {}; }
+  try {
+    const raw = JSON.parse(localStorage.getItem("im_votos_ciclo") || "{}");
+    // Compatibilidad con el formato viejo (un solo voto por ciclo)
+    Object.keys(raw).forEach(k => { if (!Array.isArray(raw[k])) raw[k] = [raw[k]]; });
+    return raw;
+  } catch(e) { return {}; }
 }
 function setVotoLocal(cicloId, modeloId) {
   const v = getVotosLocales();
-  v[cicloId] = modeloId;
+  if (!Array.isArray(v[cicloId])) v[cicloId] = [];
+  if (!v[cicloId].some(x => String(x) === String(modeloId))) v[cicloId].push(modeloId);
   localStorage.setItem("im_votos_ciclo", JSON.stringify(v));
 }
 function hasVoted(id) {
   if (!cicloActivo) return false;
   const v = getVotosLocales();
-  return String(v[cicloActivo.id]) === String(id);
-}
-// yaVotoEsteCiclo: ¿este navegador ya usó su único voto del ciclo, sea cual sea el modelo?
-function yaVotoEsteCiclo() {
-  if (!cicloActivo) return false;
-  const v = getVotosLocales();
-  return !!v[cicloActivo.id];
+  const lista = v[cicloActivo.id] || [];
+  return lista.some(x => String(x) === String(id));
 }
 
 async function vote(id) {
   if (!sb) { showToast("Supabase no configurado"); return; }
 
-  // 1) Necesita ciclo activo
+  // Necesita ciclo activo
   if (!cicloActivo) { showToast("No hay un ciclo de votación activo por ahora"); return; }
 
-  // 2) Ya usó su voto de este ciclo (guardado en este navegador)
-  if (yaVotoEsteCiclo()) {
-    showToast(hasVoted(id) ? "Ya votaste por este perfil este mes" : "Ya usaste tu voto de este ciclo. Podrás votar de nuevo cuando se reinicie el ranking.");
+  // Ya votó por este mismo perfil en este ciclo
+  if (hasVoted(id)) {
+    showToast("Ya votaste por este perfil este mes");
     return;
   }
 
@@ -1415,6 +1415,7 @@ async function vote(id) {
 async function voteFromModal() {
   if (currentModalModel) await vote(currentModalModel.id);
 }
+
 
 // ─── EMBED DE IMAGEN (link directo, <img>, iframe o script Telegram) ──
 // fit: "cover" (default, para miniaturas cuadradas) o "contain" (foto completa sin recortar, para el visor)
@@ -1618,12 +1619,6 @@ async function descargarFolletoEvento() {
       if (dl && dLs.length < maxLineas) dLs.push(dl);
       dLs.forEach((l, i) => ctx.fillText(l, padX, cursorY + i * 38));
       cursorY += dLs.length * 38;
-    }
-
-    if (ev.interesados) {
-      ctx.fillStyle = "#999";
-      ctx.font = "600 22px 'Montserrat', Helvetica, sans-serif";
-      ctx.fillText(`★ ${ev.interesados} personas interesadas`, padX, H - 48);
     }
 
     canvas.toBlob(blob => {
