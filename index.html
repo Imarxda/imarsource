@@ -40,18 +40,13 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);font-siz
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* HEADER */
-header{border-bottom:1px solid var(--black);padding:48px 60px 36px;display:flex;flex-direction:column;align-items:center;gap:12px;background-size:cover;background-position:center;background-repeat:no-repeat;position:relative}
+header{border-bottom:1px solid var(--black);padding:48px 60px 36px;display:flex;flex-direction:column;align-items:center;gap:12px;background-size:cover;background-position:center;background-repeat:no-repeat}
 .logo{cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
 .logo img{height:clamp(72px,12vw,140px);width:auto;max-width:100%;object-fit:contain;display:block}
 .header-sub{font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gray-text)}
 nav{display:flex;gap:40px;align-items:center;margin-top:8px;font-size:9px;letter-spacing:.2em;text-transform:uppercase}
 nav a{color:var(--black);text-decoration:none;cursor:pointer;transition:color var(--ease)}
 nav a:hover{color:var(--gray-text)}
-#mobile-menu-toggle{display:none;position:absolute;top:24px;left:24px;width:34px;height:34px;background:none;border:1px solid var(--black);cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;z-index:50}
-#mobile-menu-toggle span{display:block;width:16px;height:1px;background:var(--black);transition:all var(--ease)}
-#mobile-menu-toggle.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
-#mobile-menu-toggle.open span:nth-child(2){opacity:0}
-#mobile-menu-toggle.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 
 /* HERO PORTADA — estilo tapa de revista, capas editables desde el admin */
 #hero-portada{position:relative;width:100%;height:clamp(440px,72vw,760px);max-height:820px;overflow:hidden;background:var(--black)}
@@ -122,9 +117,19 @@ nav a:hover{color:var(--gray-text)}
 .fama-ciclos{font-size:8px;color:var(--gray-text);margin-top:4px;line-height:1.6}
 #fama-empty{text-align:center;padding:60px;font-family:var(--serif);font-size:20px;font-style:italic;color:var(--gray-mid)}
 
-/* DESTACADOS — oculto */
-#destacados-section{display:none!important}
-.cinta-wrap{display:none!important}
+/* DESTACADOS */
+#destacados-section{border-top:1px solid var(--gray-mid)}
+.cinta-wrap{overflow:hidden;border-top:1px solid var(--gray-mid);border-bottom:1px solid var(--gray-mid);padding:32px 0}
+.cinta-track{display:flex;gap:16px;padding:0 60px;animation:cinta 40s linear infinite}
+.cinta-track:hover{animation-play-state:paused}
+@keyframes cinta{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.cinta-card{flex-shrink:0;width:180px;cursor:pointer}
+.cinta-img{width:180px;height:260px;background:var(--gray-light);overflow:hidden;border:1px solid var(--gray-mid);transition:transform var(--ease)}
+.cinta-card:hover .cinta-img{transform:scale(1.02)}
+.cinta-embed{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none}
+.cinta-info{padding:10px 0 0}
+.cinta-name{font-family:var(--serif);font-size:13px;font-style:italic;margin-bottom:2px}
+.cinta-code{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gray-text)}
 
 /* LISTA / DIRECTORIO */
 #lista-section{padding:48px 60px 80px}
@@ -159,11 +164,6 @@ nav a:hover{color:var(--gray-text)}
 .eventos-arrow.right{right:0;background:linear-gradient(270deg,rgba(0,0,0,.65),transparent);justify-content:flex-end;padding-right:20px}
 .eventos-wrap:hover .eventos-arrow{opacity:1}
 #eventos-carousel-empty{padding:20px 60px 0;font-family:var(--serif);font-style:italic;color:#666}
-
-/* EVENTO — contador y descarga */
-.evento-countdown{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:rgba(0,0,0,.72);padding:4px 10px;display:inline-block;margin-top:4px}
-.evento-download-btn{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:var(--sans);font-size:8px;letter-spacing:.15em;text-transform:uppercase;padding:7px 10px;cursor:pointer;z-index:5;transition:background var(--ease)}
-.evento-download-btn:hover{background:rgba(0,0,0,.9)}
 
 /* ADMIN — listas con eliminar */
 .admin-list{display:flex;flex-direction:column;gap:0;margin-top:24px;border-top:1px solid var(--gray-mid)}
@@ -279,21 +279,10 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 .ap-header{border-bottom:1px solid var(--black);padding:28px 60px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--white);z-index:10}
 .ap-title{font-family:var(--serif);font-size:22px;font-weight:400}
 .ap-title span{font-style:italic;color:var(--gray-text);font-size:13px;margin-left:12px}
-.ap-body{display:flex;align-items:flex-start}
-.ap-sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--gray-mid);padding:24px 0;position:sticky;top:85px;align-self:flex-start;max-height:calc(100vh - 85px);overflow-y:auto}
-.side-item{border-bottom:1px solid var(--gray-mid)}
-.side-item:last-child{border-bottom:none}
-.side-head{width:100%;text-align:left;background:none;border:none;border-left:3px solid transparent;font-family:var(--sans);font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:18px 24px;cursor:pointer;color:var(--gray-text);display:flex;justify-content:space-between;align-items:center;gap:10px;transition:all var(--ease)}
-.side-head:hover{color:var(--black)}
-.side-head.active{color:var(--black);border-left-color:var(--black);background:var(--gray-light)}
-.side-arrow{font-size:9px;flex-shrink:0;transition:transform var(--ease);color:var(--gray-text)}
-.side-head.open .side-arrow{transform:rotate(180deg)}
-.side-children{max-height:0;overflow:hidden;transition:max-height var(--ease);display:flex;flex-direction:column;background:var(--gray-light)}
-.side-children.open{max-height:260px}
-.side-child{width:100%;text-align:left;background:none;border:none;border-left:3px solid transparent;font-family:var(--sans);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:14px 24px 14px 40px;cursor:pointer;color:var(--gray-text);transition:all var(--ease)}
-.side-child:hover{color:var(--black)}
-.side-child.active{color:var(--black);border-left-color:var(--gold)}
-.ap-content{padding:48px 60px;max-width:700px;flex:1;min-width:0}
+.ap-tabs{display:flex;gap:0;border-bottom:1px solid var(--gray-mid);margin:0 60px}
+.ap-tab{background:none;border:none;border-bottom:2px solid transparent;font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:16px 24px;cursor:pointer;color:var(--gray-text);transition:all var(--ease)}
+.ap-tab.active{border-bottom-color:var(--black);color:var(--black)}
+.ap-content{padding:48px 60px;max-width:700px}
 .ap-pane{display:none}
 .ap-pane.active{display:block}
 .ap-sec-title{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:8px}
@@ -344,7 +333,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   #modal-avatar{width:120px;height:120px}
   .ig-gallery{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));padding:14px 24px 32px}
   .ig-gallery-label{padding:20px 24px 4px}
-  .ap-header{padding-left:24px;padding-right:24px}
+  .ap-header,.ap-tabs{padding-left:24px;padding-right:24px}
   .sb-grid{grid-template-columns:1fr}
   footer{padding:24px;flex-direction:column;gap:10px;text-align:center}
 }
@@ -354,67 +343,14 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 #ranking-banner.show{display:block}
 #ranking-banner strong{color:var(--gold)}
 
-/* ── LAYOUT SOCIAL (sidebar izq + contenido + notif derecha) ── */
-#social-layout{display:flex;min-height:100vh;position:relative}
-#sidebar-left{width:260px;flex-shrink:0;border-right:1px solid var(--gray-mid);position:sticky;top:36px;height:calc(100vh - 36px);overflow-y:auto;background:var(--white);display:flex;flex-direction:column;padding:24px 0 40px}
-#main-content{flex:1;min-width:0}
-#notif-sidebar{width:320px;flex-shrink:0;border-left:1px solid var(--gray-mid);position:sticky;top:36px;height:calc(100vh - 36px);overflow-y:auto;background:var(--white)}
-
-/* Sidebar perfil */
-.sb-profile-section{padding:24px 20px;border-bottom:1px solid var(--gray-mid)}
-.sb-avatar{width:64px;height:64px;border-radius:50%;overflow:hidden;background:var(--gray-light);border:1px solid var(--gray-mid);margin:0 auto 12px;display:block}
-.sb-avatar .embed-box{border-radius:50%}
-.sb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.sb-name{font-family:var(--serif);font-size:16px;text-align:center;margin-bottom:2px}
-.sb-apodo{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text);text-align:center;margin-bottom:14px}
-.sb-login-btn{width:100%;background:var(--black);color:var(--white);border:none;font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:11px 16px;cursor:pointer;transition:background var(--ease)}
-.sb-login-btn:hover{background:#333}
-.sb-logout-btn{width:100%;background:none;border:1px solid var(--gray-mid);font-family:var(--sans);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:10px 16px;cursor:pointer;color:var(--gray-text);margin-top:8px;transition:all var(--ease)}
-.sb-logout-btn:hover{border-color:var(--black);color:var(--black)}
-.sb-vote-status{font-size:10px;color:var(--gray-text);text-align:center;margin-top:10px;line-height:1.5;padding:8px 12px;background:var(--gray-light);border-radius:4px}
-.sb-vote-status.voted{color:#2d7a2d}
-
-/* Sidebar nav links */
-.sb-nav{padding:16px 0}
-.sb-nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--black);cursor:pointer;transition:background var(--ease);border-left:3px solid transparent}
-.sb-nav-item:hover{background:var(--gray-light);border-left-color:var(--gold)}
-.sb-nav-item .icon{font-size:16px;width:20px;text-align:center}
-
-/* Notif sidebar */
-.ns-head{padding:20px 20px 14px;border-bottom:1px solid var(--gray-mid)}
-.ns-title{font-family:var(--serif);font-size:17px;font-style:italic;margin-bottom:4px}
-.ns-sub{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gray-text)}
-.ns-login-msg{padding:24px 20px;font-size:11px;color:var(--gray-text);text-align:center;line-height:1.7}
-.ns-notif-item{padding:14px 20px;border-bottom:1px solid var(--gray-mid)}
-.ns-notif-item.unread{background:#fbf8ef}
-.ns-notif-title{font-size:12px;font-weight:600;margin-bottom:3px}
-.ns-notif-body{font-size:11px;color:var(--gray-text);line-height:1.5}
-.ns-notif-time{font-size:9px;color:var(--gray-mid);margin-top:5px;letter-spacing:.08em;text-transform:uppercase}
-.ns-empty{padding:32px 20px;text-align:center;color:var(--gray-mid);font-size:11px;font-style:italic}
-#ns-list{flex:1;overflow-y:auto}
-
-/* Responsive layout social */
-@media(max-width:1200px){#notif-sidebar{display:none}}
-@media(max-width:900px){
-  nav{display:none}
-  #mobile-menu-toggle{display:flex}
-  #social-layout{display:block}
-  #sidebar-left{
-    position:static;
-    width:100%;
-    height:auto;
-    max-height:0;
-    overflow:hidden;
-    border-right:none;
-    border-bottom:1px solid var(--gray-mid);
-    padding:0;
-    transition:max-height var(--ease);
-  }
-  #sidebar-left.mobile-open{
-    max-height:600px;
-    padding:16px 0 20px;
-  }
-}
+/* ── BANNER "RECIÉN SUBIDO" ─────────────────────────────── */
+#recent-ticker{border-bottom:1px solid var(--gray-mid);overflow:hidden;height:34px;display:flex;align-items:center;background:var(--gray-light)}
+.recent-label{font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:0 16px;white-space:nowrap;border-right:1px solid var(--gray-mid);height:100%;display:flex;align-items:center;flex-shrink:0;color:var(--gray-text)}
+.recent-track-wrap{overflow:hidden;flex:1}
+.recent-track{display:flex;animation:ticker 22s linear infinite;white-space:nowrap}
+.recent-item{display:inline-flex;align-items:center;gap:10px;padding:0 32px;font-size:9px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--black);cursor:pointer}
+.recent-item:hover{color:var(--gold)}
+.recent-item::after{content:'·';color:var(--gray-text);margin-left:10px}
 
 /* ── BOTÓN "SEGUIR" ─────────────────────────────────────── */
 .btn-follow{background:none;border:1px solid var(--gray-mid);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all var(--ease)}
@@ -506,51 +442,28 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   ⏳ Ranking <strong id="ranking-ciclo-nombre">del mes</strong> — cierra en <strong id="ranking-countdown">—</strong>
 </div>
 
+<!-- TICKER "RECIÉN SUBIDO" -->
+<div id="recent-ticker">
+  <div class="recent-label">📸 Recién subido</div>
+  <div class="recent-track-wrap">
+    <div class="recent-track" id="recent-track"></div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header id="site-header">
   <div class="logo" onclick="location.reload()"><img src="https://i.ibb.co/h0XNGpb/54-sin-t-tulo-20260726015938.png" alt="imar source"></div>
-  <button id="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Menú">
-    <span></span><span></span><span></span>
-  </button>
   <nav>
     <a onclick="goTo('#eventos-carousel-section')">Eventos</a>
-    <a onclick="goTo('#podio-section')">Destacados</a>
+    <a onclick="goTo('#podio-section')">Perfiles Destacados</a>
     <a onclick="goTo('#fama-section')">Salón de la Fama</a>
+    <a onclick="goTo('#destacados-section')">Destacados</a>
     <a onclick="goTo('#lista-section')">Directorio</a>
-    <a onclick="openPostulacion()" style="color:var(--gold);font-weight:600">Quiero ser parte</a>
-    <a onclick="handleAccountNavClick()" id="nav-account-link" style="display:none">Cuenta</a>
+    <a onclick="openPostulacion()" style="color:var(--gold);font-weight:600">★ Quiero ser parte</a>
+    <a onclick="handleAccountNavClick()" id="nav-account-link">Iniciar sesión</a>
+    <a onclick="openNotifPanel()" id="nav-bell" style="display:none">🔔<span id="nav-bell-dot"></span></a>
   </nav>
 </header>
-
-<!-- ════ LAYOUT SOCIAL ════════════════════════════════════════ -->
-<div id="social-layout">
-
-<!-- ── SIDEBAR IZQUIERDO ──────────────────────────────────────── -->
-<aside id="sidebar-left">
-  <!-- Perfil del usuario -->
-  <div class="sb-profile-section" id="sb-profile-area">
-    <div class="sb-avatar" id="sb-avatar-wrap">
-      <img id="sb-avatar-img" src="" alt="" style="display:none">
-      <div id="sb-avatar-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--gray-mid)"></div>
-    </div>
-    <div class="sb-name" id="sb-name">Invitado</div>
-    <div class="sb-apodo" id="sb-apodo"></div>
-    <button class="sb-login-btn" id="sb-auth-btn" onclick="handleAccountNavClick()">Iniciar sesión</button>
-    <button class="sb-logout-btn" id="sb-logout-btn" onclick="doUserLogout()" style="display:none">Cerrar sesión</button>
-    <div class="sb-vote-status" id="sb-vote-status" style="display:none"></div>
-  </div>
-  <!-- Navegación -->
-  <nav class="sb-nav">
-    <div class="sb-nav-item" onclick="goTo('#eventos-carousel-section')"><span class="icon"></span>Eventos</div>
-    <div class="sb-nav-item" onclick="goTo('#podio-section')"><span class="icon"></span>Perfiles Destacados</div>
-    <div class="sb-nav-item" onclick="goTo('#fama-section')"><span class="icon"></span>Salón de la Fama</div>
-    <div class="sb-nav-item" onclick="goTo('#lista-section')"><span class="icon"></span>Directorio</div>
-    <div class="sb-nav-item" onclick="openPostulacion()" style="color:var(--gold)"><span class="icon"></span>Quiero ser parte</div>
-  </nav>
-</aside>
-
-<!-- ── CONTENIDO PRINCIPAL ────────────────────────────────────── -->
-<div id="main-content">
 
 <!-- HERO / PORTADA DE LA TEMPORADA — tapa de revista con capas editables -->
 <section id="hero-portada">
@@ -562,7 +475,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   <div id="hero-bajadas"></div>
   <div id="hero-personaje" class="hero-layer"></div>
   <img id="hero-marca-agua" class="hero-marca-agua-img" alt="">
-  <button id="hero-download-btn" onclick="descargarPortada()">Descargar portada</button>
+  <button id="hero-download-btn" onclick="descargarPortada()">⬇ Descargar portada</button>
 </section>
 
 <!-- SEARCH -->
@@ -629,6 +542,15 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
   <div id="fama-empty" style="display:none">Todavía no hay nadie en el Salón de la Fama.</div>
 </section>
 
+<!-- DESTACADOS -->
+<div class="section-header" id="destacados-section">
+  <div class="section-title">Destacados de la semana</div>
+  <div class="section-label">Las 10 más recientes</div>
+</div>
+<div class="cinta-wrap">
+  <div class="cinta-track" id="cinta-track"></div>
+</div>
+
 <!-- LISTA / DIRECTORIO -->
 <div class="section-header">
   <div class="section-title">Directorio de modelos</div>
@@ -646,23 +568,6 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 
 
 
-</div><!-- /main-content -->
-
-<!-- ── SIDEBAR DERECHO: NOTIFICACIONES ──────────────────────── -->
-<aside id="notif-sidebar">
-  <div class="ns-head">
-    <div class="ns-title">Notificaciones</div>
-    <div class="ns-sub" id="ns-subtitle">Tus últimas novedades</div>
-  </div>
-  <div id="ns-content">
-    <div class="ns-login-msg" id="ns-login-msg">Iniciá sesión para ver tus notificaciones.</div>
-    <div id="ns-list" style="display:none"></div>
-    <div class="ns-empty" id="ns-empty" style="display:none">No tenés notificaciones nuevas.</div>
-  </div>
-</aside>
-
-</div><!-- /social-layout -->
-
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo"><em>imar source</em></div>
@@ -677,7 +582,6 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
       <div class="modal-ev-eyebrow">Próximo evento</div>
       <div class="modal-ev-title" id="modal-ev-title">—</div>
       <div class="modal-ev-date" id="modal-ev-date">—</div>
-      <div class="modal-ev-date" id="modal-ev-lugar" style="display:none;color:#555;margin-top:-20px;margin-bottom:28px"><span id="modal-ev-lugar-text"></span></div>
       <div class="modal-ev-desc" id="modal-ev-desc">—</div>
       <div class="ig-stats-row" style="margin-top:24px">
         <div>
@@ -686,11 +590,11 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
         </div>
       </div>
       <div class="modal-actions">
-        <button class="btn-modal-vote" id="modal-ev-interes-btn" onclick="marcarInteres()">Me interesa</button>
+        <button class="btn-modal-vote" id="modal-ev-interes-btn" onclick="marcarInteres()">☆ Me interesa</button>
         <button class="btn-share" onclick="shareEvento()">Compartir evento</button>
       </div>
     </div>
-    <button id="modal-ev-close" onclick="closeEvModalDirect()">Cerrar</button>
+    <button id="modal-ev-close" onclick="closeEvModalDirect()">✕</button>
   </div>
 </div>
 
@@ -716,15 +620,15 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
           </div>
         </div>
         <div class="modal-actions">
-          <button class="btn-modal-vote" id="modal-vote-btn" onclick="voteFromModal()">Votar</button>
+          <button class="btn-modal-vote" id="modal-vote-btn" onclick="voteFromModal()">♡ Votar</button>
           <div class="share-wrap">
             <button class="btn-share" onclick="toggleShareMenu(event)">Compartir</button>
             <div class="share-menu" id="share-menu">
-              <button onclick="copyShareLinkWithCount()">Copiar enlace</button>
-              <button onclick="downloadProfileImage()">Guardar imagen del perfil</button>
+              <button onclick="copyShareLinkWithCount()">🔗 Copiar enlace</button>
+              <button onclick="downloadProfileImage()">🖼 Guardar imagen del perfil</button>
             </div>
           </div>
-          <button class="btn-follow" id="modal-follow-btn" onclick="toggleFollow()">Seguir</button>
+          <button class="btn-follow" id="modal-follow-btn" onclick="toggleFollow()">☆ Seguir</button>
           <a class="btn-share" id="modal-ig-btn" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;justify-content:center">Instagram</a>
         </div>
       </div>
@@ -733,7 +637,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     <div class="ig-gallery-label">Galería</div>
     <div class="ig-gallery" id="ig-gallery"></div><!-- reactions injected via JS -->
     <div id="ig-gallery-empty" style="display:none">Aún no hay fotos en esta galería.</div>
-    <button id="modal-close" onclick="closeModal()">Cerrar</button>
+    <button id="modal-close" onclick="closeModal()">✕</button>
   </div>
 </div>
 
@@ -741,7 +645,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <div id="lightbox-overlay" onclick="closeLightboxOverlay(event)">
   <div class="lightbox-topbar">
     <div class="lightbox-counter" id="lightbox-counter"></div>
-    <button id="lightbox-close" onclick="closeLightbox()" aria-label="Cerrar">Cerrar</button>
+    <button id="lightbox-close" onclick="closeLightbox()" aria-label="Cerrar">✕</button>
   </div>
   <div class="lightbox-track" id="lightbox-track"></div>
   <button class="lightbox-vnav up" onclick="lightboxNav(-1)" aria-label="Foto anterior">︿</button>
@@ -753,13 +657,13 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <!-- MODAL "QUIERO SER PARTE" -->
 <div id="modal-postulacion-overlay" onclick="if(event.target===this)closePostulacion()" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:3000;display:none;align-items:center;justify-content:center;padding:24px">
   <div style="background:var(--white);max-width:500px;width:100%;padding:48px;position:relative">
-    <button onclick="closePostulacion()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">Cerrar</button>
+    <button onclick="closePostulacion()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer">✕</button>
     <div style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Para modelos</div>
     <div style="font-family:var(--serif);font-size:26px;margin-bottom:8px">Sumate a imar source</div>
     <div style="font-size:12px;color:#666;line-height:1.7;margin-bottom:28px">Tu perfil, tus fotos, tu Instagram — todo en un solo link para compartir.</div>
     <div style="display:flex;flex-direction:column;gap:16px">
-      <a href="https://wa.me/5493624000000?text=Hola%2C%20quiero%20sumarme%20a%20imar%20source%20como%20modelo" target="_blank" class="btn-postular" style="text-align:center;display:block">Escribir por WhatsApp</a>
-      <a href="mailto:imarsotelo50@gmail.com?subject=Quiero%20ser%20parte%20de%20imar%20source" class="btn-postular" style="text-align:center;display:block;background:none;color:var(--black);border-color:var(--gray-mid)">Escribir por correo</a>
+      <a href="https://wa.me/5493624000000?text=Hola%2C%20quiero%20sumarme%20a%20imar%20source%20como%20modelo" target="_blank" class="btn-postular" style="text-align:center;display:block">💬 Escribir por WhatsApp</a>
+      <a href="mailto:imarsotelo50@gmail.com?subject=Quiero%20ser%20parte%20de%20imar%20source" class="btn-postular" style="text-align:center;display:block;background:none;color:var(--black);border-color:var(--gray-mid)">✉ Escribir por correo</a>
     </div>
     <div style="font-size:9px;color:var(--gray-text);margin-top:20px;text-align:center">También podés seguirnos en Instagram para novedades</div>
   </div>
@@ -768,11 +672,11 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <!-- MODAL CUENTA (login / crear cuenta para votar) -->
 <div id="modal-auth-overlay" onclick="if(event.target===this)closeAuthModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:3000;display:none;align-items:center;justify-content:center;padding:24px">
   <div style="background:var(--white);max-width:440px;width:100%;padding:44px 40px;position:relative;max-height:92vh;overflow-y:auto">
-    <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">Cerrar</button>
+    <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer">✕</button>
 
     <div style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Cuenta</div>
     <div style="font-family:var(--serif);font-size:22px;margin-bottom:10px" id="auth-modal-title">Necesitás una cuenta para votar</div>
-    <div style="font-size:11px;color:var(--gray-text);line-height:1.6;margin-bottom:24px">Creamos cuentas para asegurarnos de que cada voto sea de una persona real. Podés votar sin límites por tus favoritas.</div>
+    <div style="font-size:11px;color:var(--gray-text);line-height:1.6;margin-bottom:24px">Creamos cuentas para asegurarnos de que cada voto sea de una persona real. Un voto por cuenta, por ciclo de ranking.</div>
 
     <div style="display:flex;gap:0;border-bottom:1px solid var(--gray-mid);margin-bottom:24px">
       <button type="button" onclick="switchAuthTab('login')" id="auth-tab-login" style="flex:1;background:none;border:none;border-bottom:2px solid var(--black);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:12px 0;cursor:pointer;color:var(--black)">Iniciar sesión</button>
@@ -822,7 +726,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 <div id="notif-panel" class="notif-panel">
   <div class="notif-head">
     <div class="notif-title">Notificaciones</div>
-    <button onclick="closeNotifPanel()" style="background:none;border:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">Cerrar</button>
+    <button onclick="closeNotifPanel()" style="background:none;border:none;font-size:18px;cursor:pointer">✕</button>
   </div>
   <div class="notif-list" id="notif-list"></div>
   <div id="notif-empty" style="display:none">Todavía no tenés notificaciones.</div>
@@ -851,25 +755,11 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     <div class="ap-title">Panel Admin <span>imar source</span></div>
     <button id="ap-logout" onclick="logoutAdmin()">Cerrar sesión</button>
   </div>
-  <div class="ap-body">
-
-  <div class="ap-sidebar" id="ap-sidebar">
-    <div class="side-item">
-      <button class="side-head active open" id="side-head-modelos" onclick="toggleSide('modelos')">Modelos<span class="side-arrow">▾</span></button>
-      <div class="side-children open" id="side-children-modelos">
-        <button class="side-child active" onclick="selectSubTab('modelos','crear',this)">Crear Perfil de Modelo</button>
-        <button class="side-child" onclick="selectSubTab('modelos','foto',this)">Subir Foto a Modelo existente</button>
-        <button class="side-child" onclick="selectSubTab('modelos','gestionar',this)">Gestionar / Eliminar</button>
-      </div>
-    </div>
-    <div class="side-item">
-      <button class="side-head" id="side-head-portada" onclick="toggleSide('portada')">Editar Portada<span class="side-arrow">▾</span></button>
-    </div>
-    <div class="side-item">
-      <button class="side-head" id="side-head-eventos" onclick="toggleSide('eventos')">Carrusel / Eventos<span class="side-arrow">▾</span></button>
-    </div>
+  <div class="ap-tabs">
+    <button class="ap-tab active" onclick="switchTab('modelos',this)">Modelos</button>
+    <button class="ap-tab" onclick="switchTab('portada',this)">Editar Portada</button>
+    <button class="ap-tab" onclick="switchTab('eventos',this)">Carrusel / Eventos</button>
   </div>
-
   <div class="ap-content">
 
     <!-- Supabase config -->
@@ -928,6 +818,12 @@ portada
       <div class="ap-sec-title">Modelos</div>
       <div class="ap-sec-sub">
         Cada modelo tiene un único perfil, como una cuenta de Instagram: se crea una sola vez y después se le van sumando fotos a su galería personal.
+      </div>
+
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchSubTab('crear',this)">Crear Perfil de Modelo</button>
+        <button class="sub-tab" onclick="switchSubTab('foto',this)">Subir Foto a Modelo existente</button>
+        <button class="sub-tab" onclick="switchSubTab('gestionar',this)">Gestionar / Eliminar</button>
       </div>
 
       <!-- Crear perfil -->
@@ -1037,9 +933,7 @@ portada
       <div id="admin-eventos-empty" class="ap-status" style="display:none">Todavía no hay eventos cargados.</div>
     </div>
 
-  </div><!-- /ap-content -->
-
-  </div><!-- /ap-body -->
+  </div>
 </div>
 
 <script>
@@ -1143,67 +1037,29 @@ function renderAll() {
 }
 
 // ─── EVENTOS — carrusel estilo Netflix ──────────────────────
-function getEventCountdown(fechaStr) {
-  if (!fechaStr) return null;
-  const now = new Date();
-  const evDate = new Date(fechaStr + "T00:00:00");
-  const diff = evDate - now;
-  if (diff <= 0) return null; // evento pasado
-  const dias = Math.floor(diff / 86400000);
-  const horas = Math.floor((diff % 86400000) / 3600000);
-  const mins = Math.floor((diff % 3600000) / 60000);
-  if (dias > 0) return `Faltan ${dias} día${dias !== 1 ? "s" : ""}`;
-  if (horas > 0) return `Faltan ${horas}h ${mins}m`;
-  return `Faltan ${mins} min`;
-}
-
-function isEventPast(fechaStr) {
-  if (!fechaStr) return false;
-  const now = new Date();
-  const evDate = new Date(fechaStr + "T23:59:59");
-  return evDate < now;
-}
-
 function renderEventosCarousel() {
   const track = document.getElementById("eventos-carousel-track");
   const empty = document.getElementById("eventos-carousel-empty");
-  // Filtrar eventos pasados
-  const activeEvents = allEvents.filter(ev => !isEventPast(ev.fecha_evento));
-  if (!activeEvents.length) { track.innerHTML = ""; empty.style.display = "block"; return; }
+  if (!allEvents.length) { track.innerHTML = ""; empty.style.display = "block"; return; }
   empty.style.display = "none";
 
-  track.innerHTML = activeEvents.map(ev => {
+  track.innerHTML = allEvents.map(ev => {
     const d = ev.fecha_evento
       ? new Date(ev.fecha_evento + "T00:00:00").toLocaleDateString("es-AR",{day:"2-digit",month:"long",year:"numeric"})
       : "";
     const img = ev.banner_url
       ? `<img src="${ev.banner_url}" alt="${ev.titulo}">`
       : `<div class="evento-noimg">${ev.titulo}</div>`;
-    const countdown = getEventCountdown(ev.fecha_evento);
     return `
     <div class="evento-card" onclick="openEvModal('${ev.id}')">
       ${img}
-      <button class="evento-download-btn" onclick="event.stopPropagation();downloadEventoJPG('${ev.id}')">Descargar</button>
       <div class="evento-overlay">
         <div class="evento-titulo">${ev.titulo}</div>
         ${d ? `<div class="evento-fecha">${d}</div>` : ""}
-        ${countdown ? `<div class="evento-countdown" id="ev-cd-${ev.id}">${countdown}</div>` : ""}
-        ${ev.interesados ? `<div class="evento-fecha">${ev.interesados} interesados</div>` : ""}
+        ${ev.interesados ? `<div class="evento-fecha">★ ${ev.interesados} interesados</div>` : ""}
       </div>
     </div>`;
   }).join("");
-
-  // Actualizar countdowns cada minuto
-  if (!window._evCdInterval) {
-    window._evCdInterval = setInterval(() => {
-      allEvents.forEach(ev => {
-        const el = document.getElementById("ev-cd-" + ev.id);
-        if (!el) return;
-        const cd = getEventCountdown(ev.fecha_evento);
-        if (cd) el.textContent = cd;
-      });
-    }, 60000);
-  }
 }
 function scrollEventos(dir) {
   const track = document.getElementById("eventos-carousel-track");
@@ -1417,6 +1273,8 @@ function renderPodio() {
 
   const rankClasses = ["rank-gold","rank-silver","rank-bronze"];
   grid.innerHTML = top3.map((m, idx) => {
+    const voted = hasVoted(m.id);
+    const countdown = voted ? getRevotoCountdown(m.id) : null;
     return `
     <div class="podio-card">
       <div class="podio-img-wrap ${rankClasses[idx]||''}" onclick="openModal('${m.id}')">
@@ -1428,7 +1286,8 @@ function renderPodio() {
         <div class="podio-votes">${votePercentText(m)}</div>
         <div class="podio-votes-lbl">de los votos</div>
         ${m.compartidos ? `<div class="share-count">Compartido ${m.compartidos} veces</div>` : ''}
-        <button class="btn-vote" onclick="vote('${m.id}')">Votar</button>
+        <button class="btn-vote${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
+        ${countdown ? `<div class="vote-countdown">Podés volver a votar en ${countdown}</div>` : ''}
       </div>
     </div>`;
   }).join("");
@@ -1460,7 +1319,7 @@ function renderFama() {
     g.historial.push(f);
   });
 
-  const medalla = { 1: "1°", 2: "2°", 3: "3°" };
+  const medalla = { 1: "🥇", 2: "🥈", 3: "🥉" };
   const lista = [...grupos.values()].sort((a, b) =>
     a.mejorPuesto - b.mejorPuesto || b.veces - a.veces || a.nombre.localeCompare(b.nombre)
   );
@@ -1525,6 +1384,8 @@ function renderLista() {
   empty.style.display = "none";
 
   container.innerHTML = models.map(m => {
+    const voted = hasVoted(m.id);
+    const countdown = voted ? getRevotoCountdown(m.id) : null;
     return `
     <div class="lista-row">
       <div class="lista-avatar" onclick="openModal('${m.id}')"><div class="embed-box" id="le-${m.id}"></div></div>
@@ -1532,7 +1393,8 @@ function renderLista() {
       <div class="lista-codigo">${m.codigo}</div>
       <div class="lista-votos">${votePercentText(m)}</div>
       <div>
-        <button class="lista-btn" onclick="vote('${m.id}')">Votar</button>
+        <button class="lista-btn${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
+        ${countdown ? `<div class="vote-countdown">${countdown}</div>` : ''}
       </div>
     </div>`;
   }).join("");
@@ -1562,6 +1424,7 @@ function renderSearchResults() {
   }
 
   box.innerHTML = models.map(m => {
+    const voted = hasVoted(m.id);
     return `
     <div class="sr-row">
       <div class="sr-avatar" onclick="openModal('${m.id}')"><div class="embed-box" id="sr-${m.id}"></div></div>
@@ -1570,7 +1433,7 @@ function renderSearchResults() {
         <div class="sr-code">${m.codigo}</div>
       </div>
       <div class="sr-votes">${votePercentText(m)} de los votos</div>
-      <button class="lista-btn" style="width:auto" onclick="vote('${m.id}')">Votar</button>
+      <button class="lista-btn${voted?' voted':''}" style="width:auto" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
     </div>`;
   }).join("");
 
@@ -1608,28 +1471,40 @@ async function vote(id) {
     return;
   }
 
-  const m = allModels.find(x => x.id === id);
-  if (!m) return;
+  // 2) Necesita ciclo activo
+  if (!cicloActivo) { showToast("No hay un ciclo de votación activo por ahora"); return; }
 
-  // Votos ilimitados: insertar sin ciclo (ciclo_id puede ser null)
-  const { error: vErr } = await sb.from("votos").insert([{
-    usuario_id: currentUsuario.id, modelo_id: id, ciclo_id: cicloActivo ? cicloActivo.id : null
-  }]);
-
-  if (vErr) {
-    showToast("Error al votar: " + vErr.message);
+  // 3) Ya usó su voto de este ciclo
+  if (yaVotoEsteCiclo()) {
+    showToast(hasVoted(id) ? "Ya votaste por este perfil este mes" : "Ya usaste tu voto de este ciclo. Podrás votar de nuevo cuando se reinicie el ranking.");
     return;
   }
 
+  const m = allModels.find(x => x.id === id);
+  if (!m) return;
+
+  const { data: votoInsertado, error: vErr } = await sb.from("votos").insert([{
+    usuario_id: currentUsuario.id, modelo_id: id, ciclo_id: cicloActivo.id
+  }]).select().maybeSingle();
+
+  if (vErr) {
+    if (vErr.code === "23505") showToast("Ya usaste tu voto de este ciclo.");
+    else showToast("Error al votar: " + vErr.message);
+    return;
+  }
+
+  miVotoCiclo = votoInsertado;
   const newVotes = (m.likes_mes||0) + 1;
   const { error } = await sb.from("modelos").update({ likes_mes: newVotes }).eq("id", id);
   if (error) { showToast("Tu voto quedó registrado, pero hubo un error al sumar el contador."); }
   m.likes_mes = newVotes;
   allModels.sort((a,b)=>(b.likes_mes||0)-(a.likes_mes||0));
-  showToast("¡Voto registrado!");
+  showToast("¡Voto registrado! ♥");
   renderPodio(); renderLista(); renderSearchResults();
   if (currentModalModel && currentModalModel.id === id) {
     document.getElementById("modal-votes").textContent = votePercentText(m);
+    const vb = document.getElementById("modal-vote-btn");
+    vb.textContent = "✓ Votado"; vb.classList.add("voted");
   }
 }
 
@@ -1690,40 +1565,16 @@ async function cargarMiVoto() {
 }
 
 function updateAuthUI() {
-  // Sidebar
-  const sbName = document.getElementById("sb-name");
-  const sbApodo = document.getElementById("sb-apodo");
-  const sbAuthBtn = document.getElementById("sb-auth-btn");
-  const sbLogoutBtn = document.getElementById("sb-logout-btn");
-  const sbAvatarImg = document.getElementById("sb-avatar-img");
-  const sbAvatarPh = document.getElementById("sb-avatar-placeholder");
-  const sbVoteStatus = document.getElementById("sb-vote-status");
-
+  const link = document.getElementById("nav-account-link");
+  const bell = document.getElementById("nav-bell");
+  if (!link) return;
   if (currentUsuario) {
-    if (sbName) sbName.textContent = (currentUsuario.nombre || "") + " " + (currentUsuario.apellido || "");
-    if (sbApodo) sbApodo.textContent = currentUsuario.apodo || "";
-    if (sbAuthBtn) sbAuthBtn.style.display = "none";
-    if (sbLogoutBtn) sbLogoutBtn.style.display = "block";
-    if (sbAvatarImg && currentUsuario.foto_url) {
-      sbAvatarImg.src = currentUsuario.foto_url;
-      sbAvatarImg.style.display = "block";
-      if (sbAvatarPh) sbAvatarPh.style.display = "none";
-    }
-    if (sbVoteStatus) {
-      sbVoteStatus.style.display = "block";
-      sbVoteStatus.textContent = "Votás sin límites";
-      sbVoteStatus.className = "sb-vote-status voted";
-    }
-    renderNotifSidebar();
+    link.textContent = "★ " + (currentUsuario.apodo || "Mi cuenta");
+    if (bell) bell.style.display = "inline-flex";
+    renderNotifBadge();
   } else {
-    if (sbName) sbName.textContent = "Invitado";
-    if (sbApodo) sbApodo.textContent = "";
-    if (sbAuthBtn) sbAuthBtn.style.display = "block";
-    if (sbLogoutBtn) sbLogoutBtn.style.display = "none";
-    if (sbAvatarImg) { sbAvatarImg.style.display = "none"; sbAvatarImg.src = ""; }
-    if (sbAvatarPh) sbAvatarPh.style.display = "flex";
-    if (sbVoteStatus) sbVoteStatus.style.display = "none";
-    renderNotifSidebar();
+    link.textContent = "Iniciar sesión";
+    if (bell) bell.style.display = "none";
   }
   renderPodio(); renderLista(); renderSearchResults();
 }
@@ -1872,7 +1723,6 @@ async function cargarNotificaciones() {
     misNotificaciones = data || [];
   } catch(e) { console.warn("Error cargando notificaciones:", e); }
   renderNotifBadge();
-  renderNotifSidebar();
 }
 
 function renderNotifBadge() {
@@ -1931,35 +1781,6 @@ function renderNotifList() {
       <div class="notif-item-title">${n.titulo || "Novedad"}</div>
       <div class="notif-item-body">${n.mensaje || ""}</div>
       <div class="notif-item-time">${tiempoRelativo(n.creado_en)}</div>
-    </div>`).join("");
-}
-
-// ─── NOTIFICACIONES SIDEBAR DERECHO ────────────────────────
-function renderNotifSidebar() {
-  const loginMsg = document.getElementById("ns-login-msg");
-  const nsList = document.getElementById("ns-list");
-  const nsEmpty = document.getElementById("ns-empty");
-  if (!loginMsg || !nsList || !nsEmpty) return;
-  if (!currentUsuario) {
-    loginMsg.style.display = "block";
-    nsList.style.display = "none";
-    nsEmpty.style.display = "none";
-    return;
-  }
-  loginMsg.style.display = "none";
-  if (!misNotificaciones.length) {
-    nsList.style.display = "none";
-    nsEmpty.style.display = "block";
-    return;
-  }
-  nsEmpty.style.display = "none";
-  nsList.style.display = "block";
-  const leidas = getLeidasSet();
-  nsList.innerHTML = misNotificaciones.map(n => `
-    <div class="ns-notif-item${leidas.has(n.id) ? "" : " unread"}">
-      <div class="ns-notif-title">${n.titulo || "Novedad"}</div>
-      <div class="ns-notif-body">${n.mensaje || ""}</div>
-      <div class="ns-notif-time">${tiempoRelativo(n.creado_en)}</div>
     </div>`).join("");
 }
 
@@ -2046,13 +1867,10 @@ function openEvModal(id) {
     : "";
   document.getElementById("modal-ev-date").textContent = d;
   document.getElementById("modal-ev-desc").textContent = ev.descripcion || "";
-  const lugarEl = document.getElementById("modal-ev-lugar");
-  if (ev.lugar) { document.getElementById("modal-ev-lugar-text").textContent = ev.lugar; lugarEl.style.display = "block"; }
-  else lugarEl.style.display = "none";
   document.getElementById("modal-ev-interesados").textContent = ev.interesados || 0;
   const interesado = hasInteres(ev.id);
   const ib = document.getElementById("modal-ev-interes-btn");
-  ib.textContent = interesado ? "Te interesa" : "Me interesa";
+  ib.textContent = interesado ? "★ Te interesa" : "☆ Me interesa";
   ib.classList.toggle("voted", interesado);
   document.getElementById("modal-ev-overlay").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -2080,7 +1898,7 @@ async function marcarInteres() {
   localStorage.setItem("ii_"+ev.id, "1");
   document.getElementById("modal-ev-interesados").textContent = nuevoValor;
   const ib = document.getElementById("modal-ev-interes-btn");
-  ib.textContent = "Te interesa"; ib.classList.add("voted");
+  ib.textContent = "★ Te interesa"; ib.classList.add("voted");
   showToast("¡Genial! Te avisamos si hay novedades");
   renderEventosCarousel();
 }
@@ -2116,9 +1934,10 @@ async function openModal(id) {
   av.innerHTML = "";
   injectEmbed("modal-avatar-embed", m.foto_perfil_embed);
 
+  const voted = hasVoted(m.id);
   const vb = document.getElementById("modal-vote-btn");
-  vb.textContent = "Votar";
-  vb.classList.remove("voted");
+  vb.textContent = voted ? "✓ Votado" : "♡ Votar";
+  vb.classList.toggle("voted", voted);
 
   const igBtn = document.getElementById("modal-ig-btn");
   if (m.instagram_url) {
@@ -2277,15 +2096,6 @@ function handleHash() {
 function goTo(sel) {
   const el = document.querySelector(sel);
   if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
-  closeMobileMenu();
-}
-function toggleMobileMenu() {
-  document.getElementById("sidebar-left").classList.toggle("mobile-open");
-  document.getElementById("mobile-menu-toggle").classList.toggle("open");
-}
-function closeMobileMenu() {
-  document.getElementById("sidebar-left").classList.remove("mobile-open");
-  document.getElementById("mobile-menu-toggle").classList.remove("open");
 }
 let tt;
 function showToast(msg) {
@@ -2330,48 +2140,22 @@ function loadAdminCfg() {
   if (url) document.getElementById("sb-url").value = url;
   if (key) document.getElementById("sb-key").value = key;
 }
-function switchTab(name) {
-  document.querySelectorAll(".side-head").forEach(b=>b.classList.remove("active"));
+function switchTab(name, btn) {
+  document.querySelectorAll(".ap-tab").forEach(b=>b.classList.remove("active"));
   document.querySelectorAll(".ap-pane").forEach(p=>p.classList.remove("active"));
-  const head = document.getElementById("side-head-"+name);
-  if (head) head.classList.add("active");
+  btn.classList.add("active");
   document.getElementById("tab-"+name).classList.add("active");
   if (name === "modelos") { populateModelSelect(); renderAdminModelosList(); }
   if (name === "portada") fillPortadaForm();
   if (name === "eventos") renderAdminEventosList();
 }
-function switchSubTab(name) {
+function switchSubTab(name, btn) {
+  document.querySelectorAll(".sub-tab").forEach(b=>b.classList.remove("active"));
   document.querySelectorAll(".sub-pane").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
   document.getElementById("sub-"+name).classList.add("active");
   if (name === "foto") { populateModelSelect(); renderAdminFotosList(document.getElementById("f-modelo").value); }
   if (name === "gestionar") renderAdminModelosList();
-}
-
-/* Menú lateral tipo acordeón: tocás un ítem y se despliegan sus opciones debajo */
-function toggleSide(name) {
-  const head = document.getElementById("side-head-"+name);
-  const children = document.getElementById("side-children-"+name);
-
-  document.querySelectorAll(".side-head").forEach(b => { if (b !== head) b.classList.remove("open"); });
-  document.querySelectorAll(".side-children").forEach(c => { if (c !== children) c.classList.remove("open"); });
-
-  if (children) {
-    const willOpen = !head.classList.contains("open");
-    head.classList.toggle("open", willOpen);
-    children.classList.toggle("open", willOpen);
-  } else {
-    head.classList.add("open");
-  }
-
-  switchTab(name);
-}
-
-function selectSubTab(tabName, subName, btn) {
-  const container = document.getElementById("side-children-"+tabName);
-  if (container) container.querySelectorAll(".side-child").forEach(b=>b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
-  switchTab(tabName);
-  switchSubTab(subName);
 }
 
 // ─── ADMIN: CREAR PERFIL DE MODELO ─────────────────────────
@@ -2395,7 +2179,7 @@ async function publishModel() {
   document.getElementById("m-code").value="";
   document.getElementById("m-desc").value="";
   document.getElementById("m-embed").value="";
-  setSt(st,`Perfil de "${nombre}" creado correctamente.`,"ok");
+  setSt(st,`✓ Perfil de "${nombre}" creado correctamente.`,"ok");
   btn.disabled = false;
   populateModelSelect();
   renderAdminModelosList();
@@ -2428,7 +2212,7 @@ async function uploadFoto() {
   allFotos.push(data[0]);
   document.getElementById("f-embed").value="";
   const m = allModels.find(x=>String(x.id)===String(modeloId));
-  setSt(st,`Foto agregada a la galería de "${m?m.nombre:'el modelo'}".`,"ok");
+  setSt(st,`✓ Foto agregada a la galería de "${m?m.nombre:'el modelo'}".`,"ok");
   btn.disabled = false;
   renderAdminFotosList(modeloId);
 }
@@ -2523,7 +2307,7 @@ async function savePortada() {
   }]).select();
   if (error) { setSt(st,"Error: "+error.message,"error"); btn.disabled=false; return; }
   heroPortada = data[0];
-  setSt(st,"Portada actualizada.","ok");
+  setSt(st,"✓ Portada actualizada.","ok");
   btn.disabled = false;
   renderHero();
 }
@@ -2539,7 +2323,7 @@ async function saveHeaderBg() {
   }]).select();
   if (error) { setSt(st,"Error: "+error.message,"error"); btn.disabled=false; return; }
   heroPortada = data[0];
-  setSt(st,"Fondo del header actualizado.","ok");
+  setSt(st,"✓ Fondo del header actualizado.","ok");
   btn.disabled = false;
   renderHeaderBg();
 }
@@ -2565,7 +2349,7 @@ async function publishEvent() {
   document.getElementById("e-date").value="";
   document.getElementById("e-banner").value="";
   document.getElementById("e-desc").value="";
-  setSt(st,`Evento "${titulo}" publicado.`,"ok");
+  setSt(st,`✓ Evento "${titulo}" publicado.`,"ok");
   btn.disabled = false;
   renderTicker();
   renderEventosCarousel();
@@ -2678,7 +2462,7 @@ function renderRecentTicker() {
     const m = allModels.find(x => String(x.id) === String(f.modelo_id));
     const nombre = m ? m.nombre : "Modelo";
     const id = m ? m.id : "";
-    return `<span class="recent-item" onclick="openModal('${id}')">Nueva foto de ${nombre}</span>`;
+    return `<span class="recent-item" onclick="openModal('${id}')">📸 Nueva foto de ${nombre}</span>`;
   });
   track.innerHTML = items.join("") + items.join("");
 }
@@ -2702,7 +2486,7 @@ function toggleFollow() {
     showToast("Dejaste de seguir a " + currentModalModel.nombre);
   } else {
     list.push(id);
-    showToast("¡Ahora seguís a " + currentModalModel.nombre + "!");
+    showToast("¡Ahora seguís a " + currentModalModel.nombre + "! ☆");
   }
   saveFollowing(list);
   updateFollowBtn();
@@ -2712,7 +2496,7 @@ function updateFollowBtn() {
   const btn = document.getElementById("modal-follow-btn");
   if (!btn || !currentModalModel) return;
   const following = isFollowing(currentModalModel.id);
-  btn.textContent = following ? "Siguiendo" : "Seguir";
+  btn.textContent = following ? "★ Siguiendo" : "☆ Seguir";
   btn.classList.toggle("following", following);
 }
 
@@ -3005,7 +2789,7 @@ async function downloadProfileImage() {
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 4000);
-      showToast("¡Imagen guardada! Subila a tu historia.");
+      showToast("¡Imagen guardada! Subila a tu historia 📲");
     }, "image/jpeg", 0.92);
 
   } catch (e) {
@@ -3014,159 +2798,11 @@ async function downloadProfileImage() {
   }
 }
 
-// ─── DESCARGAR EVENTO JPG (estilo historia de IG) ───────────
-async function downloadEventoJPG(id) {
-  const ev = allEvents.find(e => String(e.id) === String(id));
-  if (!ev) return;
-  showToast("Generando imagen del evento…");
-
-  try {
-    if (document.fonts && document.fonts.load) {
-      await Promise.all([
-        document.fonts.load("italic 700 60px 'Playfair Display'"),
-        document.fonts.load("600 28px 'Montserrat'"),
-        document.fonts.load("400 22px 'Montserrat'")
-      ]).catch(() => {});
-    }
-
-    const W = 1080, H = 1920;
-    const canvas = document.createElement("canvas");
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext("2d");
-
-    // Fondo blanco total
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, W, H);
-
-    // Portada arriba: máximo 25% del alto = 480px
-    const BANNER_H = Math.round(H * 0.25); // 480px
-    if (ev.banner_url) {
-      try {
-        const bannerImg = await loadImageCORS(ev.banner_url);
-        // Cover fit dentro del área 1080x480
-        const scale = Math.max(W / bannerImg.width, BANNER_H / bannerImg.height);
-        const dw = bannerImg.width * scale, dh = bannerImg.height * scale;
-        const dx = (W - dw) / 2, dy = (BANNER_H - dh) / 2;
-        ctx.save();
-        ctx.rect(0, 0, W, BANNER_H);
-        ctx.clip();
-        ctx.drawImage(bannerImg, dx, dy, dw, dh);
-        ctx.restore();
-      } catch(e) {
-        // si no carga la imagen, dejar blanco con texto
-        ctx.fillStyle = "#111";
-        ctx.fillRect(0, 0, W, BANNER_H);
-        ctx.fillStyle = "#fff";
-        ctx.font = "italic 48px 'Playfair Display', Georgia, serif";
-        ctx.textAlign = "center";
-        ctx.fillText(ev.titulo, W/2, BANNER_H/2);
-      }
-    } else {
-      ctx.fillStyle = "#111";
-      ctx.fillRect(0, 0, W, BANNER_H);
-    }
-
-    // Línea separadora dorada
-    ctx.fillStyle = "#D4AF37";
-    ctx.fillRect(0, BANNER_H, W, 4);
-
-    // Área de texto (resto blanco)
-    let y = BANNER_H + 80;
-    ctx.textAlign = "center";
-
-    // Logo imar source (texto si no hay imagen)
-    ctx.font = "italic 32px 'Playfair Display', Georgia, serif";
-    ctx.fillStyle = "#888";
-    ctx.fillText("imar source", W / 2, y);
-    y += 60;
-
-    // Título del evento
-    ctx.font = "italic 700 72px 'Playfair Display', Georgia, serif";
-    ctx.fillStyle = "#000";
-    const titleLines = wrapCenteredText(ctx, ev.titulo || "", W/2, y, W - 120, 84);
-    y += titleLines * 84 + 40;
-
-    // Separador
-    ctx.fillStyle = "#D4AF37";
-    ctx.fillRect(W/2 - 60, y, 120, 3);
-    y += 40;
-
-    // Fecha
-    if (ev.fecha_evento) {
-      const d = new Date(ev.fecha_evento + "T00:00:00").toLocaleDateString("es-AR", {
-        weekday: "long", day: "numeric", month: "long", year: "numeric"
-      });
-      ctx.font = "600 32px 'Montserrat', Helvetica, sans-serif";
-      ctx.fillStyle = "#333";
-      ctx.textAlign = "center";
-      wrapCenteredText(ctx, d.toUpperCase(), W/2, y, W - 120, 42);
-      y += 80;
-    }
-
-    // Countdown
-    const cd = getEventCountdown(ev.fecha_evento);
-    if (cd) {
-      ctx.font = "700 36px 'Montserrat', Helvetica, sans-serif";
-      ctx.fillStyle = "#D4AF37";
-      ctx.fillText("⏳ " + cd.toUpperCase(), W/2, y);
-      y += 70;
-    }
-
-    // Lugar
-    if (ev.lugar) {
-      ctx.font = "600 28px 'Montserrat', Helvetica, sans-serif";
-      ctx.fillStyle = "#555";
-      ctx.fillText(ev.lugar, W/2, y);
-      y += 60;
-    }
-
-    // Descripción
-    if (ev.descripcion) {
-      ctx.font = "400 26px 'Montserrat', Helvetica, sans-serif";
-      ctx.fillStyle = "#555";
-      const descWords = ev.descripcion.split(" ");
-      let line = "", lines = [];
-      for (const w of descWords) {
-        const test = line ? line + " " + w : w;
-        if (ctx.measureText(test).width > W - 160 && line) { lines.push(line); line = w; }
-        else line = test;
-      }
-      if (line) lines.push(line);
-      lines = lines.slice(0, 8); // máximo 8 líneas
-      lines.forEach(l => { ctx.fillText(l, W/2, y); y += 38; });
-      y += 20;
-    }
-
-    // Pie
-    ctx.font = "500 22px 'Montserrat', Helvetica, sans-serif";
-    ctx.fillStyle = "#bbb";
-    ctx.fillText("imar source", W/2, H - 60);
-
-    canvas.toBlob((blob) => {
-      if (!blob) { showToast("No se pudo generar la imagen"); return; }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `evento-${(ev.titulo||"evento").replace(/[^a-z0-9]/gi,"-").toLowerCase()}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 4000);
-      showToast("¡Imagen del evento guardada!");
-    }, "image/jpeg", 0.93);
-
-  } catch(e) {
-    console.error(e);
-    showToast("No se pudo generar la imagen del evento.");
-  }
-}
-
 // ─── TESTIMONIOS ────────────────────────────────────────────
 // ─── MODAL "QUIERO SER PARTE" ────────────────────────────────
 function openPostulacion() {
   document.getElementById("modal-postulacion-overlay").style.display = "flex";
   document.body.style.overflow = "hidden";
-  closeMobileMenu();
 }
 function closePostulacion() {
   document.getElementById("modal-postulacion-overlay").style.display = "none";
@@ -3179,7 +2815,7 @@ function renderModalBadges(m) {
   if (!container) return;
   const badges = m.insignias || [];
   if (!badges.length) { container.innerHTML = ""; return; }
-  container.innerHTML = badges.map(b => `<span class="badge">${b}</span>`).join("");
+  container.innerHTML = badges.map(b => `<span class="badge">🏆 ${b}</span>`).join("");
 }
 
 // ─── START ─────────────────────────────────────────────────
