@@ -97,8 +97,9 @@ nav a:hover{color:var(--gray-text)}
 .podio-code{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text);margin-bottom:10px}
 .podio-votes{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:2px}
 .podio-votes-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text)}
-.btn-vote{border:1px solid var(--black);background:none;font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:10px 20px;cursor:pointer;transition:all var(--ease);margin-top:12px;width:100%}
-.btn-vote:hover,.btn-vote.voted{background:var(--black);color:var(--white)}
+.btn-vote{border:2px solid var(--black);background:none;font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:12px 20px;cursor:pointer;transition:all var(--ease);margin-top:12px;width:100%;font-weight:600}
+.btn-vote:hover{background:var(--black);color:var(--white);transform:scale(1.03)}
+.btn-vote.voted{background:var(--gold);color:var(--white);border-color:var(--gold)}
 #podio-empty{text-align:center;padding:60px;font-family:var(--serif);font-size:20px;font-style:italic;color:var(--gray-mid)}
 
 /* SALÓN DE LA FAMA */
@@ -140,8 +141,9 @@ nav a:hover{color:var(--gray-text)}
 .lista-nombre{font-family:var(--serif);font-size:16px;font-weight:400;cursor:pointer}
 .lista-codigo{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text)}
 .lista-votos{font-size:16px;font-weight:600;text-align:center}
-.lista-btn{border:1px solid var(--gray-mid);background:none;font-family:var(--sans);font-size:8px;letter-spacing:.15em;text-transform:uppercase;padding:8px 12px;cursor:pointer;transition:all var(--ease);width:100%}
-.lista-btn:hover,.lista-btn.voted{background:var(--black);color:var(--white);border-color:var(--black)}
+.lista-btn{border:1.5px solid var(--gray-mid);background:none;font-family:var(--sans);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:9px 12px;cursor:pointer;transition:all var(--ease);width:100%;font-weight:500}
+.lista-btn:hover{background:var(--black);color:var(--white);border-color:var(--black);transform:scale(1.02)}
+.lista-btn.voted{background:var(--gold);color:var(--white);border-color:var(--gold)}
 #lista-empty{padding:60px;text-align:center;font-family:var(--serif);font-size:20px;font-style:italic;color:var(--gray-mid)}
 
 /* EVENTOS — carrusel estilo Netflix */
@@ -403,27 +405,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
 @media(max-width:640px){#testimonios-section{padding:40px 24px}#seguidos-track{padding:0 24px}#banner-postulacion{padding:32px 24px}}
 
 /* ── CUENTA / AUTENTICACIÓN ─────────────────────────────── */
-.af{display:flex;flex-direction:column;gap:6px}
-.af label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray-text)}
-.af input{width:100%;border:none;border-bottom:1px solid var(--gray-mid);background:transparent;font-family:var(--sans);font-size:14px;letter-spacing:.02em;color:var(--black);padding:9px 2px;outline:none;transition:border-color var(--ease)}
-.af input:focus{border-bottom-color:var(--black)}
-#nav-account-link{position:relative}
-#nav-bell{position:relative;cursor:pointer;display:inline-flex;align-items:center}
-#nav-bell-dot{position:absolute;top:-4px;right:-8px;width:8px;height:8px;border-radius:50%;background:#c0392b;display:none}
-#nav-bell-dot.show{display:block}
-.notif-panel{position:fixed;top:0;right:0;height:100%;width:360px;max-width:92vw;background:var(--white);box-shadow:-6px 0 24px rgba(0,0,0,.18);z-index:3500;transform:translateX(100%);transition:transform var(--ease);display:flex;flex-direction:column}
-.notif-panel.open{transform:translateX(0)}
-.notif-head{padding:24px 24px 16px;border-bottom:1px solid var(--gray-mid);display:flex;justify-content:space-between;align-items:center}
-.notif-title{font-family:var(--serif);font-size:18px;font-style:italic}
-.notif-list{flex:1;overflow-y:auto;padding:8px 0}
-.notif-item{padding:16px 24px;border-bottom:1px solid var(--gray-mid);cursor:pointer}
-.notif-item.unread{background:#fbf8ef}
-.notif-item-title{font-size:12px;font-weight:600;margin-bottom:4px}
-.notif-item-body{font-size:11px;color:var(--gray-text);line-height:1.5}
-.notif-item-time{font-size:9px;color:var(--gray-mid);margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
-#notif-empty{padding:40px 24px;text-align:center;color:var(--gray-mid);font-size:11px;font-style:italic}
-#notif-scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3400;display:none}
-#notif-scrim.show{display:block}
+
 </style>
 </head>
 <body>
@@ -460,8 +442,6 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     <a onclick="goTo('#destacados-section')">Destacados</a>
     <a onclick="goTo('#lista-section')">Directorio</a>
     <a onclick="openPostulacion()" style="color:var(--gold);font-weight:600">★ Quiero ser parte</a>
-    <a onclick="handleAccountNavClick()" id="nav-account-link">Iniciar sesión</a>
-    <a onclick="openNotifPanel()" id="nav-bell" style="display:none">🔔<span id="nav-bell-dot"></span></a>
   </nav>
 </header>
 
@@ -592,6 +572,7 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
       <div class="modal-actions">
         <button class="btn-modal-vote" id="modal-ev-interes-btn" onclick="marcarInteres()">☆ Me interesa</button>
         <button class="btn-share" onclick="shareEvento()">Compartir evento</button>
+        <button class="btn-share" onclick="descargarFolletoEvento()" style="margin-left:0">📄 Descargar folleto</button>
       </div>
     </div>
     <button id="modal-ev-close" onclick="closeEvModalDirect()">✕</button>
@@ -667,69 +648,6 @@ footer{border-top:1px solid var(--black);padding:32px 60px;display:flex;justify-
     </div>
     <div style="font-size:9px;color:var(--gray-text);margin-top:20px;text-align:center">También podés seguirnos en Instagram para novedades</div>
   </div>
-</div>
-
-<!-- MODAL CUENTA (login / crear cuenta para votar) -->
-<div id="modal-auth-overlay" onclick="if(event.target===this)closeAuthModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:3000;display:none;align-items:center;justify-content:center;padding:24px">
-  <div style="background:var(--white);max-width:440px;width:100%;padding:44px 40px;position:relative;max-height:92vh;overflow-y:auto">
-    <button onclick="closeAuthModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-
-    <div style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Cuenta</div>
-    <div style="font-family:var(--serif);font-size:22px;margin-bottom:10px" id="auth-modal-title">Necesitás una cuenta para votar</div>
-    <div style="font-size:11px;color:var(--gray-text);line-height:1.6;margin-bottom:24px">Creamos cuentas para asegurarnos de que cada voto sea de una persona real. Un voto por cuenta, por ciclo de ranking.</div>
-
-    <div style="display:flex;gap:0;border-bottom:1px solid var(--gray-mid);margin-bottom:24px">
-      <button type="button" onclick="switchAuthTab('login')" id="auth-tab-login" style="flex:1;background:none;border:none;border-bottom:2px solid var(--black);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:12px 0;cursor:pointer;color:var(--black)">Iniciar sesión</button>
-      <button type="button" onclick="switchAuthTab('signup')" id="auth-tab-signup" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--gray-text);font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:12px 0;cursor:pointer">Crear cuenta</button>
-    </div>
-
-    <!-- LOGIN -->
-    <div id="auth-pane-login">
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="af"><label>Email</label><input type="email" id="login-email" autocomplete="email"></div>
-        <div class="af"><label>Contraseña</label><input type="password" id="login-password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doUserLogin()"></div>
-        <div id="auth-login-status" style="font-size:10px;color:#c0392b;min-height:16px"></div>
-        <button class="lista-btn" style="background:var(--black);color:var(--white);padding:14px 0" onclick="doUserLogin()" id="btn-do-login">Ingresar</button>
-        <div style="font-size:9px;color:var(--gray-text);text-align:center">¿Olvidaste tu contraseña? <a onclick="doResetPassword()" style="color:var(--black);text-decoration:underline;cursor:pointer">Recuperarla</a></div>
-      </div>
-    </div>
-
-    <!-- SIGNUP -->
-    <div id="auth-pane-signup" style="display:none">
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="af">
-          <label>Foto de perfil</label>
-          <div style="display:flex;align-items:center;gap:14px">
-            <div id="signup-foto-preview" style="width:56px;height:56px;border-radius:50%;overflow:hidden;background:var(--gray-light);border:1px solid var(--gray-mid);flex-shrink:0;background-size:cover;background-position:center"></div>
-            <input type="file" accept="image/*" id="signup-foto" onchange="previewSignupFoto(event)" style="font-size:11px">
-          </div>
-        </div>
-        <div class="af"><label>Nombre</label><input type="text" id="signup-nombre" autocomplete="given-name"></div>
-        <div class="af"><label>Apellido</label><input type="text" id="signup-apellido" autocomplete="family-name"></div>
-        <div class="af"><label>Apodo</label><input type="text" id="signup-apodo" placeholder="Cómo querés que te veamos"></div>
-        <div class="af"><label>Fecha de nacimiento</label><input type="date" id="signup-fecha"></div>
-        <div class="af"><label>Email</label><input type="email" id="signup-email" autocomplete="email"></div>
-        <div class="af"><label>Contraseña</label><input type="password" id="signup-password" autocomplete="new-password"></div>
-        <label style="display:flex;gap:10px;align-items:flex-start;font-size:10px;color:var(--gray-text);line-height:1.6;cursor:pointer">
-          <input type="checkbox" id="signup-privacidad" style="margin-top:3px">
-          <span>Entiendo que mis datos (foto, nombre, apellido, apodo y fecha de nacimiento) permanecen <strong>ocultos</strong>, no se muestran públicamente ni se comparten con nadie. Solo se usan para verificar que soy una persona real y evitar cuentas duplicadas.</span>
-        </label>
-        <div id="auth-signup-status" style="font-size:10px;color:#c0392b;min-height:16px"></div>
-        <button class="lista-btn" style="background:var(--black);color:var(--white);padding:14px 0" onclick="doUserSignup()" id="btn-do-signup">Crear cuenta y votar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PANEL DE NOTIFICACIONES -->
-<div id="notif-scrim" onclick="closeNotifPanel()"></div>
-<div id="notif-panel" class="notif-panel">
-  <div class="notif-head">
-    <div class="notif-title">Notificaciones</div>
-    <button onclick="closeNotifPanel()" style="background:none;border:none;font-size:18px;cursor:pointer">✕</button>
-  </div>
-  <div class="notif-list" id="notif-list"></div>
-  <div id="notif-empty" style="display:none">Todavía no tenés notificaciones.</div>
 </div>
 
 <!-- TOAST -->
@@ -942,8 +860,6 @@ const SUPABASE_URL_DEFAULT = "https://lmxpbgvbxvmnlcntovdo.supabase.co"; // pega
 const SUPABASE_KEY_DEFAULT = "sb_publishable_IRXmidh-ipHtdPMH4-O-iA_dQnnuZN6"; // pegar Anon Key aqui
 const ADMIN_PASSWORD = "imarsource2025"; // cambiar esta contraseña
 const PORTADA_ID = 1; // fila única de la tabla "portada"
-const AVATAR_BUCKET = "avatars"; // bucket de Supabase Storage para fotos de perfil de cuentas
-const EDAD_MINIMA = 18; // edad mínima para crear cuenta
 
 // ─── ESTADO ────────────────────────────────────────────────
 let sb = null;
@@ -958,15 +874,8 @@ let currentGalleryFotos = [];
 let currentLightboxIndex = 0;
 let toastTimer;
 
-// ─── CUENTA DE USUARIO ─────────────────────────────────────
-let currentUser = null;      // sesión de Supabase Auth
-let currentUsuario = null;   // fila de la tabla "usuarios" (perfil)
-let miVotoCiclo = null;      // voto del usuario en el ciclo activo (si existe)
-let pendingVoteAfterLogin = null;
-let signupFotoFile = null;
-
-// ─── NOTIFICACIONES ────────────────────────────────────────
-let misNotificaciones = [];
+// ─── VOTOS (guardados en el navegador, sin cuentas) ─────────
+// im_votos_ciclo = { [ciclo_id]: modelo_id } — un voto por ciclo, por navegador
 
 // ─── SUPABASE ──────────────────────────────────────────────
 function initSB(url, key) {
@@ -995,7 +904,6 @@ function initSBFromPanel() {
 async function init() {
   if (tryInitSB()) {
     await loadData();
-    await initAuth();
   }
   else renderAll();
   handleHash();
@@ -1451,30 +1359,35 @@ function votePercentText(m) {
   return pct + "%";
 }
 
-// hasVoted(id): ¿el usuario logueado ya usó su voto del ciclo actual en ESTE modelo?
-function hasVoted(id) {
-  return !!(miVotoCiclo && String(miVotoCiclo.modelo_id) === String(id));
+// hasVoted(id): ¿este navegador ya usó su voto del ciclo actual en ESTE modelo?
+function getVotosLocales() {
+  try { return JSON.parse(localStorage.getItem("im_votos_ciclo") || "{}"); }
+  catch(e) { return {}; }
 }
-// yaVotoEsteCiclo: ¿el usuario ya usó su único voto del ciclo, sea cual sea el modelo?
+function setVotoLocal(cicloId, modeloId) {
+  const v = getVotosLocales();
+  v[cicloId] = modeloId;
+  localStorage.setItem("im_votos_ciclo", JSON.stringify(v));
+}
+function hasVoted(id) {
+  if (!cicloActivo) return false;
+  const v = getVotosLocales();
+  return String(v[cicloActivo.id]) === String(id);
+}
+// yaVotoEsteCiclo: ¿este navegador ya usó su único voto del ciclo, sea cual sea el modelo?
 function yaVotoEsteCiclo() {
-  return !!miVotoCiclo;
+  if (!cicloActivo) return false;
+  const v = getVotosLocales();
+  return !!v[cicloActivo.id];
 }
 
 async function vote(id) {
   if (!sb) { showToast("Supabase no configurado"); return; }
 
-  // 1) Necesita cuenta
-  if (!currentUsuario) {
-    pendingVoteAfterLogin = id;
-    openAuthModal();
-    showToast("Creá una cuenta o iniciá sesión para votar");
-    return;
-  }
-
-  // 2) Necesita ciclo activo
+  // 1) Necesita ciclo activo
   if (!cicloActivo) { showToast("No hay un ciclo de votación activo por ahora"); return; }
 
-  // 3) Ya usó su voto de este ciclo
+  // 2) Ya usó su voto de este ciclo (guardado en este navegador)
   if (yaVotoEsteCiclo()) {
     showToast(hasVoted(id) ? "Ya votaste por este perfil este mes" : "Ya usaste tu voto de este ciclo. Podrás votar de nuevo cuando se reinicie el ranking.");
     return;
@@ -1483,20 +1396,11 @@ async function vote(id) {
   const m = allModels.find(x => x.id === id);
   if (!m) return;
 
-  const { data: votoInsertado, error: vErr } = await sb.from("votos").insert([{
-    usuario_id: currentUsuario.id, modelo_id: id, ciclo_id: cicloActivo.id
-  }]).select().maybeSingle();
-
-  if (vErr) {
-    if (vErr.code === "23505") showToast("Ya usaste tu voto de este ciclo.");
-    else showToast("Error al votar: " + vErr.message);
-    return;
-  }
-
-  miVotoCiclo = votoInsertado;
   const newVotes = (m.likes_mes||0) + 1;
   const { error } = await sb.from("modelos").update({ likes_mes: newVotes }).eq("id", id);
-  if (error) { showToast("Tu voto quedó registrado, pero hubo un error al sumar el contador."); }
+  if (error) { showToast("Error al votar: " + error.message); return; }
+
+  setVotoLocal(cicloActivo.id, id);
   m.likes_mes = newVotes;
   allModels.sort((a,b)=>(b.likes_mes||0)-(a.likes_mes||0));
   showToast("¡Voto registrado! ♥");
@@ -1510,278 +1414,6 @@ async function vote(id) {
 
 async function voteFromModal() {
   if (currentModalModel) await vote(currentModalModel.id);
-}
-
-// ══════════════════════════════════════════════════════════
-// ─── CUENTA DE USUARIO (Supabase Auth) ──────────────────────
-// ══════════════════════════════════════════════════════════
-
-async function initAuth() {
-  if (!sb) return;
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session && session.user) await onAuthReady(session.user);
-    else updateAuthUI();
-    sb.auth.onAuthStateChange((_event, session) => {
-      if (session && session.user) onAuthReady(session.user);
-      else { currentUser = null; currentUsuario = null; miVotoCiclo = null; updateAuthUI(); }
-    });
-  } catch(e) { console.warn("Auth init error:", e); updateAuthUI(); }
-}
-
-async function onAuthReady(user) {
-  currentUser = user;
-  try {
-    const { data } = await sb.from("usuarios").select("*").eq("id", user.id).maybeSingle();
-    if (!data || data.activa === false) {
-      // Cuenta eliminada por el administrador o perfil incompleto
-      await sb.auth.signOut();
-      currentUser = null; currentUsuario = null; miVotoCiclo = null;
-      updateAuthUI();
-      return;
-    }
-    currentUsuario = data;
-    await cargarMiVoto();
-    await cargarNotificaciones();
-  } catch(e) { console.warn("Error cargando perfil:", e); }
-  updateAuthUI();
-
-  if (pendingVoteAfterLogin) {
-    const id = pendingVoteAfterLogin;
-    pendingVoteAfterLogin = null;
-    closeAuthModal();
-    vote(id);
-  }
-}
-
-async function cargarMiVoto() {
-  miVotoCiclo = null;
-  if (!currentUsuario || !cicloActivo) return;
-  try {
-    const { data } = await sb.from("votos").select("*")
-      .eq("usuario_id", currentUsuario.id).eq("ciclo_id", cicloActivo.id).maybeSingle();
-    miVotoCiclo = data || null;
-  } catch(e) {}
-}
-
-function updateAuthUI() {
-  const link = document.getElementById("nav-account-link");
-  const bell = document.getElementById("nav-bell");
-  if (!link) return;
-  if (currentUsuario) {
-    link.textContent = "★ " + (currentUsuario.apodo || "Mi cuenta");
-    if (bell) bell.style.display = "inline-flex";
-    renderNotifBadge();
-  } else {
-    link.textContent = "Iniciar sesión";
-    if (bell) bell.style.display = "none";
-  }
-  renderPodio(); renderLista(); renderSearchResults();
-}
-
-function handleAccountNavClick() {
-  if (currentUsuario) {
-    if (confirm(`Sesión iniciada como ${currentUsuario.apodo}.\n\n¿Querés cerrar sesión?`)) doUserLogout();
-  } else {
-    openAuthModal();
-  }
-}
-
-function openAuthModal() {
-  document.getElementById("modal-auth-overlay").style.display = "flex";
-  document.body.style.overflow = "hidden";
-  switchAuthTab(pendingVoteAfterLogin ? "signup" : "login");
-}
-function closeAuthModal() {
-  document.getElementById("modal-auth-overlay").style.display = "none";
-  document.body.style.overflow = "";
-}
-function switchAuthTab(tab) {
-  const isLogin = tab === "login";
-  document.getElementById("auth-pane-login").style.display = isLogin ? "block" : "none";
-  document.getElementById("auth-pane-signup").style.display = isLogin ? "none" : "block";
-  document.getElementById("auth-tab-login").style.borderBottomColor = isLogin ? "var(--black)" : "transparent";
-  document.getElementById("auth-tab-login").style.color = isLogin ? "var(--black)" : "var(--gray-text)";
-  document.getElementById("auth-tab-signup").style.borderBottomColor = !isLogin ? "var(--black)" : "transparent";
-  document.getElementById("auth-tab-signup").style.color = !isLogin ? "var(--black)" : "var(--gray-text)";
-}
-
-function previewSignupFoto(e) {
-  const file = e.target.files && e.target.files[0];
-  if (!file) return;
-  signupFotoFile = file;
-  const url = URL.createObjectURL(file);
-  document.getElementById("signup-foto-preview").style.backgroundImage = `url('${url}')`;
-}
-
-function calcularEdad(fechaStr) {
-  const hoy = new Date(); const nac = new Date(fechaStr + "T00:00:00");
-  let edad = hoy.getFullYear() - nac.getFullYear();
-  const m = hoy.getMonth() - nac.getMonth();
-  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
-  return edad;
-}
-
-async function doUserSignup() {
-  const st = document.getElementById("auth-signup-status");
-  const btn = document.getElementById("btn-do-signup");
-  st.textContent = "";
-  const nombre = document.getElementById("signup-nombre").value.trim();
-  const apellido = document.getElementById("signup-apellido").value.trim();
-  const apodo = document.getElementById("signup-apodo").value.trim();
-  const fecha = document.getElementById("signup-fecha").value;
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
-  const aceptaPrivacidad = document.getElementById("signup-privacidad").checked;
-
-  if (!signupFotoFile) { st.textContent = "Subí una foto de perfil."; return; }
-  if (!nombre || !apellido || !apodo) { st.textContent = "Completá nombre, apellido y apodo."; return; }
-  if (!fecha) { st.textContent = "Ingresá tu fecha de nacimiento."; return; }
-  if (calcularEdad(fecha) < EDAD_MINIMA) { st.textContent = `Tenés que ser mayor de ${EDAD_MINIMA} años para crear una cuenta.`; return; }
-  if (!email || !password || password.length < 6) { st.textContent = "Email válido y contraseña de al menos 6 caracteres."; return; }
-  if (!aceptaPrivacidad) { st.textContent = "Tenés que aceptar cómo usamos tus datos para continuar."; return; }
-  if (!sb) { st.textContent = "Supabase no configurado."; return; }
-
-  btn.disabled = true; st.style.color = "var(--gray-text)"; st.textContent = "Creando cuenta…";
-  try {
-    const { data: signData, error: signErr } = await sb.auth.signUp({ email, password });
-    if (signErr) throw signErr;
-    const user = signData.user;
-    if (!user) { st.textContent = "Revisá tu email para confirmar la cuenta y después iniciá sesión."; btn.disabled=false; return; }
-
-    // Subir foto de perfil al bucket "avatars"
-    const ext = (signupFotoFile.name.split(".").pop() || "jpg").toLowerCase();
-    const path = `${user.id}/${Date.now()}.${ext}`;
-    const { error: upErr } = await sb.storage.from(AVATAR_BUCKET).upload(path, signupFotoFile, { upsert: true });
-    let fotoUrl = "";
-    if (!upErr) {
-      const { data: pub } = sb.storage.from(AVATAR_BUCKET).getPublicUrl(path);
-      fotoUrl = pub.publicUrl;
-    }
-
-    const { error: profErr } = await sb.from("usuarios").insert([{
-      id: user.id, nombre, apellido, apodo, fecha_nacimiento: fecha,
-      foto_url: fotoUrl, email, activa: true
-    }]);
-    if (profErr) throw profErr;
-
-    st.style.color = "#2d7a2d"; st.textContent = "¡Cuenta creada!";
-    // Si Supabase pide confirmación de email, no habrá sesión todavía.
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) await onAuthReady(session.user);
-    else { showToast("Te enviamos un email de confirmación. Confirmalo y volvé a iniciar sesión."); closeAuthModal(); }
-  } catch(e) {
-    st.style.color = "#c0392b";
-    st.textContent = "Error: " + (e.message || "no se pudo crear la cuenta.");
-  }
-  btn.disabled = false;
-}
-
-async function doUserLogin() {
-  const st = document.getElementById("auth-login-status");
-  const btn = document.getElementById("btn-do-login");
-  const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value;
-  if (!email || !password) { st.textContent = "Completá email y contraseña."; return; }
-  if (!sb) { st.textContent = "Supabase no configurado."; return; }
-  btn.disabled = true; st.textContent = "Ingresando…";
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { st.textContent = "Email o contraseña incorrectos."; btn.disabled = false; return; }
-  st.textContent = "";
-  await onAuthReady(data.user);
-  closeAuthModal();
-  btn.disabled = false;
-}
-
-async function doResetPassword() {
-  const email = document.getElementById("login-email").value.trim();
-  if (!email) { showToast("Escribí tu email arriba primero."); return; }
-  if (!sb) return;
-  const { error } = await sb.auth.resetPasswordForEmail(email);
-  showToast(error ? "No se pudo enviar el email." : "Te enviamos un email para restablecer tu contraseña.");
-}
-
-async function doUserLogout() {
-  if (sb) await sb.auth.signOut();
-  currentUser = null; currentUsuario = null; miVotoCiclo = null; misNotificaciones = [];
-  updateAuthUI();
-  showToast("Cerraste sesión");
-}
-
-// ══════════════════════════════════════════════════════════
-// ─── NOTIFICACIONES ──────────────────────────────────────────
-// ══════════════════════════════════════════════════════════
-
-async function cargarNotificaciones() {
-  if (!sb || !currentUsuario) return;
-  try {
-    const { data } = await sb.from("notificaciones")
-      .select("*")
-      .or(`usuario_id.eq.${currentUsuario.id},usuario_id.is.null`)
-      .order("creado_en", { ascending: false })
-      .limit(50);
-    misNotificaciones = data || [];
-  } catch(e) { console.warn("Error cargando notificaciones:", e); }
-  renderNotifBadge();
-}
-
-function renderNotifBadge() {
-  const dot = document.getElementById("nav-bell-dot");
-  if (!dot) return;
-  const leidas = getLeidasSet();
-  const hayNuevas = misNotificaciones.some(n => !leidas.has(n.id));
-  dot.classList.toggle("show", hayNuevas);
-}
-
-function getLeidasSet() {
-  try { return new Set(JSON.parse(localStorage.getItem("im_notif_leidas") || "[]")); }
-  catch(e) { return new Set(); }
-}
-function marcarTodasLeidas() {
-  const leidas = getLeidasSet();
-  misNotificaciones.forEach(n => leidas.add(n.id));
-  localStorage.setItem("im_notif_leidas", JSON.stringify([...leidas]));
-  renderNotifBadge();
-}
-
-function openNotifPanel() {
-  if (!currentUsuario) { openAuthModal(); return; }
-  document.getElementById("notif-panel").classList.add("open");
-  document.getElementById("notif-scrim").classList.add("show");
-  renderNotifList();
-  setTimeout(marcarTodasLeidas, 1200);
-}
-function closeNotifPanel() {
-  document.getElementById("notif-panel").classList.remove("open");
-  document.getElementById("notif-scrim").classList.remove("show");
-}
-
-function tiempoRelativo(fechaStr) {
-  const diff = Date.now() - new Date(fechaStr).getTime();
-  const min = Math.floor(diff/60000);
-  if (min < 1) return "ahora";
-  if (min < 60) return min + " min";
-  const hs = Math.floor(min/60);
-  if (hs < 24) return hs + " h";
-  const dias = Math.floor(hs/24);
-  return dias + " d";
-}
-
-function renderNotifList() {
-  const list = document.getElementById("notif-list");
-  const empty = document.getElementById("notif-empty");
-  if (!list) return;
-  if (!misNotificaciones.length) {
-    list.innerHTML = ""; empty.style.display = "block"; return;
-  }
-  empty.style.display = "none";
-  const leidas = getLeidasSet();
-  list.innerHTML = misNotificaciones.map(n => `
-    <div class="notif-item${leidas.has(n.id)?'':' unread'}">
-      <div class="notif-item-title">${n.titulo || "Novedad"}</div>
-      <div class="notif-item-body">${n.mensaje || ""}</div>
-      <div class="notif-item-time">${tiempoRelativo(n.creado_en)}</div>
-    </div>`).join("");
 }
 
 // ─── EMBED DE IMAGEN (link directo, <img>, iframe o script Telegram) ──
@@ -1901,6 +1533,123 @@ async function marcarInteres() {
   ib.textContent = "★ Te interesa"; ib.classList.add("voted");
   showToast("¡Genial! Te avisamos si hay novedades");
   renderEventosCarousel();
+}
+
+// ─── DESCARGAR FOLLETO DE EVENTO ─────────────────────────────
+async function descargarFolletoEvento() {
+  const ev = currentModalEvent;
+  if (!ev) return;
+  showToast("Generando folleto…");
+  try {
+    if (document.fonts && document.fonts.load) {
+      await Promise.all([
+        document.fonts.load("italic 700 60px 'Playfair Display'"),
+        document.fonts.load("600 26px 'Montserrat'"),
+        document.fonts.load("400 30px 'Montserrat'")
+      ]).catch(()=>{});
+    }
+    // Formato vertical estilo Instagram (4:5)
+    const W = 1080, H = 1350;
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+
+    // Fondo blanco de base
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H);
+
+    // ── Bloque superior: imagen del evento en horizontal ──
+    const imgH = Math.round(H * 0.5); // alto de la franja de imagen
+    if (ev.banner_url) {
+      try {
+        const img = await loadImageCORS_folleto(ev.banner_url);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, W, imgH);
+        ctx.clip();
+        // cover-fit horizontal: prioriza mostrar el ancho completo de la imagen en horizontal
+        const scale = Math.max(W / img.width, imgH / img.height);
+        const dw = img.width * scale, dh = img.height * scale;
+        ctx.drawImage(img, (W - dw) / 2, (imgH - dh) / 2, dw, dh);
+        ctx.restore();
+      } catch(e2) {
+        ctx.fillStyle = "#111"; ctx.fillRect(0, 0, W, imgH);
+      }
+    } else {
+      ctx.fillStyle = "#111"; ctx.fillRect(0, 0, W, imgH);
+    }
+
+    // ── Bloque inferior: fondo blanco con texto negro ──
+    const padX = 64;
+    let cursorY = imgH + 70;
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#000";
+    ctx.font = "italic 700 52px 'Playfair Display', Georgia, serif";
+    const tWords = (ev.titulo || "").split(" "), maxTW = W - padX*2;
+    let tL = "", tLs = [];
+    for (const w of tWords) {
+      const t = tL ? tL + " " + w : w;
+      if (ctx.measureText(t).width > maxTW && tL) { tLs.push(tL); tL = w; } else tL = t;
+    }
+    if (tL) tLs.push(tL);
+    tLs.forEach((l, i) => ctx.fillText(l, padX, cursorY + i * 58));
+    cursorY += tLs.length * 58 + 18;
+
+    const fechaStr = ev.fecha_evento
+      ? new Date(ev.fecha_evento + "T00:00:00").toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})
+      : "";
+    if (fechaStr) {
+      ctx.fillStyle = "#666";
+      ctx.font = "600 22px 'Montserrat', Helvetica, sans-serif";
+      ctx.fillText(fechaStr.toUpperCase(), padX, cursorY);
+      cursorY += 46;
+    }
+
+    if (ev.descripcion) {
+      ctx.fillStyle = "#000";
+      ctx.font = "400 26px 'Montserrat', Helvetica, sans-serif";
+      const dW = W - padX*2, dWds = ev.descripcion.split(" ");
+      let dl = "", dLs = [];
+      const maxLineas = 8;
+      for (const w of dWds) {
+        const t = dl ? dl + " " + w : w;
+        if (ctx.measureText(t).width > dW && dl) { dLs.push(dl); if (dLs.length >= maxLineas) break; dl = w; } else dl = t;
+      }
+      if (dl && dLs.length < maxLineas) dLs.push(dl);
+      dLs.forEach((l, i) => ctx.fillText(l, padX, cursorY + i * 38));
+      cursorY += dLs.length * 38;
+    }
+
+    if (ev.interesados) {
+      ctx.fillStyle = "#999";
+      ctx.font = "600 22px 'Montserrat', Helvetica, sans-serif";
+      ctx.fillText(`★ ${ev.interesados} personas interesadas`, padX, H - 48);
+    }
+
+    canvas.toBlob(blob => {
+      if (!blob) { showToast("No se pudo generar el folleto"); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `folleto-evento.jpg`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      showToast("¡Folleto descargado! 🎉");
+    }, "image/jpeg", 0.95);
+  } catch(e) {
+    console.error(e);
+    showToast("No se pudo generar el folleto.");
+  }
+}
+
+function loadImageCORS_folleto(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("No se pudo cargar: " + src));
+    img.src = src;
+  });
 }
 
 // ─── COMPARTIR EVENTO ───────────────────────────────────────
