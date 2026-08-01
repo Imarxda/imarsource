@@ -320,7 +320,7 @@ nav a::after{display:none}
 .btn-share{background:rgba(255,255,255,.08);color:var(--gfn-text);border:1px solid var(--gfn-border);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:12px 18px;cursor:pointer;transition:all .2s;border-radius:5px}
 .btn-share:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)}
 .share-wrap{position:relative;display:inline-block}
-.share-menu{position:absolute;top:calc(100% + 8px);left:0;background:var(--gfn-dark-2);border:1px solid var(--gfn-border);min-width:230px;z-index:1200;display:none;flex-direction:column;box-shadow:0 12px 32px rgba(0,0,0,.5);border-radius:6px;overflow:hidden}
+.share-menu{position:fixed;background:var(--gfn-dark-2);border:1px solid var(--gfn-border);min-width:230px;z-index:3000;display:none;flex-direction:column;box-shadow:0 12px 32px rgba(0,0,0,.5);border-radius:6px;overflow:hidden}
 .share-menu.open{display:flex}
 .share-menu button{background:none;border:none;text-align:left;padding:14px 18px;font-family:var(--sans);font-size:11px;font-weight:500;cursor:pointer;color:var(--gfn-text);transition:background .2s}
 .share-menu button:hover{background:rgba(255,255,255,.08)}
@@ -808,10 +808,6 @@ body{background:var(--gfn-dark);color:var(--gfn-text)}
           <button class="btn-modal-vote" id="modal-vote-btn" onclick="voteFromModal()">♡ Votar</button>
           <div class="share-wrap">
             <button class="btn-share" onclick="toggleShareMenu(event)">Compartir</button>
-            <div class="share-menu" id="share-menu">
-              <button onclick="copyShareLinkWithCount()">Copiar enlace</button>
-              <button onclick="downloadProfileImage()">Guardar imagen del perfil</button>
-            </div>
           </div>
           <button class="btn-follow" id="modal-follow-btn" onclick="toggleFollow()">☆ Seguir</button>
           <a class="btn-share" id="modal-ig-btn" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;justify-content:center">Instagram</a>
@@ -824,6 +820,12 @@ body{background:var(--gfn-dark);color:var(--gfn-text)}
     <div id="ig-gallery-empty" style="display:none">Aún no hay fotos en esta galería.</div>
     <button id="modal-close" onclick="closeModal()">✕</button>
   </div>
+</div>
+
+<!-- SHARE MENU — fixed, fuera de cualquier overflow para que nunca quede tapado -->
+<div class="share-menu" id="share-menu">
+  <button onclick="copyShareLinkWithCount()">Copiar enlace</button>
+  <button onclick="downloadProfileImage()">Guardar imagen del perfil</button>
 </div>
 
 <!-- LIGHTBOX — visor de fotos estilo Instagram -->
@@ -1619,7 +1621,6 @@ function renderPodio() {
   const rankLabels = ["#1","#2","#3"];
   grid.innerHTML = top3.map((m, idx) => {
     const voted = hasVoted(m.id);
-    const countdown = voted ? getRevotoCountdown(m.id) : null;
     return `
     <div class="podio-card">
       <div class="podio-img-wrap ${rankClasses[idx]||''}" onclick="openModal('${m.id}')">
@@ -1634,7 +1635,6 @@ function renderPodio() {
           <div class="podio-votes-lbl">de los votos</div>
         </div>
         <button class="btn-vote${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
-        ${countdown ? `<div class="vote-countdown">Podés volver a votar en ${countdown}</div>` : ''}
       </div>
     </div>`;
   }).join("");
@@ -1732,7 +1732,6 @@ function renderLista() {
 
   container.innerHTML = models.map(m => {
     const voted = hasVoted(m.id);
-    const countdown = voted ? getRevotoCountdown(m.id) : null;
     return `
     <div class="lista-row">
       <div class="lista-avatar" onclick="openModal('${m.id}')"><div class="embed-box" id="le-${m.id}"></div></div>
@@ -1741,7 +1740,6 @@ function renderLista() {
       <div class="lista-votos">${votePercentText(m)}</div>
       <div>
         <button class="lista-btn${voted?' voted':''}" onclick="vote('${m.id}')">${voted?'✓ Votado':'♡ Votar'}</button>
-        ${countdown ? `<div class="vote-countdown">${countdown}</div>` : ''}
       </div>
     </div>`;
   }).join("");
@@ -2764,7 +2762,19 @@ async function loadFotoReactions(fotos) {
 function toggleShareMenu(e) {
   if (e) e.stopPropagation();
   const sm = document.getElementById("share-menu");
-  if (sm) sm.classList.toggle("open");
+  if (!sm) return;
+  if (sm.classList.contains("open")) {
+    sm.classList.remove("open");
+    return;
+  }
+  // Posicionar el menú usando coordenadas fijas relativas al botón
+  const btn = e ? e.currentTarget : null;
+  if (btn) {
+    const rect = btn.getBoundingClientRect();
+    sm.style.top = (rect.bottom + 8) + "px";
+    sm.style.left = rect.left + "px";
+  }
+  sm.classList.add("open");
 }
 function closeShareMenu() {
   const sm = document.getElementById("share-menu");
@@ -2772,9 +2782,10 @@ function closeShareMenu() {
 }
 document.addEventListener("click", (e) => {
   const sm = document.getElementById("share-menu");
-  if (sm && sm.classList.contains("open") && !sm.parentElement.contains(e.target)) {
-    sm.classList.remove("open");
-  }
+  if (!sm || !sm.classList.contains("open")) return;
+  const btn = document.querySelector(".share-wrap .btn-share");
+  if (btn && btn.contains(e.target)) return;
+  if (!sm.contains(e.target)) sm.classList.remove("open");
 });
 
 async function copyShareLinkWithCount() {
