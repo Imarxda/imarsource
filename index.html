@@ -100,6 +100,9 @@ nav a::after{display:none}
 /* HERO PORTADA — estilo GFN banner grande */
 #hero-portada{position:relative;width:100%;height:clamp(340px,56vw,680px);max-height:720px;overflow:hidden;background:var(--black)}
 #hero-portada-bg{position:absolute;inset:0;background-size:cover;background-position:center 22%;background-repeat:no-repeat;background-color:#111;transition:opacity .5s ease}
+/* AMBIENT GLOW — reflejo del color del hero dispersado hacia abajo, estilo GeForce NOW */
+#hero-ambient-glow{position:absolute;bottom:-1px;left:0;right:0;height:220px;pointer-events:none;z-index:4;background:inherit;filter:blur(0);opacity:0;transition:opacity .6s ease}
+#hero-ambient-canvas{position:absolute;bottom:-80px;left:-10%;width:120%;height:160px;pointer-events:none;z-index:3;opacity:.55;transition:opacity .6s ease;border-radius:0 0 50% 50%;filter:blur(40px);background:transparent}
 .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,.05) 30%,rgba(0,0,0,.45) 65%,rgba(0,0,0,.88) 100%)}
 #hero-portada.empty .hero-layer{opacity:.55}
 .hero-layer{position:absolute;line-height:1.12;text-shadow:0 2px 12px rgba(0,0,0,.55);max-width:88%;white-space:pre-wrap;z-index:5}
@@ -125,6 +128,38 @@ nav a::after{display:none}
 .hero-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);border:none;cursor:pointer;padding:0;transition:all .25s var(--ease)}
 .hero-dot:hover{background:rgba(255,255,255,.6)}
 .hero-dot.active{background:var(--nerv-orange);width:22px;border-radius:5px}
+/* HERO ARROWS — flechas izquierda/derecha estilo GeForce NOW */
+.hero-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:20;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:22px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;transition:background .2s,transform .2s;backdrop-filter:blur(4px);line-height:1}
+.hero-arrow:hover{background:rgba(0,0,0,.75);transform:translateY(-50%) scale(1.08)}
+.hero-arrow.left{left:14px}
+.hero-arrow.right{right:14px}
+/* NOVEDADES Y ANUNCIOS */
+#novedades-section{border-top:1px solid rgba(255,255,255,.08);padding:28px 0 36px;background:var(--gfn-dark)}
+#novedades-section .section-header-inner{padding:0 28px 18px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+#novedades-section .section-title{color:var(--gfn-text);font-family:var(--sans);font-size:18px;font-weight:700;letter-spacing:.01em}
+.novedades-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:0 28px}
+.novedad-card{background:var(--gfn-dark-2);border:1px solid var(--gfn-border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s}
+.novedad-card:hover{border-color:var(--nerv-orange);transform:translateY(-2px)}
+.novedad-card-img{width:100%;height:160px;object-fit:cover;display:block;background:#1a1e1a}
+.novedad-card-img-placeholder{width:100%;height:160px;background:linear-gradient(135deg,#1a1e1a 0%,#252b25 100%);display:flex;align-items:center;justify-content:center;color:var(--gfn-text-dim);font-size:28px}
+.novedad-card-body{padding:16px}
+.novedad-card-tag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--nerv-orange);margin-bottom:6px}
+.novedad-card-title{font-family:var(--sans);font-size:15px;font-weight:700;color:var(--gfn-text);margin-bottom:6px;line-height:1.3}
+.novedad-card-date{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gfn-text-dim)}
+.novedad-card-desc{font-size:12px;color:var(--gfn-text-dim);margin-top:8px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* Modal novedades */
+#modal-nov-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;display:none;align-items:center;justify-content:center;padding:40px}
+#modal-nov-overlay.open{display:flex}
+#modal-nov-box{background:var(--gfn-dark-2);border:1px solid var(--gfn-border);border-radius:10px;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-nov-banner{width:100%;height:240px;object-fit:cover;display:block;background:#1a1e1a;border-radius:10px 10px 0 0}
+.modal-nov-banner-placeholder{width:100%;height:120px;background:linear-gradient(135deg,#1a1e1a 0%,#252b25 100%);border-radius:10px 10px 0 0}
+.modal-nov-body{padding:36px 36px 32px}
+.modal-nov-tag{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--nerv-orange);margin-bottom:10px}
+.modal-nov-title{font-family:var(--sans);font-size:26px;font-weight:700;margin-bottom:6px;color:var(--gfn-text)}
+.modal-nov-date{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gfn-text-dim);margin-bottom:24px}
+.modal-nov-desc{font-size:14px;line-height:1.85;color:var(--gfn-text-dim);white-space:pre-wrap}
+#modal-nov-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:1px solid var(--gfn-border);color:var(--gfn-text);font-size:16px;cursor:pointer;width:34px;height:34px;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:2;border-radius:50%}
+#modal-nov-close:hover{background:rgba(255,255,255,.2);transform:rotate(90deg)}
 #hero-portada.hero-slide-secondary .hero-layer,
 #hero-portada.hero-slide-secondary .hero-logo-img,
 #hero-portada.hero-slide-secondary .hero-marca-agua-img,
@@ -615,7 +650,10 @@ body{background:var(--gfn-dark);color:var(--gfn-text)}
   </div>
   <button id="hero-ver-detalles" onclick="heroVerDetalles()">VER DETALLES</button>
   <button id="hero-download-btn" onclick="descargarPortada()">Descargar portada</button>
+  <button class="hero-arrow left" onclick="heroArrowPrev()" aria-label="Anterior">&#8249;</button>
+  <button class="hero-arrow right" onclick="heroArrowNext()" aria-label="Siguiente">&#8250;</button>
   <div id="hero-dots"></div>
+  <canvas id="hero-ambient-canvas"></canvas>
 </section>
 
 <!-- TUS SEGUIDOS -->
@@ -641,6 +679,15 @@ body{background:var(--gfn-dark);color:var(--gfn-text)}
     <button class="eventos-arrow right" onclick="scrollEventos(1)" aria-label="Siguiente">›</button>
   </div>
   <div id="eventos-carousel-empty" style="display:none">Todavía no hay eventos cargados.</div>
+</section>
+
+<!-- NOVEDADES Y ANUNCIOS -->
+<section id="novedades-section">
+  <div class="section-header-inner">
+    <div class="section-title">Novedades y Anuncios</div>
+  </div>
+  <div class="novedades-grid" id="novedades-grid"></div>
+  <div id="novedades-empty" style="display:none;padding:14px 28px;font-size:12px;color:var(--gfn-text-dim)">Próximamente novedades y anuncios.</div>
 </section>
 
 <!-- PERFILES DESTACADOS -->
@@ -694,6 +741,21 @@ body{background:var(--gfn-dark);color:var(--gfn-text)}
   <div class="footer-logo"><em>imar source</em></div>
   <div class="footer-meta">© 2025 — Todos los derechos reservados</div>
 </footer>
+
+<!-- MODAL NOVEDAD -->
+<div id="modal-nov-overlay" onclick="closeNovModal(event)">
+  <div id="modal-nov-box">
+    <img id="modal-nov-banner-img" class="modal-nov-banner" src="" alt="" style="display:none">
+    <div id="modal-nov-banner-placeholder" class="modal-nov-banner-placeholder" style="display:none"></div>
+    <div class="modal-nov-body">
+      <div class="modal-nov-tag" id="modal-nov-tag">Novedad</div>
+      <div class="modal-nov-title" id="modal-nov-title">—</div>
+      <div class="modal-nov-date" id="modal-nov-date">—</div>
+      <div class="modal-nov-desc" id="modal-nov-desc">—</div>
+    </div>
+    <button id="modal-nov-close" onclick="closeNovModalDirect()">✕</button>
+  </div>
+</div>
 
 <!-- MODAL EVENTO -->
 <div id="modal-ev-overlay" onclick="closeEvModal(event)">
@@ -1059,13 +1121,15 @@ async function loadData() {
       sb.from("fotos").select("*").order("creado_en", { ascending: true }),
       sb.from("portada").select("*").eq("id", PORTADA_ID).maybeSingle(),
       sb.from("salon_fama").select("*").order("fecha_cierre", { ascending: false }),
+      sb.from("novedades").select("*").order("creado_en", { ascending: false }),
     ]);
-    const [mRes, eRes, fRes, pRes, faRes] = results;
+    const [mRes, eRes, fRes, pRes, faRes, novRes] = results;
     if (mRes.status === "fulfilled" && mRes.value.data) allModels = mRes.value.data;
     if (eRes.status === "fulfilled" && eRes.value.data) allEvents = eRes.value.data;
     if (fRes.status === "fulfilled" && fRes.value.data) allFotos = fRes.value.data;
     if (pRes.status === "fulfilled" && pRes.value.data) heroPortada = pRes.value.data;
     if (faRes.status === "fulfilled" && faRes.value.data) allFama = faRes.value.data;
+    if (novRes.status === "fulfilled" && novRes.value.data) allNovedades = novRes.value.data;
   } catch(e) { console.warn("Error Supabase:", e); }
   renderAll();
   loadCiclo();
@@ -1078,6 +1142,7 @@ function renderAll() {
   renderHero();
   renderHeaderBg();
   renderEventosCarousel();
+  renderNovedades();
   renderPodio();
   renderFama();
   renderDestacados();
@@ -1181,6 +1246,7 @@ function renderHero() {
   if (heroPortada && heroPortada.imagen_url) {
     bg.style.backgroundImage = `url('${heroPortada.imagen_url}')`;
     wrap.classList.remove("empty");
+    updateAmbientGlow(heroPortada.imagen_url);
   } else {
     bg.style.backgroundImage = "none";
     wrap.classList.add("empty");
@@ -1349,6 +1415,7 @@ function goToHeroSlide(i) {
   setTimeout(() => {
     bg.style.backgroundImage = `url('${slide.img}')`;
     bg.style.opacity = "1";
+    updateAmbientGlow(slide.img);
   }, 180);
 
   // Las capas de texto (titular, logo, marca de agua) solo tienen sentido en la portada de temporada
@@ -1366,6 +1433,119 @@ function goToHeroSlide(i) {
   heroAutoTimer = setInterval(() => {
     goToHeroSlide((heroSlideIndex + 1) % heroSlides.length);
   }, 5000);
+}
+
+// Flechas del carrusel hero
+function heroArrowPrev() {
+  if (!heroSlides.length) return;
+  goToHeroSlide((heroSlideIndex - 1 + heroSlides.length) % heroSlides.length);
+}
+function heroArrowNext() {
+  if (!heroSlides.length) return;
+  goToHeroSlide((heroSlideIndex + 1) % heroSlides.length);
+}
+
+// AMBIENT GLOW — extrae el color dominante del centro del hero y lo proyecta hacia abajo
+function updateAmbientGlow(imgUrl) {
+  const canvas = document.getElementById("hero-ambient-canvas");
+  if (!canvas) return;
+  if (!imgUrl) { canvas.style.background = "transparent"; canvas.style.opacity = "0"; return; }
+  const tempImg = new Image();
+  tempImg.crossOrigin = "anonymous";
+  tempImg.onload = function() {
+    try {
+      const c = document.createElement("canvas");
+      c.width = 32; c.height = 32;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(tempImg, 0, 0, 32, 32);
+      const d = ctx.getImageData(8, 8, 16, 16).data;
+      let r=0,g=0,bl=0,cnt=0;
+      for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];bl+=d[i+2];cnt++;}
+      if(cnt>0){r=Math.round(r/cnt);g=Math.round(g/cnt);bl=Math.round(bl/cnt);}
+      // Saturate a bit for more punch
+      const mx=Math.max(r,g,bl)||1;
+      r=Math.min(255,Math.round(r*(200/mx)));
+      g=Math.min(255,Math.round(g*(200/mx)));
+      bl=Math.min(255,Math.round(bl*(200/mx)));
+      canvas.style.background = `radial-gradient(ellipse 80% 100% at 50% 100%, rgba(${r},${g},${bl},0.55) 0%, rgba(${r},${g},${bl},0.18) 45%, transparent 75%)`;
+      canvas.style.opacity = "1";
+    } catch(e) { canvas.style.opacity = "0"; }
+  };
+  tempImg.onerror = () => { canvas.style.opacity = "0"; };
+  tempImg.src = imgUrl;
+}
+
+// ─── NOVEDADES Y ANUNCIOS ──────────────────────────────────
+let allNovedades = [];
+
+async function loadNovedades() {
+  if (!sb) return;
+  try {
+    const { data, error } = await sb.from("novedades").select("*").order("creado_en", { ascending: false });
+    if (error) return;
+    allNovedades = data || [];
+    renderNovedades();
+  } catch(e) {}
+}
+
+function renderNovedades() {
+  const grid = document.getElementById("novedades-grid");
+  const empty = document.getElementById("novedades-empty");
+  if (!grid) return;
+  if (!allNovedades.length) {
+    grid.innerHTML = "";
+    if (empty) empty.style.display = "block";
+    return;
+  }
+  if (empty) empty.style.display = "none";
+  grid.innerHTML = allNovedades.map(n => {
+    const fecha = n.fecha ? new Date(n.fecha + "T00:00:00").toLocaleDateString("es-AR",{day:"2-digit",month:"long",year:"numeric"}) : "";
+    const imgHtml = n.imagen_url
+      ? `<img class="novedad-card-img" src="${n.imagen_url}" alt="" loading="lazy">`
+      : `<div class="novedad-card-img-placeholder">📢</div>`;
+    return `
+    <div class="novedad-card" onclick="openNovModal('${n.id}')">
+      ${imgHtml}
+      <div class="novedad-card-body">
+        <div class="novedad-card-tag">${n.tipo || "Novedad"}</div>
+        <div class="novedad-card-title">${n.titulo || "Sin título"}</div>
+        ${fecha ? `<div class="novedad-card-date">${fecha}</div>` : ""}
+        ${n.descripcion ? `<div class="novedad-card-desc">${n.descripcion}</div>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function openNovModal(id) {
+  const n = allNovedades.find(x => String(x.id) === String(id));
+  if (!n) return;
+  const overlay = document.getElementById("modal-nov-overlay");
+  const bannerImg = document.getElementById("modal-nov-banner-img");
+  const bannerPh = document.getElementById("modal-nov-banner-placeholder");
+  document.getElementById("modal-nov-tag").textContent = n.tipo || "Novedad";
+  document.getElementById("modal-nov-title").textContent = n.titulo || "—";
+  const fecha = n.fecha ? new Date(n.fecha + "T00:00:00").toLocaleDateString("es-AR",{day:"2-digit",month:"long",year:"numeric"}) : "";
+  document.getElementById("modal-nov-date").textContent = fecha || "—";
+  document.getElementById("modal-nov-desc").textContent = n.descripcion || "";
+  if (n.imagen_url) {
+    bannerImg.src = n.imagen_url;
+    bannerImg.style.display = "block";
+    if (bannerPh) bannerPh.style.display = "none";
+  } else {
+    bannerImg.style.display = "none";
+    if (bannerPh) bannerPh.style.display = "block";
+  }
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeNovModal(e) {
+  if (e && e.target !== document.getElementById("modal-nov-overlay")) return;
+  closeNovModalDirect();
+}
+function closeNovModalDirect() {
+  document.getElementById("modal-nov-overlay").classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 // Descarga la portada completa (imagen + logo + textos + marca de agua) como JPG,
