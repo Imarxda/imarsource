@@ -699,6 +699,7 @@ footer::before{
     <a onclick="goTo('#fama-section');closeNav()">Salón de la Fama</a>
     <a onclick="goTo('#destacados-section');closeNav()">Destacados</a>
     <a onclick="goTo('#lista-section');closeNav()">Directorio</a>
+    <a onclick="goTo('#pixelart-section');closeNav()">Editor Pixel Art</a>
     <a onclick="openPostulacion();closeNav()" style="color:var(--gold);font-weight:600">★ Quiero ser parte</a>
   </nav>
 </header>
@@ -822,6 +823,1101 @@ footer::before{
   <div id="lista-rows"></div>
   <div id="lista-empty" style="display:none">Sin resultados.</div>
 </section>
+
+<!-- EDITOR PIXEL ART / DIAMOND PAINTING -->
+<style>
+#pixelart-section{padding:0 0 40px}
+.pxa-inner{max-width:1400px;margin:0 auto;padding:0 28px}
+.pxa-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:16px 0 22px}
+.pxa-btn{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gfn-text);background:rgba(255,255,255,.06);border:1px solid var(--gfn-border);border-radius:5px;padding:10px 16px;cursor:pointer;transition:all .2s var(--ease)}
+.pxa-btn:hover{border-color:var(--nerv-orange);color:var(--nerv-orange);background:rgba(118,185,0,.08)}
+.pxa-btn.active{background:var(--nerv-orange);color:#0d0f0d;border-color:var(--nerv-orange)}
+.pxa-btn:disabled{opacity:.35;cursor:not-allowed}
+.pxa-btn.pxa-primary{background:var(--nerv-orange);color:#0d0f0d;border-color:var(--nerv-orange)}
+.pxa-file-label{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#0d0f0d;background:var(--nerv-orange);border-radius:5px;padding:10px 18px;cursor:pointer;transition:filter .2s}
+.pxa-file-label:hover{filter:brightness(1.12)}
+.pxa-field{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gfn-text-dim)}
+.pxa-field input[type=range]{width:120px;accent-color:var(--nerv-orange)}
+.pxa-field input[type=number]{width:64px;background:rgba(255,255,255,.06);border:1px solid var(--gfn-border);border-radius:4px;color:var(--gfn-text);font-family:var(--mono);font-size:11px;padding:5px 6px}
+.pxa-field input[type=color]{width:44px;height:26px;padding:0;border:1px solid var(--gfn-border);border-radius:4px;background:none;cursor:pointer}
+.pxa-spacer{flex:1}
+.pxa-divider{width:1px;align-self:stretch;background:var(--gfn-border);margin:0 2px}
+.pxa-workspace{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.pxa-canvas-wrap{position:relative;background:var(--gfn-dark-2);border:1px solid var(--gfn-border);border-radius:8px;padding:14px;display:flex;align-items:center;justify-content:center;max-width:100%;flex:2;min-width:320px}
+#pxaCanvas,#pxaSketchCanvas,#pxaFxCanvas{display:block;image-rendering:pixelated;cursor:crosshair;max-width:100%;max-height:66vh;width:auto;height:auto;border-radius:2px}
+#pxaSketchCanvas,#pxaFxCanvas{cursor:default;image-rendering:auto}
+.pxa-canvas-wrap.pxa-crt-on{box-shadow:0 0 0 1px rgba(118,185,0,.25) inset,0 0 24px rgba(118,185,0,.08)}
+.pxa-empty-msg{font-family:var(--sans);font-size:12px;color:var(--gfn-text-dim);padding:60px 20px;text-align:center;max-width:340px}
+.pxa-legend-col{flex:1;min-width:260px}
+.pxa-legend-title{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gfn-text-dim);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.pxa-legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;max-height:520px;overflow-y:auto;padding-right:4px}
+.pxa-swatch{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--gfn-border);border-radius:5px;padding:6px 8px;cursor:pointer;transition:border-color .15s,background .15s}
+.pxa-swatch:hover{border-color:var(--nerv-orange)}
+.pxa-swatch.selected{border-color:var(--nerv-green);background:rgba(154,219,27,.08)}
+.pxa-swatch-color{width:20px;height:20px;border-radius:3px;flex-shrink:0;border:1px solid rgba(255,255,255,.15)}
+.pxa-swatch-info{display:flex;flex-direction:column;line-height:1.3;overflow:hidden}
+.pxa-swatch-hex{font-family:var(--mono);font-size:9px;color:var(--gfn-text);text-transform:uppercase}
+.pxa-swatch-count{font-family:var(--mono);font-size:8px;color:var(--gfn-text-dim)}
+.pxa-hint{font-family:var(--sans);font-size:11px;color:var(--gfn-text-dim);margin-top:10px;line-height:1.5}
+.pxa-hint b{color:var(--nerv-green)}
+.pxa-fx-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.pxa-fx-panel{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;background:rgba(255,255,255,.03);border:1px solid var(--gfn-border);border-radius:7px;padding:14px 16px;margin-top:10px}
+.pxa-fx-group{display:flex;flex-direction:column;gap:7px}
+.pxa-fx-group-label{font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--gfn-text-dim);opacity:.8}
+.pxa-fx-subtabs{display:flex;gap:6px;flex-wrap:wrap}
+.pxa-fx-subtab{font-family:var(--sans);font-weight:600;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gfn-text-dim);background:rgba(255,255,255,.05);border:1px solid var(--gfn-border);border-radius:20px;padding:6px 12px;cursor:pointer;transition:all .15s var(--ease)}
+.pxa-fx-subtab:hover{border-color:var(--nerv-orange);color:var(--nerv-orange)}
+.pxa-fx-subtab.active{background:var(--nerv-green);border-color:var(--nerv-green);color:#0d0f0d}
+.pxa-fx-stage{position:relative;display:inline-block;line-height:0}
+.pxa-fx-region{position:absolute;border:2px dashed var(--nerv-green);background:rgba(154,219,27,.10);cursor:move;box-sizing:border-box;touch-action:none}
+.pxa-fx-region:hover{border-color:var(--nerv-orange);background:rgba(255,140,0,.10)}
+.pxa-fx-region-resize{position:absolute;right:-7px;bottom:-7px;width:15px;height:15px;background:var(--nerv-green);border:2px solid #0d0f0d;border-radius:50%;cursor:nwse-resize;touch-action:none}
+.pxa-fx-region-resize:hover{background:var(--nerv-orange)}
+.pxa-fx-region-tag{position:absolute;top:-20px;left:-2px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--nerv-green);background:rgba(13,15,13,.85);padding:2px 6px;border-radius:3px;white-space:nowrap;pointer-events:none}
+.pxa-fx-mini{display:flex;flex-direction:column;gap:4px}
+.pxa-fx-mini input[type=range]{width:76px;accent-color:var(--nerv-green)}
+</style>
+
+<div class="section-header">
+  <div class="section-title">Editor de Pixel Art</div>
+  <div class="section-label">Subí una imagen, convertila en patrón de pixeles y editá cada color</div>
+</div>
+<section id="pixelart-section">
+  <div class="pxa-inner">
+    <div class="pxa-toolbar">
+      <label class="pxa-file-label">Subir imagen<input type="file" accept="image/*" style="display:none" onchange="pxaLoadFile(this)"></label>
+      <div class="pxa-field">Columnas
+        <input type="number" id="pxaCols" value="45" min="8" max="120">
+      </div>
+      <div class="pxa-field">Colores
+        <input type="number" id="pxaPalette" value="24" min="2" max="64">
+      </div>
+      <button class="pxa-btn" onclick="pxaRegenerate()">Regenerar</button>
+      <div class="pxa-divider"></div>
+      <button class="pxa-btn" id="pxaModePixelBtn" onclick="pxaSetMode('pixel')" disabled>Vista pixel art</button>
+      <button class="pxa-btn" id="pxaModeSketchBtn" onclick="pxaSetMode('sketch')" disabled>Vista boceto B/N</button>
+      <button class="pxa-btn" id="pxaModeFxBtn" onclick="pxaSetMode('effects')" disabled>Efectos (CRT / Glass / Blur / Focus / Selectivo)</button>
+      <div class="pxa-divider"></div>
+      <button class="pxa-btn" id="pxaBwBtn" onclick="pxaToggleGrayscale()" disabled>Blanco y negro</button>
+      <button class="pxa-btn" id="pxaMoveBtn" onclick="pxaToggleMove()" disabled>Mover celdas</button>
+      <button class="pxa-btn" id="pxaResetBtn" onclick="pxaReset()" disabled>Reiniciar colores</button>
+      <div class="pxa-spacer"></div>
+      <button class="pxa-btn pxa-primary" onclick="pxaDownload()" id="pxaDownloadBtn" disabled>Descargar imagen</button>
+      <button class="pxa-btn pxa-primary" onclick="pxaDownloadWithPalette()" id="pxaDownloadPaletteBtn" disabled>Descargar con colores</button>
+    </div>
+
+    <div class="pxa-workspace">
+      <div class="pxa-canvas-wrap" id="pxaCanvasWrap">
+        <div class="pxa-empty-msg" id="pxaEmptyMsg">Todavía no subiste ninguna imagen.<br>Elegí un archivo para generar el patrón de pixeles.</div>
+        <canvas id="pxaCanvas" style="display:none" onclick="pxaCanvasClick(event)"></canvas>
+        <canvas id="pxaSketchCanvas" style="display:none"></canvas>
+        <div class="pxa-fx-stage" id="pxaFxStage" style="display:none">
+          <canvas id="pxaFxCanvas"></canvas>
+          <div class="pxa-fx-region" id="pxaFxRegion" style="display:none">
+            <div class="pxa-fx-region-tag" id="pxaFxRegionTag">arrastrá para mover</div>
+            <div class="pxa-fx-region-resize" id="pxaFxRegionResize"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pxa-legend-col" id="pxaLegendCol">
+        <div class="pxa-legend-title"><span>Paleta de colores</span><span id="pxaLegendCount">0</span></div>
+        <div class="pxa-legend-grid" id="pxaLegendGrid"></div>
+        <div class="pxa-hint">Click en un color (o en un pixel del lienzo) para <b>recolorear</b>. Activá <b>Mover celdas</b> y arrastrá un cuadrito sobre otro para intercambiarlos. Probá la pestaña <b>Efectos</b> para aplicar y editar CRT, Glass, Blur o Focus mode.</div>
+      </div>
+      <div class="pxa-legend-col" id="pxaFxCol" style="display:none">
+        <div class="pxa-legend-title"><span>Editar efecto</span></div>
+        <div class="pxa-fx-tabs">
+          <button class="pxa-btn pxa-fx-tab active" data-fx="crt" onclick="pxaSetFx('crt')">CRT</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="glass" onclick="pxaSetFx('glass')">Glass</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="blur" onclick="pxaSetFx('blur')">Blur</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="focus" onclick="pxaSetFx('focus')">Focus mode</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="window" onclick="pxaSetFx('window')">Enfoque selectivo</button>
+        </div>
+        <div class="pxa-fx-panel" id="pxaFxPanel"></div>
+        <div class="pxa-hint" id="pxaFxHint">Cada efecto se puede ajustar con los controles de arriba.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── EDITOR PIXEL ART ─────────────────────────────────────────
+(function(){
+  let pxaImg = null;
+  let pxaGrid = [];         // matriz actual de colores hex
+  let pxaOriginalGrid = []; // copia sin editar, para reset
+  let pxaCols = 45, pxaRows = 45;
+  const pxaCellSize = 14;
+  let pxaGrayscale = false;
+  let pxaSelectedColor = null;
+  let pxaMode = 'pixel'; // 'pixel' | 'sketch' | 'effects'
+  let pxaSketchReady = false;
+  let pxaMoveMode = false;
+  let pxaDragFrom = null;
+  const pxaColorInput = document.createElement('input');
+  pxaColorInput.type = 'color';
+  pxaColorInput.style.position='fixed'; pxaColorInput.style.opacity='0'; pxaColorInput.style.pointerEvents='none';
+  document.body.appendChild(pxaColorInput);
+
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function toHex(r,g,b){return '#'+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('');}
+  function hexToRgb(hex){const n=parseInt(hex.slice(1),16);return [(n>>16)&255,(n>>8)&255,n&255];}
+
+  window.pxaLoadFile = function(input){
+    const file = input.files && input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const img = new Image();
+      img.onload = function(){
+        pxaImg = img;
+        pxaGenerate();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.pxaRegenerate = function(){
+    if(!pxaImg){ return; }
+    pxaGenerate();
+  };
+
+  function pxaGenerate(){
+    pxaCols = clamp(parseInt(document.getElementById('pxaCols').value)||45, 8, 120);
+    const paletteSize = clamp(parseInt(document.getElementById('pxaPalette').value)||24, 2, 64);
+    const ratio = pxaImg.height / pxaImg.width;
+    pxaRows = Math.max(4, Math.round(pxaCols * ratio));
+
+    const off = document.createElement('canvas');
+    off.width = pxaCols; off.height = pxaRows;
+    const octx = off.getContext('2d');
+    octx.imageSmoothingEnabled = true;
+    octx.drawImage(pxaImg, 0, 0, pxaCols, pxaRows);
+    const data = octx.getImageData(0,0,pxaCols,pxaRows).data;
+
+    const buckets = {};
+    for(let i=0;i<data.length;i+=4){
+      const r=data[i], g=data[i+1], b=data[i+2];
+      const key = [Math.round(r/32),Math.round(g/32),Math.round(b/32)].join(',');
+      if(!buckets[key]) buckets[key]={r:0,g:0,b:0,n:0};
+      buckets[key].r+=r; buckets[key].g+=g; buckets[key].b+=b; buckets[key].n++;
+    }
+    let bucketArr = Object.values(buckets).map(b=>({r:b.r/b.n,g:b.g/b.n,b:b.b/b.n,n:b.n}));
+    bucketArr.sort((a,b)=>b.n-a.n);
+    const palette = bucketArr.slice(0, paletteSize).map(b=>[b.r,b.g,b.b]);
+    if(palette.length===0) palette.push([200,200,200]);
+
+    function nearest(r,g,b){
+      let best=0, bestD=Infinity;
+      for(let i=0;i<palette.length;i++){
+        const p=palette[i];
+        const d=(p[0]-r)**2+(p[1]-g)**2+(p[2]-b)**2;
+        if(d<bestD){bestD=d;best=i;}
+      }
+      return palette[best];
+    }
+
+    pxaGrid = [];
+    for(let y=0;y<pxaRows;y++){
+      const row=[];
+      for(let x=0;x<pxaCols;x++){
+        const i=(y*pxaCols+x)*4;
+        const p = nearest(data[i],data[i+1],data[i+2]);
+        row.push(toHex(p[0],p[1],p[2]));
+      }
+      pxaGrid.push(row);
+    }
+    pxaOriginalGrid = pxaGrid.map(r=>r.slice());
+    pxaGrayscale = false;
+    pxaSketchReady = false;
+    pxaMoveMode = false;
+    document.getElementById('pxaBwBtn').classList.remove('active');
+    document.getElementById('pxaMoveBtn').classList.remove('active');
+    ['pxaBwBtn','pxaMoveBtn','pxaResetBtn','pxaDownloadBtn','pxaDownloadPaletteBtn','pxaModePixelBtn','pxaModeSketchBtn','pxaModeFxBtn'].forEach(id=>document.getElementById(id).disabled=false);
+    document.getElementById('pxaEmptyMsg').style.display='none';
+    pxaSetMode('pixel');
+  }
+
+  window.pxaSetMode = function(mode){
+    if(!pxaImg) return;
+    pxaMode = mode;
+    document.getElementById('pxaModePixelBtn').classList.toggle('active', mode==='pixel');
+    document.getElementById('pxaModeSketchBtn').classList.toggle('active', mode==='sketch');
+    document.getElementById('pxaModeFxBtn').classList.toggle('active', mode==='effects');
+    document.getElementById('pxaCanvas').style.display = mode==='pixel' ? 'block' : 'none';
+    document.getElementById('pxaSketchCanvas').style.display = mode==='sketch' ? 'block' : 'none';
+    document.getElementById('pxaFxStage').style.display = mode==='effects' ? 'inline-block' : 'none';
+    document.getElementById('pxaLegendCol').style.display = mode==='pixel' ? '' : 'none';
+    document.getElementById('pxaFxCol').style.display = mode==='effects' ? '' : 'none';
+    document.getElementById('pxaBwBtn').style.display = mode==='pixel' ? '' : 'none';
+    document.getElementById('pxaMoveBtn').style.display = mode==='pixel' ? '' : 'none';
+    document.getElementById('pxaResetBtn').style.display = mode==='pixel' ? '' : 'none';
+    document.getElementById('pxaDownloadPaletteBtn').style.display = mode==='sketch' ? 'none' : '';
+    document.getElementById('pxaCanvasWrap').classList.remove('pxa-crt-on');
+    document.getElementById('pxaDownloadBtn').textContent = mode==='sketch' ? 'Descargar boceto (Paint)' : 'Descargar imagen';
+    document.getElementById('pxaDownloadPaletteBtn').textContent = mode==='effects' ? 'Descargar polaroid' : 'Descargar con colores';
+    if(mode==='pixel'){
+      pxaRender();
+    } else if(mode==='sketch'){
+      if(!pxaSketchReady){ pxaGenerateSketch(); pxaSketchReady = true; }
+    } else if(mode==='effects'){
+      pxaInitFx();
+    }
+  };
+
+  function pxaRender(){
+    const canvas = document.getElementById('pxaCanvas');
+    canvas.width = pxaCols*pxaCellSize;
+    canvas.height = pxaRows*pxaCellSize;
+    const ctx = canvas.getContext('2d');
+    for(let y=0;y<pxaRows;y++){
+      for(let x=0;x<pxaCols;x++){
+        ctx.fillStyle = pxaGrid[y][x];
+        ctx.fillRect(x*pxaCellSize, y*pxaCellSize, pxaCellSize, pxaCellSize);
+        ctx.strokeStyle = 'rgba(0,0,0,.14)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x*pxaCellSize+.5, y*pxaCellSize+.5, pxaCellSize-1, pxaCellSize-1);
+      }
+    }
+    pxaRenderLegend();
+  }
+
+  function pxaColorCounts(){
+    const counts = {};
+    for(let y=0;y<pxaRows;y++) for(let x=0;x<pxaCols;x++){
+      counts[pxaGrid[y][x]] = (counts[pxaGrid[y][x]]||0)+1;
+    }
+    return Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  }
+
+  function pxaRenderLegend(){
+    const entries = pxaColorCounts();
+    document.getElementById('pxaLegendCount').textContent = entries.length + ' colores';
+    const grid = document.getElementById('pxaLegendGrid');
+    grid.innerHTML = '';
+    entries.forEach(([hex,count])=>{
+      const el = document.createElement('div');
+      el.className = 'pxa-swatch'+(hex===pxaSelectedColor?' selected':'');
+      el.innerHTML = `<div class="pxa-swatch-color" style="background:${hex}"></div>
+        <div class="pxa-swatch-info"><span class="pxa-swatch-hex">${hex}</span><span class="pxa-swatch-count">${count} celdas</span></div>`;
+      el.onclick = ()=>pxaRecolor(hex);
+      grid.appendChild(el);
+    });
+  }
+
+  function pxaRecolor(hex){
+    pxaSelectedColor = hex;
+    pxaColorInput.value = hex;
+    pxaColorInput.oninput = function(){
+      const newHex = pxaColorInput.value;
+      for(let y=0;y<pxaRows;y++) for(let x=0;x<pxaCols;x++){
+        if(pxaGrid[y][x]===hex) pxaGrid[y][x]=newHex;
+      }
+      pxaRender();
+    };
+    pxaColorInput.click();
+  }
+
+  function pxaCellFromEvent(canvas, ev){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width/rect.width, scaleY = canvas.height/rect.height;
+    const cx = Math.floor((ev.clientX-rect.left)*scaleX/pxaCellSize);
+    const cy = Math.floor((ev.clientY-rect.top)*scaleY/pxaCellSize);
+    if(cy<0||cy>=pxaRows||cx<0||cx>=pxaCols) return null;
+    return {x:cx,y:cy};
+  }
+
+  window.pxaCanvasClick = function(ev){
+    if(pxaMode!=='pixel' || pxaMoveMode) return;
+    const cell = pxaCellFromEvent(document.getElementById('pxaCanvas'), ev);
+    if(!cell) return;
+    pxaRecolor(pxaGrid[cell.y][cell.x]);
+  };
+
+  window.pxaToggleMove = function(){
+    pxaMoveMode = !pxaMoveMode;
+    document.getElementById('pxaMoveBtn').classList.toggle('active', pxaMoveMode);
+    const canvas = document.getElementById('pxaCanvas');
+    canvas.style.cursor = pxaMoveMode ? 'grab' : 'crosshair';
+  };
+
+  (function setupMoveDrag(){
+    const canvas = document.getElementById('pxaCanvas');
+    canvas.addEventListener('mousedown', function(ev){
+      if(pxaMode!=='pixel' || !pxaMoveMode) return;
+      pxaDragFrom = pxaCellFromEvent(canvas, ev);
+      canvas.style.cursor = 'grabbing';
+    });
+    canvas.addEventListener('mouseup', function(ev){
+      if(pxaMode!=='pixel' || !pxaMoveMode || !pxaDragFrom) return;
+      const to = pxaCellFromEvent(canvas, ev);
+      canvas.style.cursor = 'grab';
+      if(to && (to.x!==pxaDragFrom.x || to.y!==pxaDragFrom.y)){
+        const tmp = pxaGrid[to.y][to.x];
+        pxaGrid[to.y][to.x] = pxaGrid[pxaDragFrom.y][pxaDragFrom.x];
+        pxaGrid[pxaDragFrom.y][pxaDragFrom.x] = tmp;
+        pxaRender();
+      }
+      pxaDragFrom = null;
+    });
+  })();
+
+  window.pxaToggleGrayscale = function(){
+    pxaGrayscale = !pxaGrayscale;
+    document.getElementById('pxaBwBtn').classList.toggle('active', pxaGrayscale);
+    if(pxaGrayscale){
+      pxaGrid = pxaGrid.map(row=>row.map(hex=>{
+        const [r,g,b]=hexToRgb(hex);
+        const l = 0.299*r+0.587*g+0.114*b;
+        return toHex(l,l,l);
+      }));
+    } else {
+      pxaGrid = pxaOriginalGrid.map(r=>r.slice());
+    }
+    pxaRender();
+  };
+
+  window.pxaReset = function(){
+    pxaGrid = pxaOriginalGrid.map(r=>r.slice());
+    pxaGrayscale = false;
+    document.getElementById('pxaBwBtn').classList.remove('active');
+    pxaRender();
+  };
+
+  // ── Boceto blanco y negro (efecto dibujo a lápiz/tinta) ──────
+  function pxaGenerateSketch(){
+    const maxDim = 640;
+    const scale = Math.min(1, maxDim / Math.max(pxaImg.width, pxaImg.height));
+    const w = Math.round(pxaImg.width*scale), h = Math.round(pxaImg.height*scale);
+    const off = document.createElement('canvas');
+    off.width=w; off.height=h;
+    const octx = off.getContext('2d');
+    octx.drawImage(pxaImg,0,0,w,h);
+    const src = octx.getImageData(0,0,w,h);
+    const gray = new Float32Array(w*h);
+    for(let i=0;i<w*h;i++){
+      const r=src.data[i*4], g=src.data[i*4+1], b=src.data[i*4+2];
+      gray[i] = 0.299*r+0.587*g+0.114*b;
+    }
+    const gxK=[-1,0,1,-2,0,2,-1,0,1], gyK=[-1,-2,-1,0,0,0,1,2,1];
+    const edge = new Float32Array(w*h);
+    let maxEdge=1;
+    for(let y=1;y<h-1;y++){
+      for(let x=1;x<w-1;x++){
+        let gx=0, gy=0, k=0;
+        for(let j=-1;j<=1;j++) for(let i=-1;i<=1;i++){
+          const v = gray[(y+j)*w+(x+i)];
+          gx += v*gxK[k]; gy += v*gyK[k]; k++;
+        }
+        const mag = Math.sqrt(gx*gx+gy*gy);
+        edge[y*w+x]=mag;
+        if(mag>maxEdge) maxEdge=mag;
+      }
+    }
+    const inv = new Float32Array(w*h);
+    for(let i=0;i<w*h;i++) inv[i]=255-gray[i];
+    function boxBlur(src,w,h,radius){
+      const out = new Float32Array(w*h);
+      for(let y=0;y<h;y++){
+        for(let x=0;x<w;x++){
+          let sum=0,n=0;
+          for(let j=-radius;j<=radius;j++){
+            const yy=y+j; if(yy<0||yy>=h) continue;
+            for(let i=-radius;i<=radius;i++){
+              const xx=x+i; if(xx<0||xx>=w) continue;
+              sum+=src[yy*w+xx]; n++;
+            }
+          }
+          out[y*w+x]=sum/n;
+        }
+      }
+      return out;
+    }
+    const blurred = boxBlur(boxBlur(inv,w,h,3),w,h,3);
+    const out = new ImageData(w,h);
+    const edgeThresh = maxEdge*0.18;
+    for(let i=0;i<w*h;i++){
+      let shade = gray[i] / Math.max(1,(255-blurred[i])) * 255;
+      shade = clamp(shade,0,255);
+      shade = shade>235 ? 255 : (shade>165 ? 235 : (shade>90 ? 200 : 150));
+      let v = shade;
+      if(edge[i] > edgeThresh) v = 15;
+      out.data[i*4]=v; out.data[i*4+1]=v; out.data[i*4+2]=v; out.data[i*4+3]=255;
+    }
+    const canvas = document.getElementById('pxaSketchCanvas');
+    canvas.width=w; canvas.height=h;
+    canvas.getContext('2d').putImageData(out,0,0);
+  }
+
+  // ── EFECTOS: CRT / Glass / Blur / Focus / Enfoque selectivo ──
+  let pxaFxType = 'crt';
+  let pxaFxBase = null; // {canvas, w, h}
+  const pxaFxHasRegion = { glass:true, window:true }; // efectos con recuadro arrastrable
+  const pxaFxParams = {
+    crt:    { bg:'#101010', scan:35, aberr:2, vignette:35 },
+    glass:  { bg:'#e9e6de', type:'ribbed', amp:16, freq:5, shine:35, region:{x:0.12,y:0.42,w:0.76,h:0.5} },
+    blur:   { bg:'#eeece5', type:'motion', side:'left', amount:42, intensity:22, angle:0 },
+    focus:  { bg:'#f2f0ea', type:'dot', dot:9, colorA:'#141414', colorB:'#c81a3c' },
+    window: { blur:16, region:{x:0.30,y:0.22,w:0.42,h:0.46} }
+  };
+  const pxaFxTypeLabels = {
+    glass: [['ribbed','Acanalado'],['wave','Ondulado'],['frost','Escarchado'],['bubble','Burbuja']],
+    blur:  [['motion','Movimiento'],['gaussian','Difuso'],['radial','Zoom']],
+    focus: [['dot','Punto'],['square','Cuadrado'],['line','Línea'],['cross','Cruz']]
+  };
+  const pxaFxSideLabels = [['left','Izquierda'],['right','Derecha'],['top','Arriba'],['bottom','Abajo']];
+
+  function pxaHashRand(a,b){
+    const x = Math.sin(a*12.9898+b*78.233)*43758.5453;
+    return x-Math.floor(x);
+  }
+
+  function pxaInitFx(){
+    if(!pxaFxBase){
+      const maxDim = 700;
+      const scale = Math.min(1, maxDim/Math.max(pxaImg.width, pxaImg.height));
+      const w = Math.round(pxaImg.width*scale), h = Math.round(pxaImg.height*scale);
+      const off = document.createElement('canvas');
+      off.width=w; off.height=h;
+      off.getContext('2d').drawImage(pxaImg,0,0,w,h);
+      pxaFxBase = {canvas:off, w, h};
+    }
+    pxaBuildFxPanel();
+    pxaRenderFx();
+    pxaSetupRegionDrag();
+  }
+
+  window.pxaSetFx = function(type){
+    pxaFxType = type;
+    document.querySelectorAll('.pxa-fx-tab').forEach(b=>b.classList.toggle('active', b.dataset.fx===type));
+    pxaBuildFxPanel();
+    pxaRenderFx();
+  };
+
+  function pxaFieldGroup(label, innerHtml){
+    return `<div class="pxa-fx-group"><span class="pxa-fx-group-label">${label}</span>${innerHtml}</div>`;
+  }
+
+  function pxaTypeSubtabs(idPrefix, options, current){
+    const btns = options.map(([val,label])=>
+      `<button type="button" class="pxa-fx-subtab${val===current?' active':''}" data-val="${val}" data-group="${idPrefix}">${label}</button>`
+    ).join('');
+    return `<div class="pxa-fx-subtabs" id="${idPrefix}">${btns}</div>`;
+  }
+
+  function pxaBuildFxPanel(){
+    const p = pxaFxParams[pxaFxType];
+    const panel = document.getElementById('pxaFxPanel');
+    let html = '';
+    if(pxaFxType==='crt'){
+      html += pxaFieldGroup('Fondo', `<div class="pxa-field"><input type="color" id="pxaFxBg" value="${p.bg}"></div>`);
+      html += pxaFieldGroup('Scanlines', `<input type="range" id="pxaFxScan" min="0" max="100" value="${p.scan}">`);
+      html += pxaFieldGroup('Aberración', `<input type="range" id="pxaFxAberr" min="0" max="8" value="${p.aberr}">`);
+      html += pxaFieldGroup('Viñeteado', `<input type="range" id="pxaFxVig" min="0" max="80" value="${p.vignette}">`);
+    } else if(pxaFxType==='glass'){
+      html += pxaFieldGroup('Tipo de glass', pxaTypeSubtabs('pxaFxTypeGlass', pxaFxTypeLabels.glass, p.type));
+      html += pxaFieldGroup('Fondo', `<div class="pxa-field"><input type="color" id="pxaFxBg" value="${p.bg}"></div>`);
+      html += pxaFieldGroup('Distorsión', `<input type="range" id="pxaFxAmp" min="0" max="40" value="${p.amp}">`);
+      html += pxaFieldGroup('Frecuencia', `<input type="range" id="pxaFxFreq" min="1" max="20" value="${p.freq}">`);
+      html += pxaFieldGroup('Brillo cristal', `<input type="range" id="pxaFxShine" min="0" max="80" value="${p.shine}">`);
+      html += pxaFieldGroup('Posición del panel', `<div class="pxa-fx-mini">X <input type="range" id="pxaFxRX" min="0" max="100" value="${Math.round(p.region.x*100)}"></div><div class="pxa-fx-mini">Y <input type="range" id="pxaFxRY" min="0" max="100" value="${Math.round(p.region.y*100)}"></div>`);
+      html += pxaFieldGroup('Tamaño del panel', `<div class="pxa-fx-mini">Ancho <input type="range" id="pxaFxRW" min="10" max="100" value="${Math.round(p.region.w*100)}"></div><div class="pxa-fx-mini">Alto <input type="range" id="pxaFxRH" min="10" max="100" value="${Math.round(p.region.h*100)}"></div>`);
+    } else if(pxaFxType==='blur'){
+      html += pxaFieldGroup('Tipo de blur', pxaTypeSubtabs('pxaFxTypeBlur', pxaFxTypeLabels.blur, p.type));
+      html += pxaFieldGroup('Lado nítido', pxaTypeSubtabs('pxaFxSideBlur', pxaFxSideLabels, p.side));
+      html += pxaFieldGroup('Fondo', `<div class="pxa-field"><input type="color" id="pxaFxBg" value="${p.bg}"></div>`);
+      html += pxaFieldGroup('Área nítida', `<input type="range" id="pxaFxAmount" min="0" max="100" value="${p.amount}">`);
+      html += pxaFieldGroup('Intensidad', `<input type="range" id="pxaFxIntensity" min="0" max="50" value="${p.intensity}">`);
+      if(p.type==='motion'){
+        html += pxaFieldGroup('Ángulo', `<input type="range" id="pxaFxAngle" min="0" max="180" value="${p.angle}">`);
+      }
+    } else if(pxaFxType==='focus'){
+      html += pxaFieldGroup('Tipo de focus', pxaTypeSubtabs('pxaFxTypeFocus', pxaFxTypeLabels.focus, p.type));
+      html += pxaFieldGroup('Fondo', `<div class="pxa-field"><input type="color" id="pxaFxBg" value="${p.bg}"></div>`);
+      html += pxaFieldGroup('Tamaño de celda', `<input type="range" id="pxaFxDot" min="4" max="20" value="${p.dot}">`);
+      html += pxaFieldGroup('Color sombra', `<div class="pxa-field"><input type="color" id="pxaFxColorA" value="${p.colorA}"></div>`);
+      html += pxaFieldGroup('Color luz', `<div class="pxa-field"><input type="color" id="pxaFxColorB" value="${p.colorB}"></div>`);
+    } else if(pxaFxType==='window'){
+      html += pxaFieldGroup('Desenfoque', `<input type="range" id="pxaFxWinBlur" min="1" max="40" value="${p.blur}">`);
+      html += pxaFieldGroup('Posición del recuadro', `<div class="pxa-fx-mini">X <input type="range" id="pxaFxRX" min="0" max="100" value="${Math.round(p.region.x*100)}"></div><div class="pxa-fx-mini">Y <input type="range" id="pxaFxRY" min="0" max="100" value="${Math.round(p.region.y*100)}"></div>`);
+      html += pxaFieldGroup('Tamaño del recuadro', `<div class="pxa-fx-mini">Ancho <input type="range" id="pxaFxRW" min="8" max="100" value="${Math.round(p.region.w*100)}"></div><div class="pxa-fx-mini">Alto <input type="range" id="pxaFxRH" min="8" max="100" value="${Math.round(p.region.h*100)}"></div>`);
+    }
+    panel.innerHTML = html;
+    panel.querySelectorAll('input').forEach(inp=>{
+      inp.addEventListener('input', pxaOnFxChange);
+    });
+    panel.querySelectorAll('.pxa-fx-subtab').forEach(btn=>{
+      btn.addEventListener('click', function(){
+        panel.querySelectorAll(`[data-group="${btn.dataset.group}"]`).forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        pxaOnFxChange();
+        if(btn.dataset.group==='pxaFxTypeBlur') pxaBuildFxPanel(); // ángulo aparece solo en modo movimiento
+      });
+    });
+    pxaPositionRegionBox();
+  }
+
+  function pxaSubtabVal(groupId, fallback){
+    const el = document.querySelector(`#${groupId} .pxa-fx-subtab.active`);
+    return el ? el.dataset.val : fallback;
+  }
+
+  function pxaOnFxChange(){
+    const p = pxaFxParams[pxaFxType];
+    const bgEl = document.getElementById('pxaFxBg');
+    if(bgEl) p.bg = bgEl.value;
+    if(pxaFxType==='crt'){
+      p.scan = +document.getElementById('pxaFxScan').value;
+      p.aberr = +document.getElementById('pxaFxAberr').value;
+      p.vignette = +document.getElementById('pxaFxVig').value;
+    } else if(pxaFxType==='glass'){
+      p.type = pxaSubtabVal('pxaFxTypeGlass', p.type);
+      p.amp = +document.getElementById('pxaFxAmp').value;
+      p.freq = +document.getElementById('pxaFxFreq').value;
+      p.shine = +document.getElementById('pxaFxShine').value;
+      p.region.x = (+document.getElementById('pxaFxRX').value)/100;
+      p.region.y = (+document.getElementById('pxaFxRY').value)/100;
+      p.region.w = (+document.getElementById('pxaFxRW').value)/100;
+      p.region.h = (+document.getElementById('pxaFxRH').value)/100;
+      pxaClampRegion(p.region);
+    } else if(pxaFxType==='blur'){
+      p.type = pxaSubtabVal('pxaFxTypeBlur', p.type);
+      p.side = pxaSubtabVal('pxaFxSideBlur', p.side);
+      p.amount = +document.getElementById('pxaFxAmount').value;
+      p.intensity = +document.getElementById('pxaFxIntensity').value;
+      const angleEl = document.getElementById('pxaFxAngle');
+      if(angleEl) p.angle = +angleEl.value;
+    } else if(pxaFxType==='focus'){
+      p.type = pxaSubtabVal('pxaFxTypeFocus', p.type);
+      p.dot = +document.getElementById('pxaFxDot').value;
+      p.colorA = document.getElementById('pxaFxColorA').value;
+      p.colorB = document.getElementById('pxaFxColorB').value;
+    } else if(pxaFxType==='window'){
+      p.blur = +document.getElementById('pxaFxWinBlur').value;
+      p.region.x = (+document.getElementById('pxaFxRX').value)/100;
+      p.region.y = (+document.getElementById('pxaFxRY').value)/100;
+      p.region.w = (+document.getElementById('pxaFxRW').value)/100;
+      p.region.h = (+document.getElementById('pxaFxRH').value)/100;
+      pxaClampRegion(p.region);
+    }
+    pxaPositionRegionBox();
+    pxaRenderFx();
+  }
+
+  function pxaClampRegion(r){
+    r.w = clamp(r.w, 0.06, 1);
+    r.h = clamp(r.h, 0.06, 1);
+    r.x = clamp(r.x, 0, 1-r.w);
+    r.y = clamp(r.y, 0, 1-r.h);
+  }
+
+  function pxaPositionRegionBox(){
+    const box = document.getElementById('pxaFxRegion');
+    const hasRegion = !!pxaFxHasRegion[pxaFxType];
+    box.style.display = hasRegion ? 'block' : 'none';
+    if(!hasRegion) return;
+    const r = pxaFxParams[pxaFxType].region;
+    box.style.left = (r.x*100)+'%';
+    box.style.top = (r.y*100)+'%';
+    box.style.width = (r.w*100)+'%';
+    box.style.height = (r.h*100)+'%';
+    document.getElementById('pxaFxRegionTag').textContent = pxaFxType==='window' ? 'zona enfocada — arrastrá' : 'panel de vidrio — arrastrá';
+  }
+
+  let pxaRegionDragBound = false;
+  function pxaSetupRegionDrag(){
+    if(pxaRegionDragBound) return;
+    pxaRegionDragBound = true;
+    const stage = document.getElementById('pxaFxStage');
+    const box = document.getElementById('pxaFxRegion');
+    const resize = document.getElementById('pxaFxRegionResize');
+    let mode = null, startX=0, startY=0, startR=null;
+
+    function getRegion(){ return pxaFxParams[pxaFxType].region; }
+
+    box.addEventListener('pointerdown', function(e){
+      if(e.target===resize) return;
+      mode='move'; startX=e.clientX; startY=e.clientY; startR=Object.assign({}, getRegion());
+      box.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    resize.addEventListener('pointerdown', function(e){
+      mode='resize'; startX=e.clientX; startY=e.clientY; startR=Object.assign({}, getRegion());
+      resize.setPointerCapture(e.pointerId);
+      e.stopPropagation(); e.preventDefault();
+    });
+    function onMove(e){
+      if(!mode) return;
+      const rect = stage.getBoundingClientRect();
+      const dxF = (e.clientX-startX)/rect.width;
+      const dyF = (e.clientY-startY)/rect.height;
+      const r = getRegion();
+      if(mode==='move'){
+        r.x = startR.x + dxF; r.y = startR.y + dyF;
+        r.w = startR.w; r.h = startR.h;
+      } else if(mode==='resize'){
+        r.x = startR.x; r.y = startR.y;
+        r.w = startR.w + dxF; r.h = startR.h + dyF;
+      }
+      pxaClampRegion(r);
+      pxaPositionRegionBox();
+      pxaSyncRegionInputs();
+      pxaRenderFx();
+    }
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', function(){ mode=null; });
+  }
+
+  function pxaSyncRegionInputs(){
+    const r = pxaFxParams[pxaFxType].region;
+    const rx=document.getElementById('pxaFxRX'), ry=document.getElementById('pxaFxRY');
+    const rw=document.getElementById('pxaFxRW'), rh=document.getElementById('pxaFxRH');
+    if(rx) rx.value = Math.round(r.x*100);
+    if(ry) ry.value = Math.round(r.y*100);
+    if(rw) rw.value = Math.round(r.w*100);
+    if(rh) rh.value = Math.round(r.h*100);
+  }
+
+  function pxaRenderFx(){
+    const {canvas:base, w, h} = pxaFxBase;
+    const canvas = document.getElementById('pxaFxCanvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    const p = pxaFxParams[pxaFxType];
+    if(p.bg){ ctx.fillStyle = p.bg; ctx.fillRect(0,0,w,h); }
+
+    if(pxaFxType==='crt') pxaFxCrt(ctx, base, w, h, p);
+    else if(pxaFxType==='glass') pxaFxGlass(ctx, base, w, h, p);
+    else if(pxaFxType==='blur') pxaFxBlur(ctx, base, w, h, p);
+    else if(pxaFxType==='focus') pxaFxFocus(ctx, base, w, h, p);
+    else if(pxaFxType==='window') pxaFxWindow(ctx, base, w, h, p);
+  }
+
+  function pxaFxCrt(ctx, base, w, h, p){
+    ctx.drawImage(base,0,0);
+    if(p.scan>0){
+      ctx.fillStyle = `rgba(0,0,0,${p.scan/200})`;
+      for(let y=0;y<h;y+=2) ctx.fillRect(0,y,w,1);
+    }
+    if(p.aberr>0){
+      const img = ctx.getImageData(0,0,w,h);
+      const out = ctx.createImageData(w,h);
+      const a = p.aberr;
+      for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+        const idx=(y*w+x)*4;
+        const rIdx=(y*w+clamp(x-a,0,w-1))*4;
+        const bIdx=(y*w+clamp(x+a,0,w-1))*4;
+        out.data[idx]=img.data[rIdx]; out.data[idx+1]=img.data[idx+1]; out.data[idx+2]=img.data[bIdx+2]; out.data[idx+3]=255;
+      }
+      ctx.putImageData(out,0,0);
+    }
+    if(p.vignette>0){
+      const grad = ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*.25,w/2,h/2,Math.max(w,h)*.7);
+      grad.addColorStop(0,'rgba(0,0,0,0)');
+      grad.addColorStop(1,`rgba(0,0,0,${p.vignette/100})`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0,0,w,h);
+    }
+  }
+
+  function pxaFxGlass(ctx, base, w, h, p){
+    ctx.drawImage(base,0,0,w,h);
+    const bctx = base.getContext('2d');
+    const src = bctx.getImageData(0,0,w,h);
+    const rx = Math.round(p.region.x*w), ry = Math.round(p.region.y*h);
+    const rw = Math.max(1,Math.round(p.region.w*w)), rh = Math.max(1,Math.round(p.region.h*h));
+    const out = ctx.getImageData(rx,ry,rw,rh);
+    const freq = p.freq/100, amp = p.amp;
+    const stripW = Math.max(4, w/(p.freq*2));
+    const blockSize = Math.max(3, Math.round(24-p.freq));
+    for(let j=0;j<rh;j++){
+      for(let i=0;i<rw;i++){
+        const x = rx+i, y = ry+j;
+        let dx=0, dy=0;
+        if(p.type==='ribbed'){
+          const local = ((x%stripW)/stripW)*2-1;
+          const lens = Math.sin(local*Math.PI/2);
+          dx = lens*amp;
+          dy = Math.sin((x/stripW)*0.7 + y*0.02)*amp*0.15;
+        } else if(p.type==='wave'){
+          dx = Math.sin(y*freq*1.2)*amp + Math.sin(x*freq*0.6)*amp*0.3;
+          dy = Math.cos(x*freq*1.1)*amp*0.5;
+        } else if(p.type==='frost'){
+          const bx = Math.floor(x/blockSize), by = Math.floor(y/blockSize);
+          dx = (pxaHashRand(bx,by)-0.5)*amp*2;
+          dy = (pxaHashRand(bx+91,by+7)-0.5)*amp*2;
+        } else if(p.type==='bubble'){
+          const cx = rx+rw/2, cy = ry+rh/2;
+          const ddx = x-cx, ddy = y-cy;
+          const dist = Math.sqrt(ddx*ddx+ddy*ddy)/(Math.max(rw,rh)/2+1);
+          const k = (1-Math.min(1,dist)) * (amp/6);
+          dx = ddx*k*0.18; dy = ddy*k*0.18;
+        }
+        const sx = clamp(Math.round(x+dx),0,w-1);
+        const sy = clamp(Math.round(y+dy),0,h-1);
+        const si = (sy*w+sx)*4, di = (j*rw+i)*4;
+        out.data[di]=src.data[si]; out.data[di+1]=src.data[si+1]; out.data[di+2]=src.data[si+2]; out.data[di+3]=255;
+      }
+    }
+    ctx.putImageData(out, rx, ry);
+    if(p.shine>0){
+      ctx.save();
+      ctx.beginPath(); ctx.rect(rx,ry,rw,rh); ctx.clip();
+      for(let i=0;i<5;i++){
+        const gx = rx + (rw/5)*i - rw*0.15;
+        const grad = ctx.createLinearGradient(gx,ry,gx+rw*0.18,ry+rh);
+        grad.addColorStop(0,'rgba(255,255,255,0)');
+        grad.addColorStop(0.5,`rgba(255,255,255,${p.shine/300})`);
+        grad.addColorStop(1,'rgba(255,255,255,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(rx,ry,rw,rh);
+      }
+      ctx.restore();
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,.22)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(rx+.5, ry+.5, rw-1, rh-1);
+  }
+
+  function pxaFxBlurredCanvas(base, w, h, px){
+    const c = document.createElement('canvas');
+    c.width=w; c.height=h;
+    const cctx = c.getContext('2d');
+    cctx.filter = 'blur('+Math.max(0.001,px)+'px)';
+    cctx.drawImage(base,0,0,w,h);
+    return c;
+  }
+
+  function pxaMotionBlurCanvas(base, w, h, intensity, angle){
+    const c = document.createElement('canvas');
+    c.width=w; c.height=h;
+    const cctx = c.getContext('2d');
+    const rad = angle*Math.PI/180;
+    const steps = 14;
+    cctx.globalAlpha = 1/steps*1.4;
+    for(let i=1;i<=steps;i++){
+      const off = (i/steps)*intensity;
+      cctx.drawImage(base, Math.cos(rad)*off, Math.sin(rad)*off);
+    }
+    cctx.globalAlpha = 1;
+    return c;
+  }
+
+  function pxaRadialBlurCanvas(base, w, h, intensity){
+    const c = document.createElement('canvas');
+    c.width=w; c.height=h;
+    const cctx = c.getContext('2d');
+    const steps = 12;
+    cctx.globalAlpha = 1/steps;
+    for(let i=0;i<steps;i++){
+      const scale = 1 + (intensity/450)*(i/steps);
+      cctx.save();
+      cctx.translate(w/2,h/2); cctx.scale(scale,scale); cctx.translate(-w/2,-h/2);
+      cctx.drawImage(base,0,0,w,h);
+      cctx.restore();
+    }
+    cctx.globalAlpha = 1;
+    return c;
+  }
+
+  function pxaSideMaskCanvas(base, w, h, side, amt){
+    const tmp = document.createElement('canvas');
+    tmp.width=w; tmp.height=h;
+    const tctx = tmp.getContext('2d');
+    tctx.drawImage(base,0,0,w,h);
+    let x0,y0,x1,y1;
+    if(side==='left'){ x0=0;y0=0;x1=w;y1=0; }
+    else if(side==='right'){ x0=w;y0=0;x1=0;y1=0; }
+    else if(side==='top'){ x0=0;y0=0;x1=0;y1=h; }
+    else { x0=0;y0=h;x1=0;y1=0; }
+    const grad = tctx.createLinearGradient(x0,y0,x1,y1);
+    const plateau = clamp(amt/100, 0, 0.94);
+    grad.addColorStop(0,'rgba(255,255,255,1)');
+    grad.addColorStop(plateau,'rgba(255,255,255,1)');
+    grad.addColorStop(1,'rgba(255,255,255,0)');
+    tctx.globalCompositeOperation = 'destination-in';
+    tctx.fillStyle = grad;
+    tctx.fillRect(0,0,w,h);
+    return tmp;
+  }
+
+  function pxaFxBlur(ctx, base, w, h, p){
+    let blurred;
+    if(p.type==='motion') blurred = pxaMotionBlurCanvas(base,w,h,p.intensity,p.angle);
+    else if(p.type==='radial') blurred = pxaRadialBlurCanvas(base,w,h,p.intensity);
+    else blurred = pxaFxBlurredCanvas(base,w,h,p.intensity/2.2);
+    ctx.drawImage(blurred,0,0);
+    if(p.amount>0){
+      const sharp = pxaSideMaskCanvas(base,w,h,p.side,p.amount);
+      ctx.drawImage(sharp,0,0);
+    }
+  }
+
+  function pxaFxFocus(ctx, base, w, h, p){
+    const bctx = base.getContext('2d');
+    const src = bctx.getImageData(0,0,w,h).data;
+    const cell = p.dot;
+    const [ra,ga,ba] = hexToRgb(p.colorA);
+    const [rb,gb,bb] = hexToRgb(p.colorB);
+    for(let y=0;y<h;y+=cell){
+      for(let x=0;x<w;x+=cell){
+        let sum=0, n=0;
+        for(let j=0;j<cell && y+j<h;j++) for(let i=0;i<cell && x+i<w;i++){
+          const idx=((y+j)*w+(x+i))*4;
+          sum += 0.299*src[idx]+0.587*src[idx+1]+0.114*src[idx+2];
+          n++;
+        }
+        const lum = sum/n; // 0 oscuro .. 255 claro
+        const dark = 1 - lum/255;
+        const r = ra + (rb-ra)*(1-dark);
+        const g = ga + (gb-ga)*(1-dark);
+        const b = ba + (bb-ba)*(1-dark);
+        ctx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
+        if(p.type==='square'){
+          const s = cell*clamp(dark*1.15, 0.12, 1);
+          const off = (cell-s)/2;
+          ctx.fillRect(x+off, y+off, s, s);
+        } else if(p.type==='line'){
+          const lh = cell*clamp(dark*1.15, 0.12, 1);
+          ctx.fillRect(x, y+(cell-lh)/2, cell, lh);
+        } else if(p.type==='cross'){
+          const s = cell*clamp(dark*1.15, 0.12, 1);
+          const t = Math.max(1, s*0.28);
+          ctx.fillRect(x+cell/2-t/2, y+(cell-s)/2, t, s);
+          ctx.fillRect(x+(cell-s)/2, y+cell/2-t/2, s, t);
+        } else {
+          const radius = (cell/2) * clamp(dark*1.15, 0.12, 1);
+          ctx.beginPath();
+          ctx.arc(x+cell/2, y+cell/2, radius, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+  }
+
+  function pxaFxWindow(ctx, base, w, h, p){
+    const blurred = pxaFxBlurredCanvas(base, w, h, p.blur);
+    ctx.drawImage(blurred,0,0,w,h);
+    const rx = Math.round(p.region.x*w), ry = Math.round(p.region.y*h);
+    const rw = Math.max(1,Math.round(p.region.w*w)), rh = Math.max(1,Math.round(p.region.h*h));
+    ctx.save();
+    ctx.beginPath(); ctx.rect(rx,ry,rw,rh); ctx.clip();
+    ctx.drawImage(base,0,0,w,h);
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,.9)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(rx+.5, ry+.5, rw-1, rh-1);
+    const cx = rx, cy = ry+rh/2;
+    ctx.strokeStyle = 'rgba(255,255,255,.9)';
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(cx-7,cy); ctx.lineTo(cx+7,cy);
+    ctx.moveTo(cx,cy-7); ctx.lineTo(cx,cy+7);
+    ctx.stroke();
+  }
+
+  // ── Descargas ─────────────────────────────────────────────
+  window.pxaDownload = function(){
+    if(pxaMode==='pixel'){
+      const canvas = document.getElementById('pxaCanvas');
+      const link = document.createElement('a');
+      link.download = 'pixel-art.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } else if(pxaMode==='sketch'){
+      pxaDownloadPaintStyle();
+    } else {
+      const canvas = document.getElementById('pxaFxCanvas');
+      const link = document.createElement('a');
+      link.download = 'efecto-'+pxaFxSlug(pxaFxType)+'.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  };
+
+  const pxaFxNames = { crt:'CRT', glass:'Glass', blur:'Blur', focus:'Focus mode', window:'Enfoque selectivo' };
+  function pxaFxSlug(type){ return type==='window' ? 'enfoque-selectivo' : type; }
+
+  window.pxaDownloadWithPalette = function(){
+    if(pxaMode==='effects'){ pxaDownloadFxPolaroid(); return; }
+    const entries = pxaColorCounts();
+    const cellW = 148, cellH = 46, cols = 6;
+    const rows = Math.ceil(entries.length/cols);
+    const pad = 36;
+    const imgDrawW = Math.min(900, pxaCols*20);
+    const imgDrawH = Math.round(imgDrawW * (pxaRows/pxaCols));
+    const legendW = cols*cellW;
+    const canvasW = pad*2 + Math.max(imgDrawW, legendW);
+    const legendH = rows*cellH + 30;
+    const canvasH = pad*2 + imgDrawH + 30 + legendH + 60;
+
+    const c = document.createElement('canvas');
+    c.width = canvasW; c.height = canvasH;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,canvasW,canvasH);
+
+    ctx.fillStyle = '#1a1a1a';
+    ctx.font = '700 20px Georgia, serif';
+    ctx.textBaseline='top';
+    ctx.fillText('imar source', pad, 14);
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#888';
+    ctx.fillText(pxaCols+' x '+pxaRows+' celdas — '+entries.length+' colores', pad, 40);
+
+    const imgY = 64;
+    const imgX = (canvasW - imgDrawW)/2;
+    ctx.drawImage(document.getElementById('pxaCanvas'), imgX, imgY, imgDrawW, imgDrawH);
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(imgX+.5, imgY+.5, imgDrawW-1, imgDrawH-1);
+
+    let ly = imgY + imgDrawH + 26;
+    const lx0 = (canvasW - legendW)/2;
+    entries.forEach(([hex,count], idx)=>{
+      const col = idx % cols, row = Math.floor(idx/cols);
+      const x = lx0 + col*cellW, y = ly + row*cellH;
+      ctx.fillStyle = hex;
+      ctx.fillRect(x, y+4, 30, 30);
+      ctx.strokeStyle = 'rgba(0,0,0,.2)';
+      ctx.strokeRect(x+.5, y+4.5, 30, 30);
+      ctx.fillStyle = '#222';
+      ctx.font = '700 10px monospace';
+      ctx.fillText(hex.toUpperCase(), x+38, y+6);
+      ctx.fillStyle = '#999';
+      ctx.font = '9px monospace';
+      ctx.fillText(count+' celdas', x+38, y+20);
+    });
+
+    ctx.fillStyle = '#bbb';
+    ctx.font = 'italic 11px Georgia, serif';
+    ctx.textAlign='center';
+    ctx.fillText('generado con el editor de pixel art — imar source', canvasW/2, canvasH-32);
+    ctx.textAlign='left';
+
+    const link = document.createElement('a');
+    link.download = 'pixel-art-paleta.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+  };
+
+  function pxaDownloadFxPolaroid(){
+    const src = document.getElementById('pxaFxCanvas');
+    if(pxaFxType==='window'){
+      // Enfoque selectivo: descarga limpia, sin marca de agua ni texto
+      const link = document.createElement('a');
+      link.download = 'efecto-'+pxaFxSlug(pxaFxType)+'.png';
+      link.href = src.toDataURL('image/png');
+      link.click();
+      return;
+    }
+    const pad = 34, capH = 70;
+    const c = document.createElement('canvas');
+    c.width = src.width + pad*2;
+    c.height = pad + src.height + capH;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.drawImage(src, pad, pad*0.6);
+    ctx.strokeStyle = '#ddd';
+    ctx.strokeRect(pad+.5, pad*0.6+.5, src.width-1, src.height-1);
+    ctx.fillStyle = '#1a1a1a';
+    ctx.font = '700 16px Georgia, serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('imar source', pad, pad*0.6+src.height+30);
+    ctx.fillStyle = '#999';
+    ctx.font = 'italic 10px Georgia, serif';
+    ctx.textAlign='right';
+    ctx.fillText('efecto: '+(pxaFxNames[pxaFxType]||pxaFxType), c.width-pad, pad*0.6+src.height+30);
+    ctx.textAlign='left';
+    const link = document.createElement('a');
+    link.download = 'polaroid-'+pxaFxSlug(pxaFxType)+'-imar-source.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+  }
+
+  function pxaDownloadPaintStyle(){
+    const sketch = document.getElementById('pxaSketchCanvas');
+    const barH = 32, ribbonH = 92, statusH = 26, pad = 10;
+    const w = Math.max(sketch.width + pad*2, 560);
+    const h = barH + ribbonH + sketch.height + pad*2 + statusH;
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+
+    ctx.fillStyle = '#ece9d8';
+    ctx.fillRect(0,0,w,h);
+
+    const grad = ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0,'#1c5fd6'); grad.addColorStop(1,'#5fa3ef');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,w,barH);
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 13px Segoe UI, Arial';
+    ctx.textBaseline='middle';
+    ctx.fillText('sin título - Paint', 12, barH/2+1);
+    ['#e5e5e5','#e5e5e5','#e81123'].forEach((col,i)=>{
+      ctx.fillStyle = col;
+      ctx.fillRect(w-96+i*32, 4, 26, 24);
+      ctx.fillStyle = '#333';
+      ctx.font='12px Arial';
+      ctx.fillText(['_','□','x'][i], w-96+i*32+9, barH/2+1);
+    });
+
+    ctx.fillStyle = '#f4f2ec';
+    ctx.fillRect(0,barH,w,ribbonH);
+    ctx.strokeStyle = '#d4d0c4';
+    ctx.strokeRect(0,barH,w,ribbonH);
+    ['Pegar','Imagen','Herramientas','Pinceles','Formas','Tamaño','Color 1','Color 2'].forEach((label,i)=>{
+      ctx.fillStyle = '#333';
+      ctx.fillRect(10+i*62, barH+8, 46, 46);
+      ctx.strokeStyle = '#c9c5b8';
+      ctx.strokeRect(10+i*62, barH+8, 46, 46);
+      ctx.fillStyle = '#555';
+      ctx.font = '9px Segoe UI, Arial';
+      ctx.fillText(label, 10+i*62+2, barH+62);
+    });
+    const paintColors = ['#000000','#7f7f7f','#880015','#ed1c24','#ff7f27','#fff200','#22b14c','#00a2e8','#3f48cc','#a349a4','#ffffff','#c3c3c3','#b97a57','#ffaec9','#ffc90e','#efe4b0','#b5e61d','#99d9ea','#7092be','#c8bfe7'];
+    const palStartX = 10 + 62*8 + 14;
+    paintColors.forEach((col,i)=>{
+      const x = palStartX + (i%10)*16, y = barH+8 + Math.floor(i/10)*22;
+      ctx.fillStyle = col;
+      ctx.fillRect(x,y,14,18);
+      ctx.strokeStyle='#999';
+      ctx.strokeRect(x+.5,y+.5,14,18);
+    });
+
+    const imgX = pad, imgY = barH+ribbonH+pad;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(imgX-2, imgY-2, sketch.width+4, sketch.height+4);
+    ctx.drawImage(sketch, imgX, imgY);
+    ctx.strokeStyle = '#888';
+    ctx.strokeRect(imgX-.5, imgY-.5, sketch.width+1, sketch.height+1);
+
+    ctx.fillStyle = 'rgba(0,0,0,.35)';
+    ctx.font = 'italic 700 13px Georgia, serif';
+    ctx.fillText('imar source', imgX+8, imgY+sketch.height-14);
+
+    const statusY = h-statusH;
+    ctx.fillStyle = '#ece9d8';
+    ctx.fillRect(0,statusY,w,statusH);
+    ctx.strokeStyle = '#d4d0c4';
+    ctx.strokeRect(0,statusY,w,statusH);
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Segoe UI, Arial';
+    ctx.fillText(sketch.width+' x '+sketch.height+'px', 10, statusY+statusH/2+1);
+    ctx.fillText('100%', w-60, statusY+statusH/2+1);
+
+    const link = document.createElement('a');
+    link.download = 'boceto-paint-imar-source.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+  }
+})();
+</script>
+
+
 
 
 
