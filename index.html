@@ -896,7 +896,7 @@ footer::before{
       <div class="pxa-divider"></div>
       <button class="pxa-btn" id="pxaModePixelBtn" onclick="pxaSetMode('pixel')" disabled>Vista pixel art</button>
       <button class="pxa-btn" id="pxaModeSketchBtn" onclick="pxaSetMode('sketch')" disabled>Vista boceto B/N</button>
-      <button class="pxa-btn" id="pxaModeFxBtn" onclick="pxaSetMode('effects')" disabled>Efectos (CRT / Glass / Blur / Focus / Selectivo)</button>
+      <button class="pxa-btn" id="pxaModeFxBtn" onclick="pxaSetMode('effects')" disabled>Efectos (CRT / Glass / Blur / Focus / Selectivo / Pixelado / Código / Estirado / Anotaciones)</button>
       <div class="pxa-divider"></div>
       <button class="pxa-btn" id="pxaBwBtn" onclick="pxaToggleGrayscale()" disabled>Blanco y negro</button>
       <button class="pxa-btn" id="pxaMoveBtn" onclick="pxaToggleMove()" disabled>Mover celdas</button>
@@ -922,7 +922,7 @@ footer::before{
       <div class="pxa-legend-col" id="pxaLegendCol">
         <div class="pxa-legend-title"><span>Paleta de colores</span><span id="pxaLegendCount">0</span></div>
         <div class="pxa-legend-grid" id="pxaLegendGrid"></div>
-        <div class="pxa-hint">Click en un color (o en un pixel del lienzo) para <b>recolorear</b>. Activá <b>Mover celdas</b> y arrastrá un cuadrito sobre otro para intercambiarlos. Probá la pestaña <b>Efectos</b> para aplicar y editar CRT, Glass, Blur o Focus mode.</div>
+        <div class="pxa-hint">Click en un color (o en un pixel del lienzo) para <b>recolorear</b>. Activá <b>Mover celdas</b> y arrastrá un cuadrito sobre otro para intercambiarlos. Probá la pestaña <b>Efectos</b> para aplicar y editar CRT, Glass, Blur, Focus mode, <b>Pixelado selectivo</b> (tapar una zona puntual), <b>Código</b> (texto glitch, bloques desplazados, ruido y líneas RGB totalmente configurables) , <b>Estirado</b> (tiras de color estiradas desde una línea de corte) o <b>Anotaciones</b> (cuadros arrastrables sobre la foto normal, con texto y color propio, conectados entre sí por líneas — como una ficha técnica).</div>
       </div>
       <div class="pxa-legend-col" id="pxaFxCol" style="display:none">
         <div class="pxa-legend-title"><span>Editar efecto</span></div>
@@ -932,6 +932,10 @@ footer::before{
           <button class="pxa-btn pxa-fx-tab" data-fx="blur" onclick="pxaSetFx('blur')">Blur</button>
           <button class="pxa-btn pxa-fx-tab" data-fx="focus" onclick="pxaSetFx('focus')">Focus mode</button>
           <button class="pxa-btn pxa-fx-tab" data-fx="window" onclick="pxaSetFx('window')">Enfoque selectivo</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="pixelate" onclick="pxaSetFx('pixelate')">Pixelado selectivo</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="codeglitch" onclick="pxaSetFx('codeglitch')">Código</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="stretch" onclick="pxaSetFx('stretch')">Estirado</button>
+          <button class="pxa-btn pxa-fx-tab" data-fx="annotate" onclick="pxaSetFx('annotate')">Anotaciones</button>
         </div>
         <div class="pxa-fx-panel" id="pxaFxPanel"></div>
         <div class="pxa-hint" id="pxaFxHint">Cada efecto se puede ajustar con los controles de arriba.</div>
@@ -1253,18 +1257,28 @@ footer::before{
   // ── EFECTOS: CRT / Glass / Blur / Focus / Enfoque selectivo ──
   let pxaFxType = 'crt';
   let pxaFxBase = null; // {canvas, w, h}
-  const pxaFxHasRegion = { glass:true, window:true }; // efectos con recuadro arrastrable
+  const pxaFxHasRegion = { glass:true, window:true, pixelate:true }; // efectos con recuadro arrastrable
   const pxaFxParams = {
     crt:    { bg:'#101010', scan:35, aberr:2, vignette:35 },
     glass:  { bg:'#e9e6de', type:'ribbed', amp:16, freq:5, shine:35, region:{x:0.12,y:0.42,w:0.76,h:0.5} },
     blur:   { bg:'#eeece5', type:'motion', side:'left', amount:42, intensity:22, angle:0 },
     focus:  { bg:'#f2f0ea', type:'dot', dot:9, colorA:'#141414', colorB:'#c81a3c' },
-    window: { blur:16, region:{x:0.30,y:0.22,w:0.42,h:0.46} }
+    window: { blur:16, region:{x:0.30,y:0.22,w:0.42,h:0.46} },
+    pixelate: { type:'mosaic', size:16, glitchAmt:30, region:{x:0.28,y:0.18,w:0.44,h:0.5} },
+    codeglitch: { density:45, charSize:12, lineGlitch:26, aberration:3, textMode:'random', customText:'IMAR.SOURCE', colorMode:'rainbow', singleColor:'#5ee7ff', opacity:80, blockGlitch:18, noise:12, direction:'horizontal' },
+    stretch: { axis:'vertical', split:55, stripeWidth:3, jitter:35 },
+    annotate: { mode:'add', boxes:[], links:[], nextId:1, lineColorHex:'#e6e6e6', lineWidth:1, fontSize:10, showCoords:true, selectedId:null, _connectFrom:null }
   };
   const pxaFxTypeLabels = {
     glass: [['ribbed','Acanalado'],['wave','Ondulado'],['frost','Escarchado'],['bubble','Burbuja']],
     blur:  [['motion','Movimiento'],['gaussian','Difuso'],['radial','Zoom']],
-    focus: [['dot','Punto'],['square','Cuadrado'],['line','Línea'],['cross','Cruz']]
+    focus: [['dot','Punto'],['square','Cuadrado'],['line','Línea'],['cross','Cruz']],
+    pixelate: [['mosaic','Mosaico'],['diamond','Diamante'],['circle','Círculo'],['glitch','Glitch RGB']],
+    stretch: [['vertical','Vertical'],['horizontal','Horizontal']],
+    codeTextMode: [['random','Aleatorio'],['binary','Binario'],['custom','Personalizado']],
+    codeColorMode: [['rainbow','Arcoíris'],['terminal','Terminal verde'],['cyan','Cian digital'],['custom','Personalizado']],
+    codeDirection: [['horizontal','Horizontal'],['vertical','Vertical']],
+    annMode: [['add','Agregar cuadro'],['move','Mover'],['connect','Conectar'],['delete','Borrar']]
   };
   const pxaFxSideLabels = [['left','Izquierda'],['right','Derecha'],['top','Arriba'],['bottom','Abajo']];
 
@@ -1286,6 +1300,7 @@ footer::before{
     pxaBuildFxPanel();
     pxaRenderFx();
     pxaSetupRegionDrag();
+    pxaSetupAnnotateEvents();
   }
 
   window.pxaSetFx = function(type){
@@ -1342,6 +1357,57 @@ footer::before{
       html += pxaFieldGroup('Desenfoque', `<input type="range" id="pxaFxWinBlur" min="1" max="40" value="${p.blur}">`);
       html += pxaFieldGroup('Posición del recuadro', `<div class="pxa-fx-mini">X <input type="range" id="pxaFxRX" min="0" max="100" value="${Math.round(p.region.x*100)}"></div><div class="pxa-fx-mini">Y <input type="range" id="pxaFxRY" min="0" max="100" value="${Math.round(p.region.y*100)}"></div>`);
       html += pxaFieldGroup('Tamaño del recuadro', `<div class="pxa-fx-mini">Ancho <input type="range" id="pxaFxRW" min="8" max="100" value="${Math.round(p.region.w*100)}"></div><div class="pxa-fx-mini">Alto <input type="range" id="pxaFxRH" min="8" max="100" value="${Math.round(p.region.h*100)}"></div>`);
+    } else if(pxaFxType==='pixelate'){
+      html += pxaFieldGroup('Tipo de pixelado', pxaTypeSubtabs('pxaFxTypePixelate', pxaFxTypeLabels.pixelate, p.type));
+      html += pxaFieldGroup('Tamaño de pixel', `<input type="range" id="pxaFxPixSize" min="4" max="48" value="${p.size}">`);
+      if(p.type==='glitch'){
+        html += pxaFieldGroup('Intensidad RGB', `<input type="range" id="pxaFxGlitchAmt" min="0" max="80" value="${p.glitchAmt}">`);
+      }
+      html += pxaFieldGroup('Posición de la zona', `<div class="pxa-fx-mini">X <input type="range" id="pxaFxRX" min="0" max="100" value="${Math.round(p.region.x*100)}"></div><div class="pxa-fx-mini">Y <input type="range" id="pxaFxRY" min="0" max="100" value="${Math.round(p.region.y*100)}"></div>`);
+      html += pxaFieldGroup('Tamaño de la zona', `<div class="pxa-fx-mini">Ancho <input type="range" id="pxaFxRW" min="6" max="100" value="${Math.round(p.region.w*100)}"></div><div class="pxa-fx-mini">Alto <input type="range" id="pxaFxRH" min="6" max="100" value="${Math.round(p.region.h*100)}"></div>`);
+    } else if(pxaFxType==='codeglitch'){
+      html += pxaFieldGroup('Densidad de texto', `<input type="range" id="pxaFxCodeDensity" min="0" max="100" value="${p.density}">`);
+      html += pxaFieldGroup('Tamaño de caracteres', `<input type="range" id="pxaFxCodeSize" min="7" max="26" value="${p.charSize}">`);
+      html += pxaFieldGroup('Opacidad del texto', `<input type="range" id="pxaFxCodeOpacity" min="10" max="100" value="${p.opacity}">`);
+      html += pxaFieldGroup('Fuente del texto', pxaTypeSubtabs('pxaFxCodeTextMode', pxaFxTypeLabels.codeTextMode, p.textMode));
+      if(p.textMode==='custom'){
+        html += pxaFieldGroup('Texto personalizado', `<input type="text" id="pxaFxCodeCustomText" value="${(p.customText||'').replace(/"/g,'&quot;')}" style="background:rgba(255,255,255,.06);border:1px solid var(--gfn-border);border-radius:4px;color:var(--gfn-text);font-family:var(--mono);font-size:11px;padding:6px 8px;width:160px">`);
+      }
+      html += pxaFieldGroup('Color del texto', pxaTypeSubtabs('pxaFxCodeColorMode', pxaFxTypeLabels.codeColorMode, p.colorMode));
+      if(p.colorMode==='custom'){
+        html += pxaFieldGroup('Elegir color', `<div class="pxa-field"><input type="color" id="pxaFxCodeSingleColor" value="${p.singleColor}"></div>`);
+      }
+      html += pxaFieldGroup('Dirección de líneas', pxaTypeSubtabs('pxaFxCodeDirection', pxaFxTypeLabels.codeDirection, p.direction));
+      html += pxaFieldGroup('Líneas glitch', `<input type="range" id="pxaFxCodeLines" min="0" max="60" value="${p.lineGlitch}">`);
+      html += pxaFieldGroup('Aberración cromática', `<input type="range" id="pxaFxCodeAberr" min="0" max="10" value="${p.aberration}">`);
+      html += pxaFieldGroup('Bloques desplazados', `<input type="range" id="pxaFxCodeBlock" min="0" max="60" value="${p.blockGlitch}">`);
+      html += pxaFieldGroup('Grano / ruido', `<input type="range" id="pxaFxCodeNoise" min="0" max="60" value="${p.noise}">`);
+    } else if(pxaFxType==='stretch'){
+      html += pxaFieldGroup('Eje del estirado', pxaTypeSubtabs('pxaFxTypeStretch', pxaFxTypeLabels.stretch, p.axis));
+      html += pxaFieldGroup('Punto de corte', `<input type="range" id="pxaFxStretchSplit" min="5" max="95" value="${p.split}">`);
+      html += pxaFieldGroup('Grosor de franja', `<input type="range" id="pxaFxStretchWidth" min="1" max="16" value="${p.stripeWidth}">`);
+      html += pxaFieldGroup('Variación', `<input type="range" id="pxaFxStretchJitter" min="0" max="100" value="${p.jitter}">`);
+    } else if(pxaFxType==='annotate'){
+      html += pxaFieldGroup('Modo', pxaTypeSubtabs('pxaFxAnnMode', pxaFxTypeLabels.annMode, p.mode));
+      html += pxaFieldGroup('Color de líneas', `<div class="pxa-field"><input type="color" id="pxaFxAnnLineColor" value="${p.lineColorHex}"></div>`);
+      html += pxaFieldGroup('Grosor de línea', `<input type="range" id="pxaFxAnnLineW" min="1" max="4" value="${p.lineWidth}">`);
+      html += pxaFieldGroup('Tamaño de texto', `<input type="range" id="pxaFxAnnFont" min="7" max="18" value="${p.fontSize}">`);
+      html += pxaFieldGroup('Coordenadas', `<label style="display:flex;gap:6px;align-items:center;font-family:var(--mono);font-size:9px;color:var(--gfn-text-dim);cursor:pointer"><input type="checkbox" id="pxaFxAnnCoords" ${p.showCoords?'checked':''}> auto-generar números</label>`);
+      let listHtml = `<div class="pxa-fx-group-label" style="margin-top:4px">Cuadros creados (${p.boxes.length})</div>`;
+      if(p.boxes.length===0){
+        listHtml += `<div class="pxa-hint" style="margin-top:0">Modo <b>Agregar cuadro</b> activo: hacé click sobre la imagen para colocar un cuadro. Después conectalos con <b>Conectar</b> (click en uno, luego en otro) y editá texto/color acá abajo.</div>`;
+      } else {
+        listHtml += `<div id="pxaFxAnnList" style="display:flex;flex-direction:column;gap:6px;max-height:230px;overflow-y:auto;width:100%">`;
+        p.boxes.forEach(b=>{
+          listHtml += `<div class="pxa-fx-mini" style="display:flex;gap:6px;align-items:center;background:rgba(255,255,255,.04);padding:6px;border-radius:5px;border:1px solid ${b.id===p.selectedId?'var(--nerv-green)':'var(--gfn-border)'}">
+            <input type="color" data-box="${b.id}" class="pxaAnnBoxColor" value="${b.color}" style="width:26px;height:24px;padding:0;border:none;background:none;cursor:pointer">
+            <input type="text" data-box="${b.id}" class="pxaAnnBoxText" value="${(b.text||'').replace(/"/g,'&quot;')}" style="flex:1;min-width:80px;background:rgba(255,255,255,.06);border:1px solid var(--gfn-border);border-radius:4px;color:var(--gfn-text);font-family:var(--mono);font-size:10px;padding:5px 6px">
+            <button type="button" class="pxa-btn pxaAnnBoxDel" data-box="${b.id}" style="padding:5px 9px;font-size:9px">✕</button>
+          </div>`;
+        });
+        listHtml += '</div>';
+      }
+      html += listHtml;
     }
     panel.innerHTML = html;
     panel.querySelectorAll('input').forEach(inp=>{
@@ -1352,9 +1418,34 @@ footer::before{
         panel.querySelectorAll(`[data-group="${btn.dataset.group}"]`).forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         pxaOnFxChange();
-        if(btn.dataset.group==='pxaFxTypeBlur') pxaBuildFxPanel(); // ángulo aparece solo en modo movimiento
+        if(btn.dataset.group==='pxaFxTypeBlur' || btn.dataset.group==='pxaFxTypePixelate' || btn.dataset.group==='pxaFxCodeTextMode' || btn.dataset.group==='pxaFxCodeColorMode') pxaBuildFxPanel(); // campos condicionales según el tipo elegido
       });
     });
+    if(pxaFxType==='annotate'){
+      const ap = pxaFxParams.annotate;
+      panel.querySelectorAll('.pxaAnnBoxColor').forEach(inp=>{
+        inp.addEventListener('input', function(){
+          const b = ap.boxes.find(x=>x.id===+this.dataset.box);
+          if(b){ b.color = this.value; pxaRenderFx(); }
+        });
+      });
+      panel.querySelectorAll('.pxaAnnBoxText').forEach(inp=>{
+        inp.addEventListener('input', function(){
+          const b = ap.boxes.find(x=>x.id===+this.dataset.box);
+          if(b){ b.text = this.value; pxaRenderFx(); }
+        });
+      });
+      panel.querySelectorAll('.pxaAnnBoxDel').forEach(btn=>{
+        btn.addEventListener('click', function(){
+          const id = +this.dataset.box;
+          ap.boxes = ap.boxes.filter(x=>x.id!==id);
+          ap.links = ap.links.filter(l=>l.a!==id && l.b!==id);
+          if(ap.selectedId===id) ap.selectedId=null;
+          pxaRenderFx();
+          pxaBuildFxPanel();
+        });
+      });
+    }
     pxaPositionRegionBox();
   }
 
@@ -1400,6 +1491,42 @@ footer::before{
       p.region.w = (+document.getElementById('pxaFxRW').value)/100;
       p.region.h = (+document.getElementById('pxaFxRH').value)/100;
       pxaClampRegion(p.region);
+    } else if(pxaFxType==='pixelate'){
+      p.type = pxaSubtabVal('pxaFxTypePixelate', p.type);
+      p.size = +document.getElementById('pxaFxPixSize').value;
+      const gEl = document.getElementById('pxaFxGlitchAmt');
+      if(gEl) p.glitchAmt = +gEl.value;
+      p.region.x = (+document.getElementById('pxaFxRX').value)/100;
+      p.region.y = (+document.getElementById('pxaFxRY').value)/100;
+      p.region.w = (+document.getElementById('pxaFxRW').value)/100;
+      p.region.h = (+document.getElementById('pxaFxRH').value)/100;
+      pxaClampRegion(p.region);
+    } else if(pxaFxType==='codeglitch'){
+      p.density = +document.getElementById('pxaFxCodeDensity').value;
+      p.charSize = +document.getElementById('pxaFxCodeSize').value;
+      p.opacity = +document.getElementById('pxaFxCodeOpacity').value;
+      p.textMode = pxaSubtabVal('pxaFxCodeTextMode', p.textMode);
+      const ctEl = document.getElementById('pxaFxCodeCustomText');
+      if(ctEl) p.customText = ctEl.value;
+      p.colorMode = pxaSubtabVal('pxaFxCodeColorMode', p.colorMode);
+      const scEl = document.getElementById('pxaFxCodeSingleColor');
+      if(scEl) p.singleColor = scEl.value;
+      p.direction = pxaSubtabVal('pxaFxCodeDirection', p.direction);
+      p.lineGlitch = +document.getElementById('pxaFxCodeLines').value;
+      p.aberration = +document.getElementById('pxaFxCodeAberr').value;
+      p.blockGlitch = +document.getElementById('pxaFxCodeBlock').value;
+      p.noise = +document.getElementById('pxaFxCodeNoise').value;
+    } else if(pxaFxType==='stretch'){
+      p.axis = pxaSubtabVal('pxaFxTypeStretch', p.axis);
+      p.split = +document.getElementById('pxaFxStretchSplit').value;
+      p.stripeWidth = +document.getElementById('pxaFxStretchWidth').value;
+      p.jitter = +document.getElementById('pxaFxStretchJitter').value;
+    } else if(pxaFxType==='annotate'){
+      p.mode = pxaSubtabVal('pxaFxAnnMode', p.mode);
+      const lc = document.getElementById('pxaFxAnnLineColor'); if(lc) p.lineColorHex = lc.value;
+      const lw = document.getElementById('pxaFxAnnLineW'); if(lw) p.lineWidth = +lw.value;
+      const fsz = document.getElementById('pxaFxAnnFont'); if(fsz) p.fontSize = +fsz.value;
+      const cbx = document.getElementById('pxaFxAnnCoords'); if(cbx) p.showCoords = cbx.checked;
     }
     pxaPositionRegionBox();
     pxaRenderFx();
@@ -1422,7 +1549,7 @@ footer::before{
     box.style.top = (r.y*100)+'%';
     box.style.width = (r.w*100)+'%';
     box.style.height = (r.h*100)+'%';
-    document.getElementById('pxaFxRegionTag').textContent = pxaFxType==='window' ? 'zona enfocada — arrastrá' : 'panel de vidrio — arrastrá';
+    document.getElementById('pxaFxRegionTag').textContent = pxaFxType==='window' ? 'zona enfocada — arrastrá' : (pxaFxType==='pixelate' ? 'zona a pixelar — arrastrá' : 'panel de vidrio — arrastrá');
   }
 
   let pxaRegionDragBound = false;
@@ -1492,6 +1619,10 @@ footer::before{
     else if(pxaFxType==='blur') pxaFxBlur(ctx, base, w, h, p);
     else if(pxaFxType==='focus') pxaFxFocus(ctx, base, w, h, p);
     else if(pxaFxType==='window') pxaFxWindow(ctx, base, w, h, p);
+    else if(pxaFxType==='pixelate') pxaFxPixelate(ctx, base, w, h, p);
+    else if(pxaFxType==='codeglitch') pxaFxCode(ctx, base, w, h, p);
+    else if(pxaFxType==='stretch') pxaFxStretch(ctx, base, w, h, p);
+    else if(pxaFxType==='annotate') pxaFxAnnotate(ctx, base, w, h, p);
   }
 
   function pxaFxCrt(ctx, base, w, h, p){
@@ -1717,6 +1848,340 @@ footer::before{
     ctx.stroke();
   }
 
+  // ── Pixelado selectivo: censura / mosaico solo dentro de un recuadro ──
+  function pxaFxPixelate(ctx, base, w, h, p){
+    ctx.drawImage(base,0,0,w,h);
+    const rx = Math.round(p.region.x*w), ry = Math.round(p.region.y*h);
+    const rw = Math.max(1,Math.round(p.region.w*w)), rh = Math.max(1,Math.round(p.region.h*h));
+    const bctx = base.getContext('2d');
+    const data = bctx.getImageData(0,0,w,h).data;
+    const cell = Math.max(2, p.size);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(rx,ry,rw,rh); ctx.clip();
+    const startX = rx - (((rx%cell)+cell)%cell);
+    const startY = ry - (((ry%cell)+cell)%cell);
+    for(let y=startY; y<ry+rh; y+=cell){
+      for(let x=startX; x<rx+rw; x+=cell){
+        let sr=0, sg=0, sb=0, n=0;
+        for(let j=0;j<cell;j++){
+          const yy=y+j; if(yy<0||yy>=h) continue;
+          for(let i=0;i<cell;i++){
+            const xx=x+i; if(xx<0||xx>=w) continue;
+            const idx=(yy*w+xx)*4;
+            sr+=data[idx]; sg+=data[idx+1]; sb+=data[idx+2]; n++;
+          }
+        }
+        if(n===0) continue;
+        let r=sr/n, g=sg/n, b=sb/n;
+        if(p.type==='glitch'){
+          const j1 = (pxaHashRand(x*0.113, y*0.71)-0.5)*p.glitchAmt*2;
+          const j2 = (pxaHashRand(x*0.071+9.1, y*0.133)-0.5)*p.glitchAmt*2;
+          const rowShift = (pxaHashRand(0.001, y*0.033) < 0.12) ? (pxaHashRand(y,1.7)-0.5)*cell*3 : 0;
+          r = clamp(r + j1*1.4, 0, 255);
+          g = clamp(g - j2*0.7, 0, 255);
+          b = clamp(b + j2*2.0, 0, 255);
+          ctx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
+          ctx.fillRect(x+rowShift, y, cell, cell);
+          continue;
+        }
+        ctx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
+        if(p.type==='circle'){
+          ctx.beginPath();
+          ctx.arc(x+cell/2, y+cell/2, cell*0.46, 0, Math.PI*2);
+          ctx.fill();
+        } else if(p.type==='diamond'){
+          ctx.save();
+          ctx.translate(x+cell/2, y+cell/2);
+          ctx.rotate(Math.PI/4);
+          const s = cell*0.86;
+          ctx.fillRect(-s/2, -s/2, s, s);
+          ctx.restore();
+        } else {
+          ctx.fillRect(x, y, cell, cell);
+        }
+      }
+    }
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,.9)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(rx+.5, ry+.5, rw-1, rh-1);
+    const cx = rx, cy = ry+rh/2;
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(cx-7,cy); ctx.lineTo(cx+7,cy);
+    ctx.moveTo(cx,cy-7); ctx.lineTo(cx,cy+7);
+    ctx.stroke();
+  }
+
+  // ── Código: texto glitch + líneas RGB + bloques desplazados + ruido ──
+  function pxaFxCode(ctx, base, w, h, p){
+    ctx.drawImage(base,0,0,w,h);
+
+    // bloques desplazados (glitch tipo datamosh)
+    if(p.blockGlitch>0){
+      const blocks = Math.round(p.blockGlitch/2);
+      for(let i=0;i<blocks;i++){
+        const bw = 16+Math.floor(pxaHashRand(i*2.1,15.5)*w*0.28);
+        const bh = 5+Math.floor(pxaHashRand(i*3.7,16.6)*h*0.05);
+        const bx = Math.floor(pxaHashRand(i*4.4,17.7)*Math.max(1,w-bw));
+        const by = Math.floor(pxaHashRand(i*5.9,18.8)*Math.max(1,h-bh));
+        const shift = (pxaHashRand(i*6.6,19.9)-0.5) * w*0.14;
+        const destX = clamp(bx+shift, 0, Math.max(0,w-bw));
+        ctx.drawImage(base, bx, by, bw, bh, destX, by, bw, bh);
+      }
+    }
+
+    // franjas de escaneo con aberración cromática (horizontal o vertical)
+    const bands = Math.round(p.lineGlitch/1.5);
+    for(let i=0;i<bands;i++){
+      const off = (pxaHashRand(i*0.9, 1.23)-0.5)*p.aberration*10;
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.globalAlpha = 0.55;
+      if(p.direction==='vertical'){
+        const x = Math.floor(pxaHashRand(i*3.1, 3.3)*w);
+        const bw = 1+Math.floor(pxaHashRand(i*1.7, 9.9)*4);
+        ctx.drawImage(base, Math.max(0,x-bw), 0, bw, h, x, off, bw, h);
+      } else {
+        const y = Math.floor(pxaHashRand(i*3.1, 3.3)*h);
+        const bh = 1+Math.floor(pxaHashRand(i*1.7, 9.9)*4);
+        ctx.drawImage(base, 0, Math.max(0,y-bh), w, bh, off, y, w, bh);
+      }
+      ctx.restore();
+    }
+
+    // grano / ruido digital
+    if(p.noise>0){
+      const n = Math.round(Math.min(9000, (w*h)/900) * (p.noise/60));
+      ctx.save();
+      for(let k=0;k<n;k++){
+        const x = Math.random()*w, y = Math.random()*h;
+        const v = Math.random()*255|0;
+        ctx.fillStyle = `rgba(${v},${v},${v},.5)`;
+        ctx.fillRect(x,y,1,1);
+      }
+      ctx.restore();
+    }
+
+    // texto tipo código/datos, disperso en renglones
+    let chars;
+    if(p.textMode==='binary') chars = ['0','1'];
+    else if(p.textMode==='custom' && p.customText) chars = p.customText.split('');
+    else chars = '01#@$%&(){}[].:_-<>/\\ABCDEFGHIJKLMNOPQRSTUVWXYZimarsource'.split('');
+    if(chars.length===0) chars=['0','1'];
+
+    const lineH = p.charSize*1.6;
+    const rows = Math.ceil(h/lineH);
+    ctx.font = p.charSize+'px "Share Tech Mono","Courier New",monospace';
+    ctx.textBaseline = 'top';
+    const baseAlpha = clamp(p.opacity/100, 0.05, 1);
+    for(let r=0;r<rows;r++){
+      if(pxaHashRand(r*5.5, 4.4) > p.density/100) continue;
+      const y = r*lineH + pxaHashRand(r,5.5)*4;
+      let x = pxaHashRand(r*2.2, 6.6) * w * 0.55;
+      const len = 4 + Math.floor(pxaHashRand(r*1.3, 7.7)*16);
+      const alpha = baseAlpha * (0.6 + pxaHashRand(r*3.3, 2.2)*0.4);
+      if(p.colorMode==='rainbow'){
+        const hue = Math.floor(pxaHashRand(r*0.7, 8.8)*360);
+        ctx.fillStyle = `hsla(${hue},90%,68%,${alpha})`;
+      } else if(p.colorMode==='terminal'){
+        ctx.fillStyle = `rgba(70,230,120,${alpha})`;
+      } else if(p.colorMode==='cyan'){
+        ctx.fillStyle = `rgba(90,220,255,${alpha})`;
+      } else {
+        const [rr,gg,bb2] = hexToRgb(p.singleColor||'#5ee7ff');
+        ctx.fillStyle = `rgba(${rr},${gg},${bb2},${alpha})`;
+      }
+      let str = '';
+      for(let k=0;k<len;k++) str += chars[Math.floor(pxaHashRand(r*13+k, 9.9+k)*chars.length)];
+      if(x+len*p.charSize*0.62 > w) x = Math.max(0, w-len*p.charSize*0.62);
+      ctx.fillText(str, x, y);
+    }
+  }
+
+  // ── Estirado: convierte una franja de la imagen en tiras de color estiradas ──
+  function pxaFxStretch(ctx, base, w, h, p){
+    ctx.drawImage(base,0,0,w,h);
+    const bctx = base.getContext('2d');
+    const stripeW = Math.max(1, p.stripeWidth);
+    const jitterAmt = p.jitter/100;
+
+    if(p.axis==='vertical'){
+      const splitY = clamp(Math.round((p.split/100)*h), 0, h-1);
+      const rowData = bctx.getImageData(0, splitY, w, 1).data;
+      for(let x=0; x<w; x+=stripeW){
+        let r=0,g=0,b=0,n=0;
+        for(let i=0;i<stripeW && x+i<w;i++){
+          const idx=(x+i)*4;
+          r+=rowData[idx]; g+=rowData[idx+1]; b+=rowData[idx+2]; n++;
+        }
+        if(n===0) continue;
+        r/=n; g/=n; b/=n;
+        const varFactor = 1 + (pxaHashRand(x*0.21, 11.3)-0.5)*jitterAmt*1.3;
+        const stripeH = Math.max(2, Math.round((h-splitY) * clamp(varFactor,0.15,1.6)));
+        ctx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
+        ctx.fillRect(x, splitY, stripeW, stripeH);
+      }
+      ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,splitY+.5); ctx.lineTo(w,splitY+.5); ctx.stroke();
+    } else {
+      const splitX = clamp(Math.round((p.split/100)*w), 0, w-1);
+      const colData = bctx.getImageData(splitX, 0, 1, h).data;
+      for(let y=0; y<h; y+=stripeW){
+        let r=0,g=0,b=0,n=0;
+        for(let i=0;i<stripeW && y+i<h;i++){
+          const idx=(y+i)*4;
+          r+=colData[idx]; g+=colData[idx+1]; b+=colData[idx+2]; n++;
+        }
+        if(n===0) continue;
+        r/=n; g/=n; b/=n;
+        const varFactor = 1 + (pxaHashRand(y*0.21, 11.3)-0.5)*jitterAmt*1.3;
+        const stripeWLen = Math.max(2, Math.round((w-splitX) * clamp(varFactor,0.15,1.6)));
+        ctx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
+        ctx.fillRect(splitX, y, stripeWLen, stripeW);
+      }
+      ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(splitX+.5,0); ctx.lineTo(splitX+.5,h); ctx.stroke();
+    }
+  }
+
+  // ── Anotaciones: cuadros arrastrables sobre la foto normal, conectados por líneas, con texto y color editables ──
+  function pxaFxAnnotate(ctx, base, w, h, p){
+    ctx.drawImage(base,0,0,w,h); // foto sin distorsionar
+
+    function anchor(b){ return {x:(b.x+b.w/2)*w, y:(b.y+b.h/2)*h}; }
+
+    // líneas de conexión entre cuadros
+    p.links.forEach(l=>{
+      const A = p.boxes.find(b=>b.id===l.a), B = p.boxes.find(b=>b.id===l.b);
+      if(!A||!B) return;
+      const pa=anchor(A), pb=anchor(B);
+      ctx.save();
+      ctx.strokeStyle = p.lineColorHex;
+      ctx.lineWidth = p.lineWidth;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath(); ctx.moveTo(pa.x,pa.y); ctx.lineTo(pb.x,pb.y); ctx.stroke();
+      ctx.fillStyle = p.lineColorHex;
+      ctx.beginPath(); ctx.arc(pa.x,pa.y,2.4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(pb.x,pb.y,2.4,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    // cuadros con texto y color propio
+    p.boxes.forEach(b=>{
+      const bx=b.x*w, by=b.y*h, bw=Math.max(4,b.w*w), bh=Math.max(4,b.h*h);
+      const [rr,gg,bb2] = hexToRgb(b.color);
+      const selected = b.id===p.selectedId;
+      ctx.save();
+      ctx.fillStyle = `rgba(${rr},${gg},${bb2},${selected?0.16:0.05})`;
+      ctx.fillRect(bx,by,bw,bh);
+      ctx.strokeStyle = b.color;
+      ctx.lineWidth = selected?2:1.3;
+      if(selected){ ctx.setLineDash([4,3]); }
+      ctx.strokeRect(bx+.5,by+.5,bw-1,bh-1);
+      ctx.setLineDash([]);
+      ctx.font = p.fontSize+'px "Share Tech Mono","Courier New",monospace';
+      ctx.fillStyle = b.color;
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(b.text||'', bx, Math.max(p.fontSize, by-4));
+      if(p.showCoords){
+        ctx.font = Math.max(7,p.fontSize-2)+'px "Share Tech Mono","Courier New",monospace';
+        ctx.globalAlpha = 0.75;
+        ctx.textBaseline = 'top';
+        const num1 = (b.x*837.4).toFixed(2), num2=(b.y*412.1).toFixed(1);
+        ctx.fillText(num1+'.'+num2, bx, by+bh+3);
+        ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+    });
+
+    if(p.mode==='connect' && p._connectFrom!=null){
+      const A = p.boxes.find(b=>b.id===p._connectFrom);
+      if(A){
+        const pa = anchor(A);
+        ctx.save();
+        ctx.strokeStyle = p.lineColorHex;
+        ctx.globalAlpha = 0.5;
+        ctx.beginPath(); ctx.arc(pa.x,pa.y,7,0,Math.PI*2); ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+
+  function pxaAnnHitBox(mx,my){
+    const boxes = pxaFxParams.annotate.boxes;
+    for(let i=boxes.length-1;i>=0;i--){
+      const b = boxes[i];
+      if(mx>=b.x && mx<=b.x+b.w && my>=b.y && my<=b.y+b.h) return b;
+    }
+    return null;
+  }
+
+  let pxaAnnotateBound = false;
+  let pxaAnnDragging = null, pxaAnnDragStart = null, pxaAnnDragBoxStart = null;
+  function pxaSetupAnnotateEvents(){
+    if(pxaAnnotateBound) return;
+    pxaAnnotateBound = true;
+    const stage = document.getElementById('pxaFxStage');
+    const canvas = document.getElementById('pxaFxCanvas');
+    canvas.addEventListener('pointerdown', function(e){
+      if(pxaFxType!=='annotate') return;
+      const p = pxaFxParams.annotate;
+      const rect = stage.getBoundingClientRect();
+      const mx = (e.clientX-rect.left)/rect.width, my = (e.clientY-rect.top)/rect.height;
+      const hit = pxaAnnHitBox(mx,my);
+      if(p.mode==='add'){
+        if(hit) return;
+        const nb = { id:p.nextId++, x:clamp(mx-0.09,0,0.84), y:clamp(my-0.045,0,0.9), w:0.18, h:0.09, color:'#9adb1b', text:'etiqueta.'+(p.nextId-1), textColor:'#ffffff' };
+        p.boxes.push(nb);
+        p.selectedId = nb.id;
+        pxaRenderFx();
+        pxaBuildFxPanel();
+      } else if(p.mode==='move'){
+        if(hit){
+          pxaAnnDragging = hit;
+          pxaAnnDragStart = {x:mx,y:my};
+          pxaAnnDragBoxStart = {x:hit.x,y:hit.y};
+          p.selectedId = hit.id;
+          canvas.setPointerCapture(e.pointerId);
+          pxaRenderFx();
+          pxaBuildFxPanel();
+        }
+      } else if(p.mode==='connect'){
+        if(hit){
+          if(p._connectFrom==null){
+            p._connectFrom = hit.id;
+          } else if(p._connectFrom!==hit.id){
+            const exists = p.links.some(l=>(l.a===p._connectFrom&&l.b===hit.id)||(l.a===hit.id&&l.b===p._connectFrom));
+            if(!exists) p.links.push({a:p._connectFrom,b:hit.id});
+            p._connectFrom = null;
+          } else {
+            p._connectFrom = null;
+          }
+          pxaRenderFx();
+        }
+      } else if(p.mode==='delete'){
+        if(hit){
+          p.boxes = p.boxes.filter(b=>b.id!==hit.id);
+          p.links = p.links.filter(l=>l.a!==hit.id && l.b!==hit.id);
+          if(p.selectedId===hit.id) p.selectedId=null;
+          pxaRenderFx();
+          pxaBuildFxPanel();
+        }
+      }
+    });
+    window.addEventListener('pointermove', function(e){
+      if(pxaFxType!=='annotate' || !pxaAnnDragging) return;
+      const rect = stage.getBoundingClientRect();
+      const mx = (e.clientX-rect.left)/rect.width, my = (e.clientY-rect.top)/rect.height;
+      const dx = mx-pxaAnnDragStart.x, dy = my-pxaAnnDragStart.y;
+      pxaAnnDragging.x = clamp(pxaAnnDragBoxStart.x+dx, 0, 1-pxaAnnDragging.w);
+      pxaAnnDragging.y = clamp(pxaAnnDragBoxStart.y+dy, 0, 1-pxaAnnDragging.h);
+      pxaRenderFx();
+    });
+    window.addEventListener('pointerup', function(){ pxaAnnDragging = null; });
+  }
+
   // ── Descargas ─────────────────────────────────────────────
   window.pxaDownload = function(){
     if(pxaMode==='pixel'){
@@ -1736,8 +2201,15 @@ footer::before{
     }
   };
 
-  const pxaFxNames = { crt:'CRT', glass:'Glass', blur:'Blur', focus:'Focus mode', window:'Enfoque selectivo' };
-  function pxaFxSlug(type){ return type==='window' ? 'enfoque-selectivo' : type; }
+  const pxaFxNames = { crt:'CRT', glass:'Glass', blur:'Blur', focus:'Focus mode', window:'Enfoque selectivo', pixelate:'Pixelado selectivo', codeglitch:'Código', stretch:'Estirado', annotate:'Anotaciones' };
+  function pxaFxSlug(type){
+    if(type==='window') return 'enfoque-selectivo';
+    if(type==='pixelate') return 'pixelado-selectivo';
+    if(type==='codeglitch') return 'codigo-glitch';
+    if(type==='stretch') return 'estirado';
+    if(type==='annotate') return 'anotaciones';
+    return type;
+  }
 
   window.pxaDownloadWithPalette = function(){
     if(pxaMode==='effects'){ pxaDownloadFxPolaroid(); return; }
@@ -1804,8 +2276,8 @@ footer::before{
 
   function pxaDownloadFxPolaroid(){
     const src = document.getElementById('pxaFxCanvas');
-    if(pxaFxType==='window'){
-      // Enfoque selectivo: descarga limpia, sin marca de agua ni texto
+    if(pxaFxType==='window' || pxaFxType==='pixelate' || pxaFxType==='annotate'){
+      // Enfoque selectivo / Pixelado selectivo / Anotaciones: descarga limpia, sin marca de agua ni texto
       const link = document.createElement('a');
       link.download = 'efecto-'+pxaFxSlug(pxaFxType)+'.png';
       link.href = src.toDataURL('image/png');
