@@ -648,6 +648,71 @@ footer::before{
 
 /* ── CUENTA / AUTENTICACIÓN ─────────────────────────────── */
 
+/* ══════════════════════════════════════════════════════════
+   ESTILO ARTSTATION — capa visual sobre la base GeForce NOW.
+   Fondo más negro y grillas tipo masonry con overlay al hover,
+   manteniendo estructura, acentos naranja/verde y HUD del sitio.
+   ══════════════════════════════════════════════════════════ */
+:root{
+  --as-bg:#0d0d0f;--as-bg-2:#151517;--as-card:#1a1a1c;--as-border:rgba(255,255,255,.08);
+}
+body{background:var(--as-bg)}
+header,#ticker-bar{background:var(--as-bg)}
+#search-results-panel{background:var(--as-bg-2)}
+
+/* Grillas más densas, tipo masonry de ArtStation */
+.novedades-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.fama-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px}
+.ig-gallery{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+
+/* Cards imagen-primero con overlay oscuro y título que sube al hover,
+   como los "project cards" de ArtStation */
+.novedad-card,.podio-card,.fama-card,.cinta-card,.evento-card{
+  background:var(--as-card);
+  border:1px solid var(--as-border);
+  border-radius:4px;
+  position:relative;
+  overflow:hidden;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.novedad-card:hover,.podio-card:hover,.fama-card:hover,.cinta-card:hover,.evento-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(0,0,0,.55);
+  border-color:rgba(255,255,255,.18);
+}
+.novedad-card-img,.novedad-card-img-placeholder{border-radius:4px 4px 0 0}
+.novedad-card-body{
+  background:linear-gradient(180deg, var(--as-card) 0%, var(--as-card) 100%);
+}
+.novedad-card-title{font-family:var(--sans);letter-spacing:0;font-weight:600;font-size:14px}
+.novedad-card-tag{color:var(--nerv-orange);letter-spacing:.14em}
+
+/* Overlay tipo ArtStation sobre thumbnails cuadrados (fama / cinta) */
+.fama-card,.cinta-card{position:relative}
+.fama-card::after,.cinta-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.82) 100%);
+  opacity:0;transition:opacity .25s ease;pointer-events:none
+}
+.fama-card:hover::after,.cinta-card:hover::after{opacity:1}
+
+/* Botones y acentos: esquinas menos "gaming HUD", más limpias como ArtStation */
+.pxa-btn,.ticker-label,.hud-tag{border-radius:3px}
+
+/* Cabecera de sección tipo ArtStation: título simple + línea sutil */
+.section-title{letter-spacing:.01em;font-weight:700}
+.section-header{border-bottom:1px solid var(--as-border);padding-bottom:14px}
+
+/* Buscador: fondo aún más oscuro, borde sutil, sin glow excesivo */
+.header-search-wrap{background:var(--as-card);border-color:var(--as-border)}
+.header-search-wrap:focus-within{border-color:rgba(255,255,255,.3);background:#202022}
+
+/* Scrollbar oscura tipo ArtStation */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--as-bg)}
+::-webkit-scrollbar-thumb{background:#333336;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#444448}
+
 </style>
 </head>
 <body>
@@ -892,8 +957,12 @@ footer::before{
       <div class="pxa-field">Colores
         <input type="number" id="pxaPalette" value="24" min="2" max="64">
       </div>
+      <div class="pxa-field">Colores polaroid
+        <input type="number" id="pxaPolaroidColors" value="6" min="1" max="64">
+      </div>
       <button class="pxa-btn" onclick="pxaRegenerate()">Regenerar</button>
       <div class="pxa-divider"></div>
+      <button class="pxa-btn" id="pxaModeOriginalBtn" onclick="pxaSetMode('original')" disabled>Vista original</button>
       <button class="pxa-btn" id="pxaModePixelBtn" onclick="pxaSetMode('pixel')" disabled>Vista pixel art</button>
       <button class="pxa-btn" id="pxaModeSketchBtn" onclick="pxaSetMode('sketch')" disabled>Vista boceto B/N</button>
       <button class="pxa-btn" id="pxaModeFxBtn" onclick="pxaSetMode('effects')" disabled>Efectos (CRT / Glass / Blur / Focus / Selectivo / Pixelado / Código / Estirado / Anotaciones)</button>
@@ -909,6 +978,7 @@ footer::before{
     <div class="pxa-workspace">
       <div class="pxa-canvas-wrap" id="pxaCanvasWrap">
         <div class="pxa-empty-msg" id="pxaEmptyMsg">Todavía no subiste ninguna imagen.<br>Elegí un archivo para generar el patrón de pixeles.</div>
+        <canvas id="pxaOriginalCanvas" style="display:none"></canvas>
         <canvas id="pxaCanvas" style="display:none" onclick="pxaCanvasClick(event)"></canvas>
         <canvas id="pxaSketchCanvas" style="display:none"></canvas>
         <div class="pxa-fx-stage" id="pxaFxStage" style="display:none">
@@ -1038,17 +1108,19 @@ footer::before{
     pxaMoveMode = false;
     document.getElementById('pxaBwBtn').classList.remove('active');
     document.getElementById('pxaMoveBtn').classList.remove('active');
-    ['pxaBwBtn','pxaMoveBtn','pxaResetBtn','pxaDownloadBtn','pxaDownloadPaletteBtn','pxaModePixelBtn','pxaModeSketchBtn','pxaModeFxBtn'].forEach(id=>document.getElementById(id).disabled=false);
+    ['pxaBwBtn','pxaMoveBtn','pxaResetBtn','pxaDownloadBtn','pxaDownloadPaletteBtn','pxaModeOriginalBtn','pxaModePixelBtn','pxaModeSketchBtn','pxaModeFxBtn'].forEach(id=>document.getElementById(id).disabled=false);
     document.getElementById('pxaEmptyMsg').style.display='none';
-    pxaSetMode('pixel');
+    pxaSetMode('original');
   }
 
   window.pxaSetMode = function(mode){
     if(!pxaImg) return;
     pxaMode = mode;
+    document.getElementById('pxaModeOriginalBtn').classList.toggle('active', mode==='original');
     document.getElementById('pxaModePixelBtn').classList.toggle('active', mode==='pixel');
     document.getElementById('pxaModeSketchBtn').classList.toggle('active', mode==='sketch');
     document.getElementById('pxaModeFxBtn').classList.toggle('active', mode==='effects');
+    document.getElementById('pxaOriginalCanvas').style.display = mode==='original' ? 'block' : 'none';
     document.getElementById('pxaCanvas').style.display = mode==='pixel' ? 'block' : 'none';
     document.getElementById('pxaSketchCanvas').style.display = mode==='sketch' ? 'block' : 'none';
     document.getElementById('pxaFxStage').style.display = mode==='effects' ? 'inline-block' : 'none';
@@ -1059,15 +1131,134 @@ footer::before{
     document.getElementById('pxaResetBtn').style.display = mode==='pixel' ? '' : 'none';
     document.getElementById('pxaDownloadPaletteBtn').style.display = mode==='sketch' ? 'none' : '';
     document.getElementById('pxaCanvasWrap').classList.remove('pxa-crt-on');
-    document.getElementById('pxaDownloadBtn').textContent = mode==='sketch' ? 'Descargar boceto (Paint)' : 'Descargar imagen';
-    document.getElementById('pxaDownloadPaletteBtn').textContent = mode==='effects' ? 'Descargar polaroid' : 'Descargar con colores';
-    if(mode==='pixel'){
+    document.getElementById('pxaDownloadBtn').textContent = mode==='sketch' ? 'Descargar boceto (Paint)' : (mode==='original' ? 'Descargar imagen original' : 'Descargar imagen');
+    document.getElementById('pxaDownloadPaletteBtn').textContent = (mode==='effects' || mode==='original') ? 'Descargar polaroid' : 'Descargar con colores';
+    if(mode==='original'){
+      pxaRenderOriginal();
+    } else if(mode==='pixel'){
       pxaRender();
     } else if(mode==='sketch'){
       if(!pxaSketchReady){ pxaGenerateSketch(); pxaSketchReady = true; }
     } else if(mode==='effects'){
       pxaInitFx();
     }
+  };
+
+  function pxaRenderOriginal(){
+    const canvas = document.getElementById('pxaOriginalCanvas');
+    const maxDim = 900;
+    const scale = Math.min(1, maxDim / Math.max(pxaImg.width, pxaImg.height));
+    canvas.width = Math.round(pxaImg.width*scale);
+    canvas.height = Math.round(pxaImg.height*scale);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(pxaImg, 0, 0, canvas.width, canvas.height);
+  }
+
+  function pxaGetPolaroidColorCount(){
+    return clamp(parseInt(document.getElementById('pxaPolaroidColors').value)||6, 1, 64);
+  }
+
+  function pxaDominantColorsFromImage(n){
+    const off = document.createElement('canvas');
+    const maxDim = 160;
+    const scale = Math.min(1, maxDim / Math.max(pxaImg.width, pxaImg.height));
+    off.width = Math.max(1, Math.round(pxaImg.width*scale));
+    off.height = Math.max(1, Math.round(pxaImg.height*scale));
+    const octx = off.getContext('2d');
+    octx.drawImage(pxaImg, 0, 0, off.width, off.height);
+    const data = octx.getImageData(0,0,off.width,off.height).data;
+    const totalPixels = off.width*off.height;
+
+    function bucketize(div){
+      const buckets = {};
+      for(let i=0;i<data.length;i+=4){
+        if(data[i+3] < 16) continue;
+        const r=data[i], g=data[i+1], b=data[i+2];
+        const key = [Math.round(r/div),Math.round(g/div),Math.round(b/div)].join(',');
+        if(!buckets[key]) buckets[key]={r:0,g:0,b:0,n:0};
+        buckets[key].r+=r; buckets[key].g+=g; buckets[key].b+=b; buckets[key].n++;
+      }
+      return Object.values(buckets).map(b=>({hex:toHex(b.r/b.n,b.g/b.n,b.b/b.n), n:b.n}))
+        .sort((a,b)=>b.n-a.n);
+    }
+
+    // Empieza con un agrupado fino y, si hace falta, lo afina más para
+    // asegurar que existan al menos n colores distintos disponibles.
+    let divisions = [40,28,20,14,10,7,5,3,2,1];
+    let arr = [];
+    for(const div of divisions){
+      arr = bucketize(div);
+      if(arr.length >= n) break;
+    }
+
+    const top = arr.slice(0,n);
+    let usedPixels = top.reduce((s,c)=>s+c.n,0);
+    return top.map(c=>({hex:c.hex, pct: totalPixels? Math.round(c.n/totalPixels*1000)/10 : 0}));
+  }
+
+  window.pxaDownloadOriginalPolaroid = function(){
+    const n = pxaGetPolaroidColorCount();
+    const colors = pxaDominantColorsFromImage(n);
+    const maxDim = 800;
+    const scale = Math.min(1, maxDim / Math.max(pxaImg.width, pxaImg.height));
+    const imgW = Math.round(pxaImg.width*scale), imgH = Math.round(pxaImg.height*scale);
+
+    const pad = 34;
+    const swatchSize = colors.length > 24 ? 22 : 34;
+    const swatchGap = colors.length > 24 ? 6 : 10;
+    const cols = Math.min(colors.length, colors.length > 24 ? 12 : 8);
+    const rows = Math.ceil(colors.length/cols);
+    const swatchesW = cols*(swatchSize+swatchGap)-swatchGap;
+    const swatchesH = rows*(swatchSize+30);
+    const capH = 60 + swatchesH + 24;
+
+    const c = document.createElement('canvas');
+    c.width = Math.max(imgW, swatchesW) + pad*2;
+    c.height = pad + imgH + capH;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,c.width,c.height);
+
+    const imgX = (c.width - imgW)/2;
+    ctx.drawImage(pxaImg, imgX, pad*0.6, imgW, imgH);
+    ctx.strokeStyle = '#ddd';
+    ctx.strokeRect(imgX+.5, pad*0.6+.5, imgW-1, imgH-1);
+
+    let sy = pad*0.6 + imgH + 26;
+    ctx.fillStyle = '#1a1a1a';
+    ctx.font = '700 16px Georgia, serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('imar source', pad, sy);
+    ctx.fillStyle = '#999';
+    ctx.font = 'italic 10px Georgia, serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('imagen original — '+colors.length+' colores dominantes', c.width-pad, sy);
+    ctx.textAlign = 'left';
+
+    const sx0 = (c.width - swatchesW)/2;
+    let swy = sy + 16;
+    colors.forEach((col, idx)=>{
+      const cidx = idx % cols, ridx = Math.floor(idx/cols);
+      const x = sx0 + cidx*(swatchSize+swatchGap);
+      const y = swy + ridx*(swatchSize+30);
+      ctx.fillStyle = col.hex;
+      ctx.fillRect(x, y, swatchSize, swatchSize);
+      ctx.strokeStyle = 'rgba(0,0,0,.2)';
+      ctx.strokeRect(x+.5, y+.5, swatchSize, swatchSize);
+      ctx.fillStyle = '#222';
+      ctx.font = (colors.length > 24 ? '700 7px monospace' : '700 9px monospace');
+      ctx.textAlign = 'center';
+      ctx.fillText(col.hex.toUpperCase(), x+swatchSize/2, y+swatchSize+12);
+      ctx.fillStyle = '#999';
+      ctx.font = (colors.length > 24 ? '7px monospace' : '8px monospace');
+      ctx.fillText(col.pct+'%', x+swatchSize/2, y+swatchSize+23);
+      ctx.textAlign = 'left';
+    });
+
+    const link = document.createElement('a');
+    link.download = 'polaroid-original-imar-source.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
   };
 
   function pxaRender(){
@@ -2184,7 +2375,13 @@ footer::before{
 
   // ── Descargas ─────────────────────────────────────────────
   window.pxaDownload = function(){
-    if(pxaMode==='pixel'){
+    if(pxaMode==='original'){
+      const canvas = document.getElementById('pxaOriginalCanvas');
+      const link = document.createElement('a');
+      link.download = 'imagen-original.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } else if(pxaMode==='pixel'){
       const canvas = document.getElementById('pxaCanvas');
       const link = document.createElement('a');
       link.download = 'pixel-art.png';
@@ -2213,6 +2410,7 @@ footer::before{
 
   window.pxaDownloadWithPalette = function(){
     if(pxaMode==='effects'){ pxaDownloadFxPolaroid(); return; }
+    if(pxaMode==='original'){ pxaDownloadOriginalPolaroid(); return; }
     const entries = pxaColorCounts();
     const cellW = 148, cellH = 46, cols = 6;
     const rows = Math.ceil(entries.length/cols);
